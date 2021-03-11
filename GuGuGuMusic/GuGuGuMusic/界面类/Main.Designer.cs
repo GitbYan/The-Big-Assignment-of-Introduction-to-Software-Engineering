@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.Main_Panel = new System.Windows.Forms.Panel();
             this.Detail_Panel = new System.Windows.Forms.Panel();
             this.Play_Panel = new System.Windows.Forms.Panel();
@@ -349,7 +348,6 @@
             // notifyIcon
             // 
             this.notifyIcon.ContextMenuStrip = this.contextMenuStrip;
-            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "notifyIcon";
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseClick);
@@ -366,7 +364,7 @@
             this.Btn_Shut.M_Color = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.Btn_Shut.M_HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.Btn_Shut.Name = "Btn_Shut";
-            this.Btn_Shut.Size = new System.Drawing.Size(70, 58);
+            this.Btn_Shut.Size = new System.Drawing.Size(70, 56);
             this.Btn_Shut.TabIndex = 2;
             this.Btn_Shut.TabStop = false;
             this.Btn_Shut.Tag = "";
@@ -388,9 +386,9 @@
             // 
             this.shut_panel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.shut_panel.Controls.Add(this.Btn_Shut);
-            this.shut_panel.Location = new System.Drawing.Point(0, 588);
+            this.shut_panel.Location = new System.Drawing.Point(0, 590);
             this.shut_panel.Name = "shut_panel";
-            this.shut_panel.Size = new System.Drawing.Size(300, 60);
+            this.shut_panel.Size = new System.Drawing.Size(300, 58);
             this.shut_panel.TabIndex = 0;
             // 
             // openFileDialog1
