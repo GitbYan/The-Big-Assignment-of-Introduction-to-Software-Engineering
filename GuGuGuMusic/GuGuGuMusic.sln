@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuGuGuMusic", "GuGuGuMusic\GuGuGuMusic.csproj", "{90D46FE3-2ABA-4CF8-8B8A-BCCCE46256D2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9AA4705B-9EB9-4E7F-BA59-8D51218EFD96} = {9AA4705B-9EB9-4E7F-BA59-8D51218EFD96}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlDemos", "..\ControlDemos\ControlDemos\ControlDemos.csproj", "{9AA4705B-9EB9-4E7F-BA59-8D51218EFD96}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90D46FE3-2ABA-4CF8-8B8A-BCCCE46256D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90D46FE3-2ABA-4CF8-8B8A-BCCCE46256D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90D46FE3-2ABA-4CF8-8B8A-BCCCE46256D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90D46FE3-2ABA-4CF8-8B8A-BCCCE46256D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AA4705B-9EB9-4E7F-BA59-8D51218EFD96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AA4705B-9EB9-4E7F-BA59-8D51218EFD96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AA4705B-9EB9-4E7F-BA59-8D51218EFD96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AA4705B-9EB9-4E7F-BA59-8D51218EFD96}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E18D5D55-316B-490C-AE83-A6AB3A33DC42}
+	EndGlobalSection
+EndGlobal
