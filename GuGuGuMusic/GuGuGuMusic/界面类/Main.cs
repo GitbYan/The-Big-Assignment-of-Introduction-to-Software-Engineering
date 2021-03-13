@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AxWMPLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -162,55 +164,54 @@ namespace GuGuGuMusic
         {
             m_aeroEnabled = false;
             InitializeComponent();
-            this.Tool_Panel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
-            this.Play_Panel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
-            this.Icon_Panel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);            
+            this.Panel_Tool.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
+            this.Panel_Play.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
+            this.Panel_Icon.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
             this.Main_Panel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
-            Btn_Close.Parent = Tool_Panel;
+
+            ((System.ComponentModel.ISupportInitialize)(this.WMP)).BeginInit();//myClient为第三方控件名
+            this.Controls.Add(WMP);
+            ((System.ComponentModel.ISupportInitialize)(this.WMP)).EndInit();
+
+
+            playListForm = new PlayListForm() { TopLevel = false,TopMost = true};
+            this.Controls.Add(playListForm);
+            musics = mDB.GetMusics();
+            mGroup.musics = musics;
         }
-        
+
+        private MDB mDB = new MDB();//连接数据库
+        private PlayListForm playListForm = new PlayListForm() { TopLevel = false };//展示当前播放列表   
+        AxWindowsMediaPlayer WMP = new AxWindowsMediaPlayer() { Visible = false };//音乐播放控件
+        private MGroup mGroup = new MGroup();//当前播放列表
+        private List<Music> musics = new List<Music>();
+
+
+
+
         #region 事件
         ///实现部分控件随窗体缩放
         private void Main_Resize(object sender, EventArgs e)//resize事件 实现缩放
         {
+            playListForm.Width = 0;
+            playListForm.Hide();
             //大小
             Main_Panel.Width = this.Width - 2 * edgeX;
             Main_Panel.Height = this.Height - 2 * edgeY;
-            Nav_Panel.Height = (int)(this.Height - 2 * edgeY);
-            Tool_Panel.Width = (int)(this.Width - Nav_Panel.Width - 2 * edgeX);
-            Play_Panel.Width = (int)(this.Width - Nav_Panel.Width - 2 * edgeX);
-            mTrackBar.Width = (int)(this.Width - Nav_Panel.Width - 2 * edgeX);
-            PlayControl_Panel.Width = (int)(this.Width - Nav_Panel.Width - 2 * edgeX);
-            Detail_Panel.Width = (int)(this.Width - Nav_Panel.Width - 2 * edgeX);
-            Detail_Panel.Height = (int)(this.Height - Play_Panel.Height - Tool_Panel.Height - 2 * edgeY);
-            List_Panel.Height = (int)(Nav_Panel.Height - Icon_Panel.Height);
+            Panel_Nav.Height = (int)(this.Height - 2 * edgeY);
+            Panel_Tool.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
+            Panel_Play.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
+            mTrackBar.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
+            Panel_PlayStatus.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
+            Panel_Detail.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
+            Panel_Detail.Height = (int)(this.Height - Panel_Play.Height - 80 - 2 * edgeY);
+            Panel_List.Height = (int)(Panel_Nav.Height - Panel_Icon.Height);
             //位置
-            Play_Panel.Location = new Point(Play_Panel.Location.X, Detail_Panel.Location.Y + Detail_Panel.Height);
-        }
+            Panel_Play.Location = new Point(Panel_Play.Location.X, Panel_Detail.Location.Y + Panel_Detail.Height);
+            Panel_Control.Location = new Point((Panel_PlayStatus.Width - Panel_Control.Width) / 2, 0);
 
-        private void Btn_Close_Click(object sender, EventArgs e)
-        {
-            this.Hide();
-            SetVisibleCore(false);
-        }
-
-        private void Btn_MaxSize_Click(object sender, EventArgs e)
-        {
-            if(this.WindowState == FormWindowState.Normal)
-            {
-                this.WindowState = FormWindowState.Maximized;
-                toolTip.SetToolTip(Btn_MaxSize, "还原");
-            }
-            else
-            {
-                this.WindowState = FormWindowState.Normal;
-                toolTip.SetToolTip(Btn_MaxSize, "最大化");
-            }
-        }
-
-        private void Btn_MinSize_Click(object sender, EventArgs e)
-        {
-            this.WindowState = FormWindowState.Minimized;
         }
 
         private void notifyIcon_MouseClick(object sender, MouseEventArgs e)
@@ -234,6 +235,32 @@ namespace GuGuGuMusic
             notifyIcon.Dispose();
         }
 
+
+        private void Btn_Close_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            SetVisibleCore(false);
+        }
+
+        private void Btn_MaxSize_Click(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Normal)
+            {
+                this.WindowState = FormWindowState.Maximized;
+                toolTip.SetToolTip(Btn_MaxSize, "还原");
+            }
+            else
+            {
+                this.WindowState = FormWindowState.Normal;
+                toolTip.SetToolTip(Btn_MaxSize, "最大化");
+            }
+        }
+
+        private void Btn_MinSize_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+
         private void Btn_Menu_Click(object sender, EventArgs e)
         {
             Point p = new Point(0, 0);
@@ -243,27 +270,108 @@ namespace GuGuGuMusic
 
         private void Btn_Playlist_Click(object sender, EventArgs e)
         {
-            Playlist_Panel.Width = 0;
-            Playlist_Panel.Visible = true;
-            Playlist_Panel.BringToFront();
+            playListForm.MusicUpdate(mGroup);
+            playListForm.BringToFront();
+            playListForm.Show();
+            playListForm.Width = 300;
+            playListForm.Location = new Point(this.Width - 300, 0);
+            /*
             for (int i = 0; i <= 150; i++)
             {
-                Playlist_Panel.Width = i * 2;
-                Invalidate();
-            }
-
+                playListForm.Width = i * 2;
+                playListForm.Location = new Point(this.Width - i * 2, 0);
+            }*/
 
         }
 
-        private void Btn_Shut_Click(object sender, EventArgs e)
+        private void Btn_Mode_Click(object sender, EventArgs e)
         {
-            Playlist_Panel.Visible = false;
-            Playlist_Panel.SendToBack();
+
         }
 
+        private void Btn_Volume_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                mTrackBar.M_Value = 0;
+                Music music = InitMusic(openFileDialog.FileName);
+                this.mGroup.Add(music);
+                mDB.AddMusic(music);
+            }
+        }
+
+        private Music InitMusic(string filename)
+        {
+            try
+            {
+                string[] str = filename.Split('\\');
+                string fileurl = "";
+                string name = "";
+                string singer = "";
+                foreach (string s in str)
+                {
+                    if (s != str.Last())
+                    {
+                        fileurl = fileurl + s + "\\";
+                    }
+                    if (s == str.Last())
+                    {
+                        fileurl += s;
+                        string[] str_ = s.Split('-');
+                        name = str_[1];
+                        singer = str_[0];
+                    }
+                }
+                Music music = new Music(name, singer, "", fileurl);                
+                Console.WriteLine("成功解析音乐路径:"+name+" : "+singer+" : "+fileurl);
+                return music;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message + "\n" + "解析音乐路径失败");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 是否在播放中
+        /// </summary>
+        private bool MediaStatus = false;
+
+        private void Btn_Play_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!MediaStatus)
+                {
+                    Btn_Play.Text = "||";
+                    Console.WriteLine(musics[0].FileURL.ToString());
+                    WMP.URL = "C:\\Users\\ASUS\\Music\\Laura Shigihara - Zombies On Your Lawn.mp3";
+                    WMP.Ctlcontrols.play();
+
+                    MediaStatus = true;
+                }
+                else
+                {
+                    Btn_Play.Text = "▶";
+                    WMP.Ctlcontrols.stop();
+                    MediaStatus = false;
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n音乐播放失败");
+            }
+        }
         #endregion
 
-   
+
     }
 
 }
