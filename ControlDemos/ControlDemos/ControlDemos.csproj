@@ -44,25 +44,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="MEnum.cs" />
     <Compile Include="MEventArgs.cs" />
-    <Compile Include="MForm.cs">
-      <SubType>Form</SubType>
+    <Compile Include="MListBox.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MItem.cs" />
     <Compile Include="MSearchBox.cs" />
     <Compile Include="MTrackBar.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="MForm.resx">
-      <DependentUpon>MForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
