@@ -97,6 +97,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MDB.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -104,13 +107,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="实体类\MGroup.cs" />
+    <Compile Include="MLButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="实体类\User.cs" />
-    <Compile Include="界面类\LikedForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="界面类\LikedForm.Designer.cs">
-      <DependentUpon>LikedForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="界面类\Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,15 +120,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="实体类\Music.cs" />
-    <Compile Include="界面类\PlayListForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="界面类\PlayListForm.Designer.cs">
-      <DependentUpon>PlayListForm.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="界面类\LikedForm.resx">
-      <DependentUpon>LikedForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="界面类\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
@@ -136,9 +127,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="界面类\PlayListForm.resx">
-      <DependentUpon>PlayListForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
