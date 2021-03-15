@@ -13,6 +13,14 @@ namespace GuGuGuMusic
 
         }
 
+        public Music(string FileURL)
+        {
+            Name = InitMusic(FileURL).Name;
+            Singer = InitMusic(FileURL).Singer;
+            Album = InitMusic(FileURL).Album;
+            FileURL = InitMusic(FileURL).FileURL;
+        }
+
         public Music(string Name,string Singer,string Album,string FileURL)
         {
             this.Name = Name;
@@ -87,6 +95,43 @@ namespace GuGuGuMusic
                 _Duration = value;
             }
         }
-        
+
+        /// <summary>
+        /// 解析音乐文件路径名并返回音乐对象
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public Music InitMusic(string filename)
+        {
+            try
+            {
+                string[] str = filename.Split('\\');
+                string fileurl = "";
+                string name = "";
+                string singer = "";
+                foreach (string s in str)
+                {
+                    if (s != str.Last())
+                    {
+                        fileurl = fileurl + s + "\\";
+                    }
+                    if (s == str.Last())
+                    {
+                        fileurl += s;
+                        string[] str_ = s.Split('-');
+                        name = str_[1];
+                        singer = str_[0];
+                    }
+                }
+                Music music = new Music(name, singer, "", fileurl);
+                Console.WriteLine("成功解析音乐路径:" + name + " : " + singer + " : " + fileurl);
+                return music;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + "\n" + "解析音乐路径失败");
+                return null;
+            }
+        }
     }
 }

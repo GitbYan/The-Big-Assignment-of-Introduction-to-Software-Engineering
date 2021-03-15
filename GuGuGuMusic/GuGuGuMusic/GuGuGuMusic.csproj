@@ -97,17 +97,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MButton.cs">
+    <Compile Include="界面类\MButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MDB.cs" />
+    <Compile Include="实体类\MDB.cs" />
+    <Compile Include="实体类\MyMusicApp.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="实体类\MGroup.cs" />
-    <Compile Include="MLButton.cs">
+    <Compile Include="实体类\MusicList.cs" />
+    <Compile Include="界面类\MLButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="实体类\User.cs" />

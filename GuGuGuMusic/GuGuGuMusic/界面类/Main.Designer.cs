@@ -40,11 +40,11 @@
             this.Btn_Volume = new System.Windows.Forms.Button();
             this.Btn_Mode = new System.Windows.Forms.Button();
             this.Btn_Next = new System.Windows.Forms.Button();
-            this.Btn_Previus = new System.Windows.Forms.Button();
+            this.Btn_Last = new System.Windows.Forms.Button();
             this.Btn_Play = new System.Windows.Forms.Button();
             this.Btn_MusicName = new System.Windows.Forms.Button();
             this.Btn_MusicPic = new System.Windows.Forms.Button();
-            this.Btn_Rate = new System.Windows.Forms.Button();
+            this.Btn_Process = new System.Windows.Forms.Button();
             this.Btn_Playlist = new System.Windows.Forms.Button();
             this.mTrackBar = new ControlDemos.MTrackBar();
             this.Panel_Tool = new System.Windows.Forms.Panel();
@@ -65,11 +65,11 @@
             this.Btn_CteateList = new System.Windows.Forms.Button();
             this.Btn_ShowCreatedList = new System.Windows.Forms.Button();
             this.Panel_MyMusicMenuList = new System.Windows.Forms.Panel();
-            this.Btn_History = new System.Windows.Forms.Button();
-            this.Btn_Local = new System.Windows.Forms.Button();
+            this.Btn_History = new GuGuGuMusic.MLButton();
+            this.Btn_Local = new GuGuGuMusic.MLButton();
             this.Lbl_MyMusic = new System.Windows.Forms.Button();
             this.Panel_OnlineMusicMenuList = new System.Windows.Forms.Panel();
-            this.Btn_PopMusic = new System.Windows.Forms.Button();
+            this.Btn_PopMusic = new GuGuGuMusic.MLButton();
             this.Lbl_OnlineMusic = new System.Windows.Forms.Button();
             this.Panel_Icon = new System.Windows.Forms.Panel();
             this.Icon_pictureBox = new System.Windows.Forms.PictureBox();
@@ -78,7 +78,7 @@
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Panel_PlayList = new System.Windows.Forms.Panel();
             this.Btn_Shut = new System.Windows.Forms.Button();
-            this.Panel_PlayingMusciGroup = new System.Windows.Forms.Panel();
+            this.Panel_PlayingMusicLIst = new System.Windows.Forms.Panel();
             this.Lbl_Number = new System.Windows.Forms.Label();
             this.Lbl_PlayList = new System.Windows.Forms.Button();
             this.Timer_CreatingList = new System.Windows.Forms.Timer(this.components);
@@ -159,7 +159,7 @@
             this.Panel_PlayStatus.Controls.Add(this.Panel_Control);
             this.Panel_PlayStatus.Controls.Add(this.Btn_MusicName);
             this.Panel_PlayStatus.Controls.Add(this.Btn_MusicPic);
-            this.Panel_PlayStatus.Controls.Add(this.Btn_Rate);
+            this.Panel_PlayStatus.Controls.Add(this.Btn_Process);
             this.Panel_PlayStatus.Controls.Add(this.Btn_Playlist);
             this.Panel_PlayStatus.Location = new System.Drawing.Point(0, 16);
             this.Panel_PlayStatus.MinimumSize = new System.Drawing.Size(700, 64);
@@ -172,7 +172,7 @@
             this.Panel_Control.Controls.Add(this.Btn_Volume);
             this.Panel_Control.Controls.Add(this.Btn_Mode);
             this.Panel_Control.Controls.Add(this.Btn_Next);
-            this.Panel_Control.Controls.Add(this.Btn_Previus);
+            this.Panel_Control.Controls.Add(this.Btn_Last);
             this.Panel_Control.Controls.Add(this.Btn_Play);
             this.Panel_Control.Location = new System.Drawing.Point(240, 0);
             this.Panel_Control.Name = "Panel_Control";
@@ -221,19 +221,19 @@
             this.Btn_Next.UseVisualStyleBackColor = false;
             this.Btn_Next.Click += new System.EventHandler(this.Btn_Next_Click);
             // 
-            // Btn_Previus
+            // Btn_Last
             // 
-            this.Btn_Previus.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.Btn_Previus.FlatAppearance.BorderSize = 0;
-            this.Btn_Previus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Previus.Location = new System.Drawing.Point(40, 0);
-            this.Btn_Previus.Name = "Btn_Previus";
-            this.Btn_Previus.Size = new System.Drawing.Size(40, 64);
-            this.Btn_Previus.TabIndex = 8;
-            this.Btn_Previus.TabStop = false;
-            this.Btn_Previus.Text = "|◀";
-            this.Btn_Previus.UseVisualStyleBackColor = false;
-            this.Btn_Previus.Click += new System.EventHandler(this.Btn_Previus_Click);
+            this.Btn_Last.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.Btn_Last.FlatAppearance.BorderSize = 0;
+            this.Btn_Last.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Last.Location = new System.Drawing.Point(40, 0);
+            this.Btn_Last.Name = "Btn_Last";
+            this.Btn_Last.Size = new System.Drawing.Size(40, 64);
+            this.Btn_Last.TabIndex = 8;
+            this.Btn_Last.TabStop = false;
+            this.Btn_Last.Text = "|◀";
+            this.Btn_Last.UseVisualStyleBackColor = false;
+            this.Btn_Last.Click += new System.EventHandler(this.Btn_Last_Click);
             // 
             // Btn_Play
             // 
@@ -278,21 +278,21 @@
             this.Btn_MusicPic.TabStop = false;
             this.Btn_MusicPic.UseVisualStyleBackColor = false;
             // 
-            // Btn_Rate
+            // Btn_Process
             // 
-            this.Btn_Rate.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.Btn_Rate.Dock = System.Windows.Forms.DockStyle.Right;
-            this.Btn_Rate.Enabled = false;
-            this.Btn_Rate.FlatAppearance.BorderSize = 0;
-            this.Btn_Rate.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.Btn_Rate.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.Btn_Rate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Rate.Location = new System.Drawing.Point(504, 0);
-            this.Btn_Rate.Name = "Btn_Rate";
-            this.Btn_Rate.Size = new System.Drawing.Size(121, 64);
-            this.Btn_Rate.TabIndex = 2;
-            this.Btn_Rate.TabStop = false;
-            this.Btn_Rate.UseVisualStyleBackColor = false;
+            this.Btn_Process.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.Btn_Process.Dock = System.Windows.Forms.DockStyle.Right;
+            this.Btn_Process.Enabled = false;
+            this.Btn_Process.FlatAppearance.BorderSize = 0;
+            this.Btn_Process.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_Process.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_Process.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Process.Location = new System.Drawing.Point(504, 0);
+            this.Btn_Process.Name = "Btn_Process";
+            this.Btn_Process.Size = new System.Drawing.Size(121, 64);
+            this.Btn_Process.TabIndex = 2;
+            this.Btn_Process.TabStop = false;
+            this.Btn_Process.UseVisualStyleBackColor = false;
             // 
             // Btn_Playlist
             // 
@@ -697,7 +697,7 @@
             // 
             this.Panel_PlayList.BackColor = System.Drawing.Color.White;
             this.Panel_PlayList.Controls.Add(this.Btn_Shut);
-            this.Panel_PlayList.Controls.Add(this.Panel_PlayingMusciGroup);
+            this.Panel_PlayList.Controls.Add(this.Panel_PlayingMusicLIst);
             this.Panel_PlayList.Controls.Add(this.Lbl_Number);
             this.Panel_PlayList.Controls.Add(this.Lbl_PlayList);
             this.Panel_PlayList.Location = new System.Drawing.Point(608, 0);
@@ -718,14 +718,14 @@
             this.Btn_Shut.UseVisualStyleBackColor = true;
             this.Btn_Shut.Click += new System.EventHandler(this.Btn_Shut_Click);
             // 
-            // Panel_PlayingMusciGroup
+            // Panel_PlayingMusicLIst
             // 
-            this.Panel_PlayingMusciGroup.AutoScroll = true;
-            this.Panel_PlayingMusciGroup.Location = new System.Drawing.Point(0, 68);
-            this.Panel_PlayingMusciGroup.MinimumSize = new System.Drawing.Size(300, 512);
-            this.Panel_PlayingMusciGroup.Name = "Panel_PlayingMusciGroup";
-            this.Panel_PlayingMusciGroup.Size = new System.Drawing.Size(300, 512);
-            this.Panel_PlayingMusciGroup.TabIndex = 8;
+            this.Panel_PlayingMusicLIst.AutoScroll = true;
+            this.Panel_PlayingMusicLIst.Location = new System.Drawing.Point(0, 68);
+            this.Panel_PlayingMusicLIst.MinimumSize = new System.Drawing.Size(300, 512);
+            this.Panel_PlayingMusicLIst.Name = "Panel_PlayingMusicLIst";
+            this.Panel_PlayingMusicLIst.Size = new System.Drawing.Size(300, 512);
+            this.Panel_PlayingMusicLIst.TabIndex = 8;
             // 
             // Lbl_Number
             // 
@@ -808,13 +808,13 @@
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Panel Panel_PlayStatus;
         private System.Windows.Forms.Button Btn_Mode;
-        private System.Windows.Forms.Button Btn_Previus;
+        private System.Windows.Forms.Button Btn_Last;
         private System.Windows.Forms.Button Btn_Play;
         private System.Windows.Forms.Button Btn_Next;
         private System.Windows.Forms.Button Btn_Volume;
         private System.Windows.Forms.Button Btn_MusicName;
         private System.Windows.Forms.Button Btn_MusicPic;
-        private System.Windows.Forms.Button Btn_Rate;
+        private System.Windows.Forms.Button Btn_Process;
         private System.Windows.Forms.Button Btn_User;
         private System.Windows.Forms.Button Btn_Menu;
         private System.Windows.Forms.Button Btn_Line;
@@ -828,11 +828,11 @@
         private System.Windows.Forms.Button Btn_ShowCreatedList;
         private System.Windows.Forms.Panel Panel_CreateList;
         private System.Windows.Forms.Panel Panel_MyMusicMenuList;
-        private System.Windows.Forms.Button Btn_History;
-        private System.Windows.Forms.Button Btn_Local;
+        private MLButton Btn_History;
+        private MLButton Btn_Local;
         private System.Windows.Forms.Button Lbl_MyMusic;
         private System.Windows.Forms.Panel Panel_OnlineMusicMenuList;
-        private System.Windows.Forms.Button Btn_PopMusic;
+        private MLButton Btn_PopMusic;
         private System.Windows.Forms.Button Lbl_OnlineMusic;
         private System.Windows.Forms.Button Btn_Spread;
         private System.Windows.Forms.Button Btn_CteateList;
@@ -841,7 +841,7 @@
         private System.Windows.Forms.Panel Panel_PlayList;
         private System.Windows.Forms.Button Lbl_PlayList;
         private System.Windows.Forms.Label Lbl_Number;
-        private System.Windows.Forms.Panel Panel_PlayingMusciGroup;
+        private System.Windows.Forms.Panel Panel_PlayingMusicLIst;
         private System.Windows.Forms.Button Btn_Shut;
         private System.Windows.Forms.Timer Timer_CreatingList;
     }

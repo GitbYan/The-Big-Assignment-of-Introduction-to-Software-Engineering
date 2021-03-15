@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -178,44 +179,13 @@ namespace GuGuGuMusic
             //
             this.Btn_Local.BackColor = System.Drawing.SystemColors.ButtonShadow;
             ChoosedListButton = Btn_Local;
-            //
-
-            //读取各项列表信息
-            PlayingMusicGroup.musics = mDB.GetMusics();
-            LocalMusicGroup.musics = mDB.GetMusics();
-            //
-            ReadyMusic = PlayingMusicGroup.musics.First();
-            //显示默认列表
-            ShowList(LocalMusicGroup.musics);
+            myMusicApp = new MyMusicApp();
+            ShowList(myMusicApp.LocalMusicList.Musics);
         }
-        private MDB mDB = new MDB();//连接数据库
+
+        public MyMusicApp myMusicApp;
         AxWindowsMediaPlayer WMP = new AxWindowsMediaPlayer() { Visible = false };//音乐播放控件
 
-
-        /// <summary>
-        /// 当前播放列表
-        /// </summary>
-        private MGroup PlayingMusicGroup = new MGroup();
-        /// <summary>
-        /// 本地和下载列表
-        /// </summary>
-        private MGroup LocalMusicGroup = new MGroup();
-        /// <summary>
-        /// 历史播放列表
-        /// </summary>
-        private MGroup HistoryMusicGroup = new MGroup();
-        /// <summary>
-        /// 流行音乐列表
-        /// </summary>
-        private MGroup PopMusicGroup = new MGroup();
-        /// <summary>
-        /// 创建的列表 
-        /// </summary>
-        private MGroup[] CreatedListMusicGroup = new MGroup[100];
-        /// <summary>
-        /// 正在播放的音乐
-        /// </summary>
-        private Music ReadyMusic = new Music();
         /// <summary>
         /// 当前选择播放的音乐 对应button
         /// </summary>
@@ -223,11 +193,8 @@ namespace GuGuGuMusic
         /// <summary>
         /// 当前选中的音乐播放列表 对应button
         /// </summary>
-        private object ChoosedListButton = new object();
-        /// <summary>
-        /// 是否在播放中
-        /// </summary>
-        private bool MediaStatus = false;
+        private MLButton ChoosedListButton = new MLButton();
+
 
 
         #region 事件
@@ -314,18 +281,11 @@ namespace GuGuGuMusic
         {
             try
             {
-                PlayListUpdate(PlayingMusicGroup);
+                PlayListUpdate(myMusicApp.PlayingMusicList);
                 Panel_PlayList.BringToFront();
                 Panel_PlayList.Show();
                 Panel_PlayList.Width = 300;
                 Panel_PlayList.Location = new Point(this.Width - 300, 0);
-                
-                /*
-                for (int i = 0; i <= 150; i++)
-                {
-                    Panel_PlayList.Width = i * 2;
-                    Panel_PlayList.Location = new Point(this.Width - i * 2, 0);
-                }*/
             }
             catch (Exception ce)
             {
@@ -350,64 +310,41 @@ namespace GuGuGuMusic
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 mTrackBar.M_Value = 0;
-                Music music = InitMusic(openFileDialog.FileName);
-                this.PlayingMusicGroup.Add(music);
-                mDB.AddMusic(music);
+                Music music = new Music().InitMusic(openFileDialog.FileName);
+                
+                myMusicApp.UpdateMusicList(myMusicApp.LocalMusicList, music, ListOperation.ADD);
+                ShowList(myMusicApp.LocalMusicList.Musics);
             }
         }
 
-        private Music InitMusic(string filename)
-        {
-            try
-            {
-                string[] str = filename.Split('\\');
-                string fileurl = "";
-                string name = "";
-                string singer = "";
-                foreach (string s in str)
-                {
-                    if (s != str.Last())
-                    {
-                        fileurl = fileurl + s + "\\";
-                    }
-                    if (s == str.Last())
-                    {
-                        fileurl += s;
-                        string[] str_ = s.Split('-');
-                        name = str_[1];
-                        singer = str_[0];
-                    }
-                }
-                Music music = new Music(name, singer, "", fileurl);                
-                Console.WriteLine("成功解析音乐路径:"+name+" : "+singer+" : "+fileurl);
-                return music;
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.Message + "\n" + "解析音乐路径失败");
-                return null;
-            }
-        }
-
+        /// <summary>
+        /// 播放按钮点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Btn_Play_Click(object sender, EventArgs e)
         {
             try
             {
-                if (!MediaStatus)
+                if (Btn_Play.Text == "▶")
                 {
-                    Btn_Play.Text = "||";
-                    Console.WriteLine(ReadyMusic.Name);
-                    WMP.URL = ReadyMusic.FileURL.ToString();
-                    WMP.currentMedia.name = ReadyMusic.Name + " - " + ReadyMusic.Singer;
-                    WMP.Ctlcontrols.play();
-                    MediaStatus = true;
+                    if (myMusicApp.PlayingMusicList.Musics.Count >= 0) 
+                    {
+                        Music m = myMusicApp.PlayingMusicList.Musics.First();
+                        myMusicApp.PlayMusic(m);
+                        WMP.URL = myMusicApp.ReadyMusic.FileURL.ToString();
+                        WMP.currentMedia.name = myMusicApp.ReadyMusic.Name + " - " + myMusicApp.ReadyMusic.Singer;
+                        WMP.Ctlcontrols.play();
+                    }
                 }
                 else
                 {
-                    Btn_Play.Text = "▶";
-                    WMP.Ctlcontrols.stop();
-                    MediaStatus = false;
+                    if(WMP.URL != null)
+                    {
+                        WMP.Ctlcontrols.stop();
+                    }
                 }
+                Btn_Play.Text = Btn_Play.Text == "||" ? "▶" : "||";
             }
             catch(Exception ex)
             {
@@ -417,15 +354,15 @@ namespace GuGuGuMusic
 
         #endregion
 
-        private void PlayListUpdate(MGroup PlayingMusicGroup)
+        private void PlayListUpdate(MusicList PlayingMusicList)
         {
             try
             {
-                Panel_PlayingMusciGroup.Controls.Clear();
-                if (PlayingMusicGroup != null && PlayingMusicGroup.musics != null)
+                Panel_PlayingMusicLIst.Controls.Clear();
+                if (PlayingMusicList != null && PlayingMusicList.Musics != null)
                 {
                     int i = 0;
-                    foreach (Music music in PlayingMusicGroup.musics)
+                    foreach (Music music in PlayingMusicList.Musics)
                     {
                         MButton b = new MButton()
                         {
@@ -439,7 +376,7 @@ namespace GuGuGuMusic
                         b.Location = new Point(0, 64 * i);
                         b.Text = music.Name;
                         b.FlatAppearance.BorderSize = 0;
-                        Panel_PlayingMusciGroup.Controls.Add(b);
+                        Panel_PlayingMusicLIst.Controls.Add(b);
                         b.Show();
                         i++;
                     }
@@ -458,18 +395,18 @@ namespace GuGuGuMusic
             newChoosedListButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
             Button oldChoosedListButton = (Button)ChoosedListButton;
             oldChoosedListButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            ChoosedListButton = sender;
+            ChoosedListButton = (MLButton)sender;
         }
 
-        private void ShowList(List<Music> musics)
+        private void ShowList(List<Music> Musics)
         {
             try
             {
                 panel1.Controls.Clear();
                 int i = 0;
-                if(musics != null)
+                if(Musics != null)
                 {
-                    foreach (Music music in musics)
+                    foreach (Music music in Musics)
                     {
                         MButton b = new MButton()
                         {
@@ -496,23 +433,34 @@ namespace GuGuGuMusic
             }
         }
 
+        /// <summary>
+        /// 双击音乐列表的一项音乐时播放该音乐
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PlayChoosedMusic(object sender, EventArgs e)
         {
-            Btn_Play.Text = "||";
-            Console.WriteLine("测试");
-            MButton MB = (MButton)sender;
+            try
+            {
+                Btn_Play.Text = "||";
+                MButton MB = (MButton)sender;
 
-            MB.BackColor = System.Drawing.SystemColors.ButtonShadow;
-            ChoosedMButton.BackColor = Color.Transparent;
-            ChoosedMButton = MB;
+                MB.BackColor = System.Drawing.SystemColors.ButtonShadow;
+                ChoosedMButton.BackColor = Color.Transparent;
+                ChoosedMButton = MB;
 
-            ReadyMusic = MB.M_music;
-            MediaStatus = false;
-            Console.WriteLine(ReadyMusic.Name);
-            WMP.URL = ReadyMusic.FileURL.ToString();
-            WMP.currentMedia.name = ReadyMusic.Name + " - " + ReadyMusic.Singer;
-            WMP.Ctlcontrols.play();
-            MediaStatus = true;
+                Music music = MB.M_music;
+                myMusicApp.PlayMusic(music);
+                
+
+                WMP.URL = MB.M_music.FileURL.ToString();
+                WMP.currentMedia.name = music.Name + " - " + music.Singer;
+                WMP.Ctlcontrols.play();
+            }
+            catch(Exception ce)
+            {
+                Console.WriteLine(ce.Message+"音乐播放失败");
+            }
         }
 
 
@@ -543,6 +491,7 @@ namespace GuGuGuMusic
             }
         }
 
+        #region 创建歌单
         /// <summary>
         /// 正在创建的列表
         /// </summary>
@@ -609,7 +558,7 @@ namespace GuGuGuMusic
         {
             ResetChoosedListButton(sender);
             MLButton button = (MLButton)sender;
-            ShowList(button.M_mGroup.musics);
+            ShowList(button.MusicList.Musics);
         }
 
         private void Timer_CreatingList_Tick(object sender, EventArgs e)
@@ -621,23 +570,25 @@ namespace GuGuGuMusic
             }
         }
 
+        #endregion
+
         private void Btn_Local_Click(object sender, EventArgs e)
         {
             ResetChoosedListButton(sender);
-            ShowList(LocalMusicGroup.musics);
+            ShowList(myMusicApp.LocalMusicList.Musics);
 
         }
 
         private void Btn_History_Click(object sender, EventArgs e)
         {
             ResetChoosedListButton(sender);
-            ShowList(HistoryMusicGroup.musics);
+            ShowList(myMusicApp.HistoryMusicList.Musics);
         }
 
         private void Btn_PopMusic_Click(object sender, EventArgs e)
         {
             ResetChoosedListButton(sender);
-            ShowList(PopMusicGroup.musics);
+            ShowList(myMusicApp.PopMusicList.Musics);
         }
 
         private void Btn_Shut_Click(object sender, EventArgs e)
@@ -648,12 +599,39 @@ namespace GuGuGuMusic
 
         private void Btn_Next_Click(object sender, EventArgs e)
         {
+            try
+            {
+                Btn_Play.Text = "||";
+                myMusicApp.PlayNextMusic();
 
+                Music m = myMusicApp.ReadyMusic;
+                WMP.URL = m.FileURL.ToString();
+                WMP.currentMedia.name = m.Name + " - " + m.Singer;
+                WMP.Ctlcontrols.play();
+            }
+            catch (Exception ex)
+            {
+                Btn_Play.Text = "▶";
+                Console.WriteLine(ex.Message + "\n音乐播放失败");
+            }
         }
 
-        private void Btn_Previus_Click(object sender, EventArgs e)
+        private void Btn_Last_Click(object sender, EventArgs e)
         {
-
+            try
+            {
+                Btn_Play.Text = "||";
+                myMusicApp.PlayLastMusic();
+                Console.WriteLine(myMusicApp.ReadyMusic.Name);
+                WMP.URL = myMusicApp.ReadyMusic.FileURL.ToString();
+                WMP.currentMedia.name = myMusicApp.ReadyMusic.Name + " - " + myMusicApp.ReadyMusic.Singer;
+                WMP.Ctlcontrols.play();
+            }
+            catch (Exception ex)
+            {
+                Btn_Play.Text = "▶";
+                Console.WriteLine(ex.Message + "\n音乐播放失败");
+            }
         }
     }
 
