@@ -16,11 +16,7 @@ namespace GuGuGuMusic
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //MDB mDB = new MDB();
-            //mDB.connection();
             Application.Run(new Main());
-
-
         }
     }
 }

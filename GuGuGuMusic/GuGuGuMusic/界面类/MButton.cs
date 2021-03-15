@@ -20,6 +20,10 @@ namespace GuGuGuMusic
         }
 
         private Music _music = new Music();
+
+        /// <summary>
+        /// 保存按钮对应的音乐信息
+        /// </summary>
         public Music M_music
         {
             get { return _music; }
@@ -28,10 +32,13 @@ namespace GuGuGuMusic
                 _music = value;
             }
         }
-
+        #region 重定义鼠标双击事件
         public new event EventHandler DoubleClick;
+
         DateTime clickTime;
+
         bool isClicked = false;
+
         protected override void OnClick(EventArgs e)
         {
             base.OnClick(e);
@@ -55,7 +62,7 @@ namespace GuGuGuMusic
                 clickTime = DateTime.Now;
             }
         }
-
+        #endregion
     }
 
 
