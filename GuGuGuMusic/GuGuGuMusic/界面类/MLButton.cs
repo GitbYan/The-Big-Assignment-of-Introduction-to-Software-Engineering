@@ -13,19 +13,10 @@ namespace GuGuGuMusic
         {
 
         }
-        public MLButton(MGroup mGroup)
+        public MLButton(MusicList mGroup)
         {
-            _mGroup = mGroup;
+            MusicList = mGroup;
         }
-
-        private MGroup _mGroup = new MGroup();
-        public MGroup M_mGroup
-        {
-            get { return _mGroup; }
-            set
-            {
-                _mGroup = value;
-            }
-        }
+        public MusicList MusicList { get; set; } = new MusicList();
     }
 }
