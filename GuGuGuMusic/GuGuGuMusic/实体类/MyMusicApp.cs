@@ -11,10 +11,13 @@ namespace GuGuGuMusic
     {
         public MyMusicApp()
         {
+            //初始化本地存储目录
             WriteLocalTxt("local.txt", "../local/");
             WriteLocalTxt("playing.txt", "../local/");
+            //读取本地目录信息
             LocalMusicList = mDB.GetLocalMusicList();
             PlayingMusicList = mDB.GetPlayingMusicList();
+            //默认登陆时，读取用户信息
             if (IsLogin)
             {
                 HistoryMusicList = mDB.GetMusicList(new MusicList("历史播放列表", user.User_Id));
@@ -112,11 +115,11 @@ namespace GuGuGuMusic
             return CreatedMusicList.Count() < 100;
         }
         /// <summary>
-        /// 对数据库中歌单歌曲进行添加或删除操作,同时更新对应歌单属性
+        /// 对数据库中对应的歌单歌曲进行添加或删除操作,同时更新对应歌单（MusicList）的音乐（Musics）信息
         /// </summary>
-        /// <param name="musicList"></param>
-        /// <param name="music"></param>
-        /// <param name="listOperation"></param>
+        /// <param name="musicList">歌单</param>
+        /// <param name="music">歌曲</param>
+        /// <param name="listOperation">操作</param>
         public bool UpdateMusicList(MusicList musicList, Music music, ListOperation listOperation)
         {
             try

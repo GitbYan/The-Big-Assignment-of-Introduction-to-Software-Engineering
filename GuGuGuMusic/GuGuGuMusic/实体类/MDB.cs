@@ -80,6 +80,10 @@ namespace GuGuGuMusic
             return Command(sql).ExecuteReader();
         }
 
+        /// <summary>
+        /// 执行sql语句返回所有user信息
+        /// </summary>
+        /// <returns></returns>
         public DataSet GetUserInfo()
         {
             MySqlDataAdapter mySqlDataAdapter = new MySqlDataAdapter("select * from userinfo", connection());
@@ -88,22 +92,10 @@ namespace GuGuGuMusic
             return userInfoDataSet;
         }
 
-        public bool AddMusic(Music music)
-        {
-            try
-            {
-                string sql = "INSERT INTO musicinfo VALUES('" + music.Name + "','" + music.Singer + "','" + music.FileURL.Replace("\\", "/") + "','"+music.Album + "') ON DUPLICATE KEY UPDATE Fileurl = VALUES(Fileurl)";
-                int n = ExcuteNonQuery(sql);
-                Console.WriteLine("数据库添加成功，修改数据条数" + n);
-                return true;
-
-            }catch(Exception e)
-            {
-                Console.WriteLine(e.Message + "数据库添加失败");
-                return false;
-            }
-        }
-
+        /// <summary>
+        /// 执行sql语句返回所有music信息
+        /// </summary>
+        /// <returns></returns>
         public List<Music> GetMusics()
         {
             try
@@ -128,7 +120,7 @@ namespace GuGuGuMusic
 
         #region 歌单部分
         /// <summary>
-        /// 修改数据库对应音乐表，返回操作涉及的项数，失败返回-1
+        /// 修改数据库中对应的音乐表，返回操作涉及的项数，失败返回-1
         /// </summary>
         /// <param name="musicList">列表对象</param>
         /// <param name="music">音乐对象</param>
@@ -159,7 +151,7 @@ namespace GuGuGuMusic
         }
         
         /// <summary>
-        /// 修改歌单名,返回数据库操作设计的数据条数，失败返回-1
+        /// 修改数据库中歌单名,返回数据库操作所涉及的数据条数，失败返回-1
         /// </summary>
         /// <param name="musicList"></param>
         /// <param name="ListName"></param>
@@ -181,7 +173,7 @@ namespace GuGuGuMusic
         }
 
         /// <summary>
-        /// 删除指定歌单
+        /// 删除数据库中指定歌单
         /// </summary>
         /// <param name="musicList"></param>
         /// <returns></returns>
@@ -201,7 +193,7 @@ namespace GuGuGuMusic
         }
 
         /// <summary>
-        /// 从数据库读取全部歌单索引
+        /// 从数据库读取全部歌单信息（不包括音乐文件，仅读取 歌单-用户 的匹配数目）
         /// </summary>
         /// <returns></returns>
         public MusicList[] GetMusicList(User user)
@@ -233,7 +225,7 @@ namespace GuGuGuMusic
         }
 
         /// <summary>
-        /// 从数据库读取歌单内容
+        /// 从数据库读取任一歌单内容，返回歌单内所有音乐信息
         /// </summary>
         /// <param name="musicList"></param>
         /// <returns></returns>
@@ -250,7 +242,7 @@ namespace GuGuGuMusic
         }
         
         /// <summary>
-        /// 从本地读取歌单
+        /// 从本地读取歌单-本地与下载
         /// </summary>
         /// <returns></returns>
         public MusicList GetLocalMusicList()
@@ -277,7 +269,7 @@ namespace GuGuGuMusic
         }
 
         /// <summary>
-        /// 更新本地歌单信息
+        /// 更新本地歌单信息-本地与下载
         /// </summary>
         /// <param name="musicList"></param>
         public void UpdateLocalMusicList(MusicList musicList,Music music, ListOperation listOperation)
@@ -347,7 +339,7 @@ namespace GuGuGuMusic
         }
 
         /// <summary>
-        /// 从本地读取歌单
+        /// 从本地读取歌单-播放列表（缓存）
         /// </summary>
         /// <returns></returns>
         public MusicList GetPlayingMusicList()
@@ -373,6 +365,12 @@ namespace GuGuGuMusic
             }
         }
 
+        /// <summary>
+        /// 更新本地歌单信息-播放列表
+        /// </summary>
+        /// <param name="musicList"></param>
+        /// <param name="music"></param>
+        /// <param name="listOperation"></param>
         public void UpdatePlayingMusicList(MusicList musicList, Music music, ListOperation listOperation)
         {
             try

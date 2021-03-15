@@ -17,6 +17,10 @@ namespace GuGuGuMusic
         {
             MusicList = mGroup;
         }
+
+        /// <summary>
+        /// 保存按钮对应的音乐列表信息
+        /// </summary>
         public MusicList MusicList { get; set; } = new MusicList();
     }
 }
