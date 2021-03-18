@@ -13,6 +13,7 @@ using System.Windows.Forms;
 namespace ControlDemos
 {
     [DefaultEvent("MValueChanged")]
+
     public class MTrackBar : Control
     {
         public MTrackBar()
@@ -69,12 +70,12 @@ namespace ControlDemos
             }
         }
 
-        private int _Minimum = 0;
+        private double _Minimum = 0;
         /// <summary>
         /// 滑块刻度最小值<para>范围：大于等于0</para>
         /// </summary>
         [Category("DemoUI"), Description("滑块刻度最小值")]
-        public int M_Minimum
+        public double M_Minimum
         {
             get { return _Minimum; }
             set
@@ -87,12 +88,12 @@ namespace ControlDemos
         }
 
 
-        private int _Maximum = 100;
+        private double _Maximum = 100;
         /// <summary>
         /// 滑块刻度最大值
         /// </summary>
         [Category("DemoUI"), Description("滑块刻度最大值")]
-        public int M_Maximum
+        public double M_Maximum
         {
             get { return _Maximum; }
             set
@@ -103,12 +104,12 @@ namespace ControlDemos
             }
         }
 
-        private int _Value = 0;
+        private double _Value = 0;
         /// <summary>
         /// 滑块当前标识值
         /// </summary>
         [Category("DemoUI"), Description("滑块当前标识值")]
-        public int M_Value
+        public double M_Value
         {
             get { return _Value; }
             set
@@ -248,7 +249,7 @@ namespace ControlDemos
                 fCapHalfWidth = _BarSize / 2.0f;
             }
 
-            float fRatio = Convert.ToSingle(_Value - _Minimum) / (_Maximum - _Minimum);
+            float fRatio = Convert.ToSingle((float)((_Value - _Minimum) / (_Maximum - _Minimum)));
             if (_Orientation == Orientation.Horizontal_LR)
             {
                 float fPointValue = fRatio * (Width - fCapWidth) + fCapHalfWidth;
@@ -424,7 +425,6 @@ namespace ControlDemos
             base.OnMouseEnter(e);
             mouseStatus = MouseStatus.Enter;
             Invalidate();
-
         }
 
         protected override void OnMouseLeave(EventArgs e)
@@ -432,9 +432,13 @@ namespace ControlDemos
             base.OnMouseLeave(e);
             mouseStatus = MouseStatus.Leave;
             Invalidate();
-
         }
 
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            base.OnMouseWheel(e);
+            Invalidate();
+        }
         #endregion
     }
 }

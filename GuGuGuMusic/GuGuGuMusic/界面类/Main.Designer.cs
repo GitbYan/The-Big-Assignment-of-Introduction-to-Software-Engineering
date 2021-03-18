@@ -46,7 +46,7 @@
             this.Btn_MusicPic = new System.Windows.Forms.Button();
             this.Btn_Process = new System.Windows.Forms.Button();
             this.Btn_Playlist = new System.Windows.Forms.Button();
-            this.mTrackBar = new ControlDemos.MTrackBar();
+            this.mTrackBar_Music = new ControlDemos.MTrackBar();
             this.Panel_Tool = new System.Windows.Forms.Panel();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.切换账号ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,6 +65,7 @@
             this.Btn_CteateList = new System.Windows.Forms.Button();
             this.Btn_ShowCreatedList = new System.Windows.Forms.Button();
             this.Panel_MyMusicMenuList = new System.Windows.Forms.Panel();
+            this.Btn_Liked = new GuGuGuMusic.MLButton();
             this.Btn_History = new GuGuGuMusic.MLButton();
             this.Btn_Local = new GuGuGuMusic.MLButton();
             this.Lbl_MyMusic = new System.Windows.Forms.Button();
@@ -75,6 +76,10 @@
             this.Icon_pictureBox = new System.Windows.Forms.PictureBox();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.Btn_Random = new System.Windows.Forms.Button();
+            this.Btn_Sequential = new System.Windows.Forms.Button();
+            this.Btn_Loop = new System.Windows.Forms.Button();
+            this.Btn_SingleLoop = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Panel_PlayList = new System.Windows.Forms.Panel();
             this.Btn_Shut = new System.Windows.Forms.Button();
@@ -82,6 +87,12 @@
             this.Lbl_Number = new System.Windows.Forms.Label();
             this.Lbl_PlayList = new System.Windows.Forms.Button();
             this.Timer_CreatingList = new System.Windows.Forms.Timer(this.components);
+            this.Timer_Music = new System.Windows.Forms.Timer(this.components);
+            this.Panel_Mode = new System.Windows.Forms.Panel();
+            this.Panel_Volume = new System.Windows.Forms.Panel();
+            this.Lbl_Volume = new System.Windows.Forms.Label();
+            this.mTrackBar_Volume = new ControlDemos.MTrackBar();
+            this.Timer_MusicName = new System.Windows.Forms.Timer(this.components);
             this.Main_Panel.SuspendLayout();
             this.Panel_Detail.SuspendLayout();
             this.Panel_Play.SuspendLayout();
@@ -97,6 +108,8 @@
             this.Panel_Icon.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Icon_pictureBox)).BeginInit();
             this.Panel_PlayList.SuspendLayout();
+            this.Panel_Mode.SuspendLayout();
+            this.Panel_Volume.SuspendLayout();
             this.SuspendLayout();
             // 
             // Main_Panel
@@ -112,6 +125,7 @@
             this.Main_Panel.Name = "Main_Panel";
             this.Main_Panel.Size = new System.Drawing.Size(900, 640);
             this.Main_Panel.TabIndex = 0;
+            this.Main_Panel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
             // 
             // Panel_Detail
             // 
@@ -146,13 +160,14 @@
             // 
             this.Panel_Play.BackColor = System.Drawing.Color.WhiteSmoke;
             this.Panel_Play.Controls.Add(this.Panel_PlayStatus);
-            this.Panel_Play.Controls.Add(this.mTrackBar);
+            this.Panel_Play.Controls.Add(this.mTrackBar_Music);
             this.Panel_Play.Location = new System.Drawing.Point(200, 560);
             this.Panel_Play.Margin = new System.Windows.Forms.Padding(0);
             this.Panel_Play.MinimumSize = new System.Drawing.Size(700, 80);
             this.Panel_Play.Name = "Panel_Play";
             this.Panel_Play.Size = new System.Drawing.Size(700, 80);
             this.Panel_Play.TabIndex = 1;
+            this.Panel_Play.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
             // 
             // Panel_PlayStatus
             // 
@@ -166,6 +181,7 @@
             this.Panel_PlayStatus.Name = "Panel_PlayStatus";
             this.Panel_PlayStatus.Size = new System.Drawing.Size(700, 64);
             this.Panel_PlayStatus.TabIndex = 1;
+            this.Panel_PlayStatus.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
             // 
             // Panel_Control
             // 
@@ -203,7 +219,8 @@
             this.Btn_Mode.Size = new System.Drawing.Size(40, 64);
             this.Btn_Mode.TabIndex = 9;
             this.Btn_Mode.TabStop = false;
-            this.Btn_Mode.Text = "🔁";
+            this.Btn_Mode.Text = "顺序播放";
+            this.Btn_Mode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.Btn_Mode.UseVisualStyleBackColor = false;
             this.Btn_Mode.Click += new System.EventHandler(this.Btn_Mode_Click);
             // 
@@ -211,6 +228,7 @@
             // 
             this.Btn_Next.BackColor = System.Drawing.Color.WhiteSmoke;
             this.Btn_Next.FlatAppearance.BorderSize = 0;
+            this.Btn_Next.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
             this.Btn_Next.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_Next.Location = new System.Drawing.Point(140, 0);
             this.Btn_Next.Name = "Btn_Next";
@@ -225,6 +243,7 @@
             // 
             this.Btn_Last.BackColor = System.Drawing.Color.WhiteSmoke;
             this.Btn_Last.FlatAppearance.BorderSize = 0;
+            this.Btn_Last.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
             this.Btn_Last.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_Last.Location = new System.Drawing.Point(40, 0);
             this.Btn_Last.Name = "Btn_Last";
@@ -287,11 +306,14 @@
             this.Btn_Process.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.Btn_Process.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.Btn_Process.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Process.Location = new System.Drawing.Point(504, 0);
+            this.Btn_Process.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Btn_Process.Location = new System.Drawing.Point(501, 0);
             this.Btn_Process.Name = "Btn_Process";
-            this.Btn_Process.Size = new System.Drawing.Size(121, 64);
+            this.Btn_Process.Size = new System.Drawing.Size(124, 64);
             this.Btn_Process.TabIndex = 2;
             this.Btn_Process.TabStop = false;
+            this.Btn_Process.Text = "00:00 / 00:00";
+            this.Btn_Process.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.Btn_Process.UseVisualStyleBackColor = false;
             // 
             // Btn_Playlist
@@ -309,24 +331,27 @@
             this.Btn_Playlist.UseVisualStyleBackColor = true;
             this.Btn_Playlist.Click += new System.EventHandler(this.Btn_Playlist_Click);
             // 
-            // mTrackBar
+            // mTrackBar_Music
             // 
-            this.mTrackBar.Location = new System.Drawing.Point(0, 2);
-            this.mTrackBar.M_BarColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
-            this.mTrackBar.M_BarSize = 3;
-            this.mTrackBar.M_CircleRadius = 6;
-            this.mTrackBar.M_IsRound = true;
-            this.mTrackBar.M_Maximum = 100;
-            this.mTrackBar.M_Minimum = 0;
-            this.mTrackBar.M_Orientation = ControlDemos.Orientation.Horizontal_LR;
-            this.mTrackBar.M_SliderColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(204)))), ((int)(((byte)(108)))));
-            this.mTrackBar.M_Value = 50;
-            this.mTrackBar.Margin = new System.Windows.Forms.Padding(0);
-            this.mTrackBar.MinimumSize = new System.Drawing.Size(700, 3);
-            this.mTrackBar.Name = "mTrackBar";
-            this.mTrackBar.Size = new System.Drawing.Size(700, 13);
-            this.mTrackBar.TabIndex = 0;
-            this.mTrackBar.Text = "mTrackBar1";
+            this.mTrackBar_Music.Location = new System.Drawing.Point(0, 2);
+            this.mTrackBar_Music.M_BarColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
+            this.mTrackBar_Music.M_BarSize = 3;
+            this.mTrackBar_Music.M_CircleRadius = 6;
+            this.mTrackBar_Music.M_IsRound = true;
+            this.mTrackBar_Music.M_Maximum = 100D;
+            this.mTrackBar_Music.M_Minimum = 0D;
+            this.mTrackBar_Music.M_Orientation = ControlDemos.Orientation.Horizontal_LR;
+            this.mTrackBar_Music.M_SliderColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(204)))), ((int)(((byte)(108)))));
+            this.mTrackBar_Music.M_Value = 0D;
+            this.mTrackBar_Music.Margin = new System.Windows.Forms.Padding(0);
+            this.mTrackBar_Music.MinimumSize = new System.Drawing.Size(700, 3);
+            this.mTrackBar_Music.Name = "mTrackBar_Music";
+            this.mTrackBar_Music.Size = new System.Drawing.Size(700, 13);
+            this.mTrackBar_Music.TabIndex = 0;
+            this.mTrackBar_Music.Text = "mTrackBar_Music";
+            this.mTrackBar_Music.MValueChanged += new ControlDemos.MTrackBar.MValueChangedEventHandler(this.mTrackBar_Music_MValueChanged);
+            this.mTrackBar_Music.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mTrackBar_MouseDown);
+            this.mTrackBar_Music.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mTrackBar_MouseUp);
             // 
             // Panel_Tool
             // 
@@ -344,6 +369,7 @@
             this.Panel_Tool.Name = "Panel_Tool";
             this.Panel_Tool.Size = new System.Drawing.Size(700, 60);
             this.Panel_Tool.TabIndex = 0;
+            this.Panel_Tool.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
             // 
             // contextMenuStrip
             // 
@@ -488,7 +514,7 @@
             // 
             this.Panel_CreatedList.AutoSize = true;
             this.Panel_CreatedList.Dock = System.Windows.Forms.DockStyle.Top;
-            this.Panel_CreatedList.Location = new System.Drawing.Point(0, 214);
+            this.Panel_CreatedList.Location = new System.Drawing.Point(0, 245);
             this.Panel_CreatedList.Name = "Panel_CreatedList";
             this.Panel_CreatedList.Size = new System.Drawing.Size(200, 0);
             this.Panel_CreatedList.TabIndex = 4;
@@ -499,7 +525,7 @@
             this.Panel_CreateList.Controls.Add(this.Btn_CteateList);
             this.Panel_CreateList.Controls.Add(this.Btn_ShowCreatedList);
             this.Panel_CreateList.Dock = System.Windows.Forms.DockStyle.Top;
-            this.Panel_CreateList.Location = new System.Drawing.Point(0, 176);
+            this.Panel_CreateList.Location = new System.Drawing.Point(0, 207);
             this.Panel_CreateList.Name = "Panel_CreateList";
             this.Panel_CreateList.Size = new System.Drawing.Size(200, 38);
             this.Panel_CreateList.TabIndex = 3;
@@ -562,14 +588,32 @@
             // 
             // Panel_MyMusicMenuList
             // 
+            this.Panel_MyMusicMenuList.Controls.Add(this.Btn_Liked);
             this.Panel_MyMusicMenuList.Controls.Add(this.Btn_History);
             this.Panel_MyMusicMenuList.Controls.Add(this.Btn_Local);
             this.Panel_MyMusicMenuList.Controls.Add(this.Lbl_MyMusic);
             this.Panel_MyMusicMenuList.Dock = System.Windows.Forms.DockStyle.Top;
             this.Panel_MyMusicMenuList.Location = new System.Drawing.Point(0, 77);
             this.Panel_MyMusicMenuList.Name = "Panel_MyMusicMenuList";
-            this.Panel_MyMusicMenuList.Size = new System.Drawing.Size(200, 99);
+            this.Panel_MyMusicMenuList.Size = new System.Drawing.Size(200, 130);
             this.Panel_MyMusicMenuList.TabIndex = 2;
+            // 
+            // Btn_Liked
+            // 
+            this.Btn_Liked.FlatAppearance.BorderSize = 0;
+            this.Btn_Liked.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ButtonShadow;
+            this.Btn_Liked.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Liked.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
+            this.Btn_Liked.Location = new System.Drawing.Point(20, 96);
+            this.Btn_Liked.Margin = new System.Windows.Forms.Padding(0);
+            this.Btn_Liked.Name = "Btn_Liked";
+            this.Btn_Liked.Size = new System.Drawing.Size(160, 30);
+            this.Btn_Liked.TabIndex = 4;
+            this.Btn_Liked.Text = "            ❤我喜欢";
+            this.Btn_Liked.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Btn_Liked.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.Btn_Liked.UseVisualStyleBackColor = true;
+            this.Btn_Liked.Click += new System.EventHandler(this.Btn_Liked_Click);
             // 
             // Btn_History
             // 
@@ -590,6 +634,7 @@
             // 
             // Btn_Local
             // 
+            this.Btn_Local.BackColor = System.Drawing.SystemColors.ButtonShadow;
             this.Btn_Local.FlatAppearance.BorderSize = 0;
             this.Btn_Local.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ButtonShadow;
             this.Btn_Local.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -601,7 +646,7 @@
             this.Btn_Local.TabIndex = 2;
             this.Btn_Local.Text = "            本地和下载";
             this.Btn_Local.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.Btn_Local.UseVisualStyleBackColor = true;
+            this.Btn_Local.UseVisualStyleBackColor = false;
             this.Btn_Local.Click += new System.EventHandler(this.Btn_Local_Click);
             // 
             // Lbl_MyMusic
@@ -671,6 +716,7 @@
             this.Panel_Icon.Name = "Panel_Icon";
             this.Panel_Icon.Size = new System.Drawing.Size(200, 79);
             this.Panel_Icon.TabIndex = 0;
+            this.Panel_Icon.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
             // 
             // Icon_pictureBox
             // 
@@ -688,6 +734,70 @@
             this.notifyIcon.Text = "notifyIcon";
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseClick);
+            // 
+            // Btn_Random
+            // 
+            this.Btn_Random.BackColor = System.Drawing.Color.White;
+            this.Btn_Random.FlatAppearance.BorderSize = 0;
+            this.Btn_Random.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Random.Location = new System.Drawing.Point(3, 108);
+            this.Btn_Random.Name = "Btn_Random";
+            this.Btn_Random.Size = new System.Drawing.Size(87, 34);
+            this.Btn_Random.TabIndex = 13;
+            this.Btn_Random.TabStop = false;
+            this.Btn_Random.Text = "随机播放";
+            this.Btn_Random.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.toolTip.SetToolTip(this.Btn_Random, "随机播放");
+            this.Btn_Random.UseVisualStyleBackColor = false;
+            this.Btn_Random.Click += new System.EventHandler(this.Btn_Random_Click);
+            // 
+            // Btn_Sequential
+            // 
+            this.Btn_Sequential.BackColor = System.Drawing.Color.White;
+            this.Btn_Sequential.FlatAppearance.BorderSize = 0;
+            this.Btn_Sequential.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Sequential.Location = new System.Drawing.Point(3, 73);
+            this.Btn_Sequential.Name = "Btn_Sequential";
+            this.Btn_Sequential.Size = new System.Drawing.Size(87, 34);
+            this.Btn_Sequential.TabIndex = 12;
+            this.Btn_Sequential.TabStop = false;
+            this.Btn_Sequential.Text = "顺序播放";
+            this.Btn_Sequential.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.toolTip.SetToolTip(this.Btn_Sequential, "顺序播放");
+            this.Btn_Sequential.UseVisualStyleBackColor = false;
+            this.Btn_Sequential.Click += new System.EventHandler(this.Btn_Sequential_Click);
+            // 
+            // Btn_Loop
+            // 
+            this.Btn_Loop.BackColor = System.Drawing.Color.White;
+            this.Btn_Loop.FlatAppearance.BorderSize = 0;
+            this.Btn_Loop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Loop.Location = new System.Drawing.Point(3, 38);
+            this.Btn_Loop.Name = "Btn_Loop";
+            this.Btn_Loop.Size = new System.Drawing.Size(87, 34);
+            this.Btn_Loop.TabIndex = 11;
+            this.Btn_Loop.TabStop = false;
+            this.Btn_Loop.Text = "列表循环";
+            this.Btn_Loop.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.toolTip.SetToolTip(this.Btn_Loop, "列表循环");
+            this.Btn_Loop.UseVisualStyleBackColor = false;
+            this.Btn_Loop.Click += new System.EventHandler(this.Btn_Loop_Click);
+            // 
+            // Btn_SingleLoop
+            // 
+            this.Btn_SingleLoop.BackColor = System.Drawing.Color.White;
+            this.Btn_SingleLoop.FlatAppearance.BorderSize = 0;
+            this.Btn_SingleLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SingleLoop.Location = new System.Drawing.Point(3, 3);
+            this.Btn_SingleLoop.Name = "Btn_SingleLoop";
+            this.Btn_SingleLoop.Size = new System.Drawing.Size(87, 34);
+            this.Btn_SingleLoop.TabIndex = 10;
+            this.Btn_SingleLoop.TabStop = false;
+            this.Btn_SingleLoop.Text = "单曲循环";
+            this.Btn_SingleLoop.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.toolTip.SetToolTip(this.Btn_SingleLoop, "单曲循环");
+            this.Btn_SingleLoop.UseVisualStyleBackColor = false;
+            this.Btn_SingleLoop.Click += new System.EventHandler(this.Btn_SingleLoop_Click);
             // 
             // openFileDialog
             // 
@@ -735,7 +845,7 @@
             this.Lbl_Number.Name = "Lbl_Number";
             this.Lbl_Number.Size = new System.Drawing.Size(300, 23);
             this.Lbl_Number.TabIndex = 7;
-            this.Lbl_Number.Text = " 0首歌曲";
+            this.Lbl_Number.Text = "  0首歌曲";
             // 
             // Lbl_PlayList
             // 
@@ -756,12 +866,80 @@
             this.Timer_CreatingList.Interval = 10;
             this.Timer_CreatingList.Tick += new System.EventHandler(this.Timer_CreatingList_Tick);
             // 
+            // Timer_Music
+            // 
+            this.Timer_Music.Interval = 500;
+            this.Timer_Music.Tick += new System.EventHandler(this.Timer_Music_Tick);
+            // 
+            // Panel_Mode
+            // 
+            this.Panel_Mode.BackColor = System.Drawing.Color.White;
+            this.Panel_Mode.Controls.Add(this.Btn_Random);
+            this.Panel_Mode.Controls.Add(this.Btn_Sequential);
+            this.Panel_Mode.Controls.Add(this.Btn_Loop);
+            this.Panel_Mode.Controls.Add(this.Btn_SingleLoop);
+            this.Panel_Mode.Location = new System.Drawing.Point(418, 435);
+            this.Panel_Mode.Name = "Panel_Mode";
+            this.Panel_Mode.Size = new System.Drawing.Size(93, 145);
+            this.Panel_Mode.TabIndex = 0;
+            this.Panel_Mode.Visible = false;
+            // 
+            // Panel_Volume
+            // 
+            this.Panel_Volume.BackColor = System.Drawing.Color.White;
+            this.Panel_Volume.Controls.Add(this.Lbl_Volume);
+            this.Panel_Volume.Controls.Add(this.mTrackBar_Volume);
+            this.Panel_Volume.Location = new System.Drawing.Point(610, 390);
+            this.Panel_Volume.Name = "Panel_Volume";
+            this.Panel_Volume.Size = new System.Drawing.Size(65, 190);
+            this.Panel_Volume.TabIndex = 0;
+            this.Panel_Volume.Visible = false;
+            // 
+            // Lbl_Volume
+            // 
+            this.Lbl_Volume.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Lbl_Volume.Location = new System.Drawing.Point(12, 159);
+            this.Lbl_Volume.Name = "Lbl_Volume";
+            this.Lbl_Volume.Size = new System.Drawing.Size(42, 23);
+            this.Lbl_Volume.TabIndex = 1;
+            this.Lbl_Volume.Text = "100%";
+            this.Lbl_Volume.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // mTrackBar_Volume
+            // 
+            this.mTrackBar_Volume.BackColor = System.Drawing.Color.White;
+            this.mTrackBar_Volume.Enabled = false;
+            this.mTrackBar_Volume.Location = new System.Drawing.Point(22, 19);
+            this.mTrackBar_Volume.M_BarColor = System.Drawing.Color.WhiteSmoke;
+            this.mTrackBar_Volume.M_BarSize = 4;
+            this.mTrackBar_Volume.M_CircleRadius = 10;
+            this.mTrackBar_Volume.M_IsRound = true;
+            this.mTrackBar_Volume.M_Maximum = 100D;
+            this.mTrackBar_Volume.M_Minimum = 0D;
+            this.mTrackBar_Volume.M_Orientation = ControlDemos.Orientation.Vertical_DU;
+            this.mTrackBar_Volume.M_SliderColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(204)))), ((int)(((byte)(108)))));
+            this.mTrackBar_Volume.M_Value = 100D;
+            this.mTrackBar_Volume.Name = "mTrackBar_Volume";
+            this.mTrackBar_Volume.Size = new System.Drawing.Size(21, 123);
+            this.mTrackBar_Volume.TabIndex = 0;
+            this.mTrackBar_Volume.Text = "mTrackBar_Volume";
+            this.mTrackBar_Volume.MValueChanged += new ControlDemos.MTrackBar.MValueChangedEventHandler(this.mTrackBar_Volume_ValueChanged);
+            this.mTrackBar_Volume.MouseEnter += new System.EventHandler(this.mTrackBar_Volume_MouseEnter);
+            // 
+            // Timer_MusicName
+            // 
+            this.Timer_MusicName.Enabled = true;
+            this.Timer_MusicName.Interval = 1000;
+            this.Timer_MusicName.Tick += new System.EventHandler(this.Timer_MusicName_Tick);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.ClientSize = new System.Drawing.Size(908, 648);
+            this.Controls.Add(this.Panel_Volume);
+            this.Controls.Add(this.Panel_Mode);
             this.Controls.Add(this.Main_Panel);
             this.Controls.Add(this.Panel_PlayList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -769,6 +947,7 @@
             this.MinimumSize = new System.Drawing.Size(908, 648);
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.mTrackBar_Volume_MouseWheel);
             this.Resize += new System.EventHandler(this.Main_Resize);
             this.Main_Panel.ResumeLayout(false);
             this.Panel_Detail.ResumeLayout(false);
@@ -786,6 +965,8 @@
             this.Panel_Icon.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Icon_pictureBox)).EndInit();
             this.Panel_PlayList.ResumeLayout(false);
+            this.Panel_Mode.ResumeLayout(false);
+            this.Panel_Volume.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -799,7 +980,7 @@
         private System.Windows.Forms.Panel Panel_Detail;
         private System.Windows.Forms.Panel Panel_Icon;
         private System.Windows.Forms.Panel Panel_MenuList;
-        private ControlDemos.MTrackBar mTrackBar;
+        private ControlDemos.MTrackBar mTrackBar_Music;
         private System.Windows.Forms.PictureBox Icon_pictureBox;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
@@ -844,6 +1025,17 @@
         private System.Windows.Forms.Panel Panel_PlayingMusicLIst;
         private System.Windows.Forms.Button Btn_Shut;
         private System.Windows.Forms.Timer Timer_CreatingList;
+        private MLButton Btn_Liked;
+        private System.Windows.Forms.Timer Timer_Music;
+        private System.Windows.Forms.Panel Panel_Mode;
+        private System.Windows.Forms.Button Btn_Random;
+        private System.Windows.Forms.Button Btn_Sequential;
+        private System.Windows.Forms.Button Btn_Loop;
+        private System.Windows.Forms.Button Btn_SingleLoop;
+        private System.Windows.Forms.Panel Panel_Volume;
+        private ControlDemos.MTrackBar mTrackBar_Volume;
+        private System.Windows.Forms.Label Lbl_Volume;
+        private System.Windows.Forms.Timer Timer_MusicName;
     }
 }
 

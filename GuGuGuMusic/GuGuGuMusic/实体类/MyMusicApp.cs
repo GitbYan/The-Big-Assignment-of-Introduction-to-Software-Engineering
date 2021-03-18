@@ -15,8 +15,8 @@ namespace GuGuGuMusic
             WriteLocalTxt("local.txt", "../local/");
             WriteLocalTxt("playing.txt", "../local/");
             //读取本地目录信息
-            LocalMusicList = mDB.GetLocalMusicList();
-            PlayingMusicList = mDB.GetPlayingMusicList();
+            LocalMusicList = mDB.GetLocalMusicList(LocalMusicList);
+            PlayingMusicList = mDB.GetLocalMusicList(PlayingMusicList);
             //默认登陆时，读取用户信息
             if (IsLogin)
             {
@@ -87,6 +87,10 @@ namespace GuGuGuMusic
         /// </summary>
         public MusicList PopMusicList { get; set; } = new MusicList("流行音乐");
         /// <summary>
+        /// 我喜欢列表
+        /// </summary>
+        public MusicList LikedMusicList { get; set; } = new MusicList("我喜欢");
+        /// <summary>
         /// 创建的列表 
         /// </summary>
         public MusicList[] CreatedMusicList { get; set; } = new MusicList[100];
@@ -115,52 +119,21 @@ namespace GuGuGuMusic
             return CreatedMusicList.Count() < 100;
         }
         /// <summary>
-        /// 对数据库中对应的歌单歌曲进行添加或删除操作,同时更新对应歌单（MusicList）的音乐（Musics）信息
+        /// 更新对应歌单（MusicList）的相关信息
         /// </summary>
         /// <param name="musicList">歌单</param>
-        /// <param name="music">歌曲</param>
-        /// <param name="listOperation">操作</param>
-        public bool UpdateMusicList(MusicList musicList, Music music, ListOperation listOperation)
+        public bool UpdateMusicList(MusicList musicList)
         {
             try
             {
-                if(musicList.ListName.ToString() == "本地与下载")
-                {
-                    mDB.UpdateLocalMusicList(LocalMusicList, music, listOperation);
-                    LocalMusicList.Add(music);
-                    Console.WriteLine(musicList.ListName + "添加音乐成功");
-                    return true;
-                }
-                else if (musicList.ListName.ToString() == "播放列表")
-                {
-                    mDB.UpdatePlayingMusicList(PlayingMusicList, music, listOperation);
-
-                    PlayingMusicList.Add(music);
-                    Console.WriteLine(musicList.ListName + "添加音乐成功");
-                    return true;
-                }
-                else
-                {
-                    int n = 0;
-                    switch (listOperation)
-                    {
-                        case ListOperation.ADD:
-                            n = mDB.UpdateMusicList(musicList, music, listOperation);
-                            musicList.Add(music);
-                            Console.WriteLine(musicList.ListName + "添加音乐成功");
-                            break;
-                        case ListOperation.DELETE:
-                            n = mDB.UpdateMusicList(musicList, music, listOperation);
-                            musicList.Remove(music);
-                            Console.WriteLine(musicList.ListName + "删除音乐成功");
-                            break;
-                    }
-                    return (n >= 0);
-                }
+                int n = 0;
+                n = mDB.UpdateMusicList(musicList);
+                Console.WriteLine(musicList.ListName + "更新数据库成功");
+                return (n >= 0);
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.Message + musicList.ListName + "音乐增删操作失败");
+                Console.WriteLine(e.Message + musicList.ListName + "更新数据库失败");
                 return false;
             }
         }
@@ -205,71 +178,10 @@ namespace GuGuGuMusic
         }
         #endregion
 
-        #region 播放部分
-        /// <summary>
-        /// 播放音乐
-        /// </summary>
-        /// <param name="music"></param>
-        public void PlayMusic(Music music)
-        {
-            try
-            {
-                ReadyMusic = music;
-                UpdateMusicList(PlayingMusicList, ReadyMusic, ListOperation.ADD);
-                int index = PlayingMusicList.IndexOf(ReadyMusic);
-                int n = PlayingMusicList.Count - 1;
-                if (index > 0 && index < n) //ReadyMusic既不是第一个元素也不是最后一个元素
-                {
-                    LastMusic = PlayingMusicList.Musics[index - 1];
-                    NextMusic = PlayingMusicList.Musics[index + 1];
-                }
-                else if (index == 0 && index < n) //ReadyMusic是第一个元素但不是最后一个元素
-                {
-                    LastMusic = PlayingMusicList.Musics.Last();
-                    NextMusic = PlayingMusicList.Musics[index + 1];
-                }
-                else if (index == n && index > 0) //ReadyMusic是最后一个元素但不是第一个元素
-                {
-                    LastMusic = PlayingMusicList.Musics[index - 1];
-                    NextMusic = PlayingMusicList.Musics.First();
-                }
-                else //ReadyMusic既是第一个元素也是最后一个元素
-                {
-                    NextMusic = LastMusic = ReadyMusic;
-                }
-            }catch(Exception e)
-            {
-                Console.WriteLine(e.Message + "播放失败");
-            }
-        }
-        /// <summary>
-        /// 播放下一首
-        /// </summary>
-        /// <param name="music"></param>
-        public void PlayNextMusic()
-        {
-            PlayMusic(NextMusic);
-        }
-        /// <summary>
-        /// 播放上一首
-        /// </summary>
-        public void PlayLastMusic()
-        {
-            PlayMusic(LastMusic);
-        }
-        #endregion
 
     }
     
 
-    /// <summary>
-    /// 歌单操作种类
-    /// </summary>
-    public enum ListOperation
-    {
-        ADD,//添加音乐
-        DELETE,//删除音乐
-    }
 
 
 

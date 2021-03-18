@@ -32,6 +32,11 @@ namespace GuGuGuMusic
                 _music = value;
             }
         }
+
+        /// <summary>
+        /// 保存音乐在歌单的位置
+        /// </summary>
+        public int Index { get; set; }
         #region 重定义鼠标双击事件
         public new event EventHandler DoubleClick;
 
