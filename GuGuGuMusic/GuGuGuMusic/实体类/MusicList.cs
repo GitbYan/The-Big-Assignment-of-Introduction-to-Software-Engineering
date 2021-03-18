@@ -40,6 +40,8 @@ namespace GuGuGuMusic
         /// </summary>
         public string ListName { get; set; } = "";
 
+        public int StartIndex { get; set; } = 0;
+
         public bool IsReadOnly => throw new NotImplementedException();
 
         public bool IsFixedSize => throw new NotImplementedException();

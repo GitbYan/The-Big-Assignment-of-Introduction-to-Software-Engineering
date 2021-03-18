@@ -1,4 +1,5 @@
 ﻿using AxWMPLib;
+using ControlDemos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WMPLib;
 
 namespace GuGuGuMusic
 {
@@ -168,24 +170,31 @@ namespace GuGuGuMusic
             //设置双缓冲减少屏幕闪烁
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            //添加程序在屏幕上的拖动事件
-            this.Panel_Tool.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
-            this.Panel_Play.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
-            this.Panel_Icon.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
-            this.Main_Panel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel_MouseDown);
-            //添加第三方控件，实例化
-            ((System.ComponentModel.ISupportInitialize)(this.WMP)).BeginInit();
-            this.Controls.Add(WMP);
-            ((System.ComponentModel.ISupportInitialize)(this.WMP)).EndInit();
-            //设置默认音乐列表为本地与下载，设置对应按钮显示颜色
-            this.Btn_Local.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            
+            //添加第三方控件AxWindowsMediaPlayer，实例化
+            ((System.ComponentModel.ISupportInitialize)(this.AWMP)).BeginInit();
+            this.Controls.Add(AWMP);
+            ((System.ComponentModel.ISupportInitialize)(this.AWMP)).EndInit();
+
+            
+            //设置默认音乐列表为本地与下载
             ChoosedListButton = Btn_Local;
 
-            //初始化音乐app
+            //初始化音乐app(数据初始化
             myMusicApp = new MyMusicApp();
+            Btn_Local.MusicList = myMusicApp.LocalMusicList;
+            Btn_Liked.MusicList = myMusicApp.LikedMusicList;
+            Btn_PopMusic.MusicList = myMusicApp.PopMusicList;
+            Btn_History.MusicList = myMusicApp.HistoryMusicList;
 
             //初始化界面的音乐列表，显示本地与下载列表中的音乐文件
             ShowList(myMusicApp.LocalMusicList.Musics);
+
+            //初始化播放器
+            InitAWMP(myMusicApp.PlayingMusicList, myMusicApp.PlayingMusicList.StartIndex);
+            AWMP.settings.setMode("loop", true);//设置为循环播放
+            AWMP.settings.volume = 100;
+
         }
 
         /// <summary>
@@ -194,9 +203,9 @@ namespace GuGuGuMusic
         public MyMusicApp myMusicApp;
 
         /// <summary>
-        /// 独立的音乐播放控件，windows自带
+        /// 独立的音乐播放控件，软件核心
         /// </summary>
-        AxWindowsMediaPlayer WMP = new AxWindowsMediaPlayer() { Visible = false };
+        AxWindowsMediaPlayer AWMP = new AxWindowsMediaPlayer() { Visible = false };
 
         /// <summary>
         /// 当前选择播放的音乐 对应button
@@ -217,10 +226,12 @@ namespace GuGuGuMusic
         {
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                mTrackBar.M_Value = 0;
+                mTrackBar_Music.M_Value = 0;
                 Music music = new Music().InitMusic(openFileDialog.FileName);
+                myMusicApp.LocalMusicList.Add(music);
+                Btn_Local.MusicList = myMusicApp.LocalMusicList;
 
-                myMusicApp.UpdateMusicList(myMusicApp.LocalMusicList, music, ListOperation.ADD);
+                myMusicApp.UpdateMusicList(myMusicApp.LocalMusicList);
                 ShowList(myMusicApp.LocalMusicList.Musics);
             }
         }
@@ -241,7 +252,7 @@ namespace GuGuGuMusic
             Panel_Nav.Height = (int)(this.Height - 2 * edgeY);
             Panel_Tool.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
             Panel_Play.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
-            mTrackBar.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
+            mTrackBar_Music.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
             Panel_PlayStatus.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
             Panel_Detail.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
             Panel_Detail.Height = (int)(this.Height - Panel_Play.Height - 80 - 2 * edgeY);
@@ -252,6 +263,8 @@ namespace GuGuGuMusic
             Panel_Play.Location = new Point(Panel_Play.Location.X, Panel_Detail.Location.Y + Panel_Detail.Height);
             Panel_Control.Location = new Point((Panel_PlayStatus.Width - Panel_Control.Width) / 2, 0);
             Panel_PlayList.Location = new Point(this.Width - Panel_PlayList.Width, 0);
+            Panel_Mode.Location = new Point(this.Width - 908 + 418, Panel_Mode.Location.Y);
+            Panel_Volume.Location = new Point(this.Width - 908 + 610, Panel_Volume.Location.Y);
         }
 
         /// <summary>
@@ -339,7 +352,38 @@ namespace GuGuGuMusic
         #endregion
 
 
-        #region 音乐播放控制相关事件
+        #region 音乐播放相关
+
+        /// <summary>
+        /// 初始化AxWindowsMediaPlayer的播放列表
+        /// </summary>
+        /// <param name="musicList"></param>
+        /// <param name="index"></param>
+        private void InitAWMP(MusicList musicList, int index)
+        {
+            try
+            {
+                IWMPPlaylist playList = AWMP.playlistCollection.newPlaylist("MyPlayList");
+                IWMPMedia media = AWMP.newMedia(musicList.Musics[index].FileURL);
+                playList.appendItem(media);
+                for(int i = 0; i < musicList.Musics.Count; i++) 
+                {
+                    if (i == index)
+                    {
+                        continue;
+                    }
+                    string url = musicList.Musics[i].FileURL.ToString();
+                    media = AWMP.newMedia(url);
+                    playList.appendItem(media);
+                }
+                AWMP.currentPlaylist = playList;
+                AWMP.Ctlcontrols.stop();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message+"初始化AWMP播放列表失败");
+            }            
+        }
 
         /// <summary>
         /// 播放状态设置事件
@@ -348,7 +392,13 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_Mode_Click(object sender, EventArgs e)
         {
-
+            try
+            {
+                Panel_Mode.Visible = Panel_Mode.Visible == true ? false : true;                
+            }catch(Exception ce)
+            {
+                Console.WriteLine(ce.Message);
+            }
         }
 
         /// <summary>
@@ -358,7 +408,51 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_Volume_Click(object sender, EventArgs e)
         {
+            try
+            {
+                mTrackBar_Volume.Enabled = mTrackBar_Volume.Enabled ? false : true;
+                if (mTrackBar_Volume.Enabled) { mTrackBar_Volume.Focus(); }
+                Panel_Volume.Visible = Panel_Volume.Visible == true ? false : true;
+            }
+            catch(Exception ce)
+            {
+                Console.WriteLine(ce.Message);
+            }
+        }
 
+        /// <summary>
+        /// 音量滑块获取鼠标焦点
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mTrackBar_Volume_MouseEnter(object sender,EventArgs e)
+        {
+            try
+            {
+                mTrackBar_Volume.Focus();
+            }
+            catch(Exception ce)
+            {
+                Console.WriteLine(ce.Message);
+            }
+        }
+        /// <summary>
+        /// 鼠标滚轮控制调节音量
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mTrackBar_Volume_MouseWheel(object sender,MouseEventArgs e)
+        {
+            try
+            {
+                if (mTrackBar_Volume.Enabled)
+                {
+                    mTrackBar_Volume.M_Value += e.Delta / 120;
+                }
+            }catch(Exception ce)
+            {
+                Console.WriteLine(ce.Message);
+            }
         }
 
         /// <summary>
@@ -372,20 +466,17 @@ namespace GuGuGuMusic
             {
                 if (Btn_Play.Text == "▶")
                 {
-                    if (myMusicApp.PlayingMusicList.Musics.Count >= 0) 
+                    if (AWMP.currentPlaylist!=null) 
                     {
-                        Music m = myMusicApp.PlayingMusicList.Musics.First();
-                        myMusicApp.PlayMusic(m);
-                        WMP.URL = myMusicApp.ReadyMusic.FileURL.ToString();
-                        WMP.currentMedia.name = myMusicApp.ReadyMusic.Name + " - " + myMusicApp.ReadyMusic.Singer;
-                        WMP.Ctlcontrols.play();
+                        AWMP.Ctlcontrols.play();
+                        Timer_Music.Start();
                     }
                 }
                 else
                 {
-                    if(WMP.URL != null)
+                    if(AWMP.currentPlaylist != null)
                     {
-                        WMP.Ctlcontrols.stop();
+                        AWMP.Ctlcontrols.pause();
                     }
                 }
                 Btn_Play.Text = Btn_Play.Text == "||" ? "▶" : "||";
@@ -405,17 +496,17 @@ namespace GuGuGuMusic
         {
             try
             {
-                Btn_Play.Text = "||";
-                myMusicApp.PlayNextMusic();
-
-                Music m = myMusicApp.ReadyMusic;
-                WMP.URL = m.FileURL.ToString();
-                WMP.currentMedia.name = m.Name + " - " + m.Singer;
-                WMP.Ctlcontrols.play();
+                AWMP.Ctlcontrols.stop();
+                if (AWMP.currentPlaylist != null)
+                {
+                    AWMP.Ctlcontrols.next();
+                    Btn_Play.Text ="||";
+                    AWMP.Ctlcontrols.play();
+                    Timer_Music.Start();
+                }
             }
             catch (Exception ex)
             {
-                Btn_Play.Text = "▶";
                 Console.WriteLine(ex.Message + "\n音乐播放失败");
             }
         }
@@ -429,19 +520,308 @@ namespace GuGuGuMusic
         {
             try
             {
-                Btn_Play.Text = "||";
-                myMusicApp.PlayLastMusic();
-                Console.WriteLine(myMusicApp.ReadyMusic.Name);
-                WMP.URL = myMusicApp.ReadyMusic.FileURL.ToString();
-                WMP.currentMedia.name = myMusicApp.ReadyMusic.Name + " - " + myMusicApp.ReadyMusic.Singer;
-                WMP.Ctlcontrols.play();
+                AWMP.Ctlcontrols.stop();
+                if (AWMP.currentPlaylist != null)
+                {
+                    AWMP.Ctlcontrols.previous();
+                    Btn_Play.Text = "||";
+                    AWMP.Ctlcontrols.play();
+                    Timer_Music.Start();
+                }
             }
             catch (Exception ex)
             {
-                Btn_Play.Text = "▶";
                 Console.WriteLine(ex.Message + "\n音乐播放失败");
             }
         }
+
+        /// <summary>
+        /// 利用计时器让进度条跟随音乐播放进度
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Timer_Music_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                double currentPosition = AWMP.Ctlcontrols.currentPosition;
+                double duration = AWMP.currentMedia.duration;
+                double value = mTrackBar_Music.M_Maximum * currentPosition / duration;
+                if (value < 0) { mTrackBar_Music.M_Value = 0; }
+                else { mTrackBar_Music.M_Value = value; }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine(ce.Message);
+            }
+        }
+
+        private void mTrackBar_Music_MValueChanged(object sender, MEventArgs e)
+        {
+            try
+            {
+                double duration = AWMP.currentMedia.duration;
+                double currentPosition = (mTrackBar_Music.M_Value / mTrackBar_Music.M_Maximum) * duration;
+                //用数字实时显示播放进度
+                string max_minute = (int)(duration / 60) >= 10 ? ((int)(duration / 60)).ToString() : "0" + ((int)(duration / 60)).ToString();
+                string max_second = (int)(duration % 60) >= 10 ? ((int)(duration % 60)).ToString() : "0" + ((int)(duration % 60)).ToString();
+                string cur_minute = (int)(currentPosition / 60) >= 10 ? ((int)(currentPosition / 60)).ToString() : "0" + ((int)(currentPosition / 60)).ToString();
+                string cur_second = (int)(currentPosition % 60) >= 10 ? ((int)(currentPosition % 60)).ToString() : "0" + ((int)(currentPosition % 60)).ToString();
+                if (cur_minute.Length > 2) { cur_minute = "00"; }
+                if (cur_second.Length > 2) { cur_second = "00"; }
+                Btn_Process.Text = cur_minute + ":" + cur_second + " / " + max_minute + ":" + max_second;
+
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine(ce.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// 手动控制进度时关闭计时器控制
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mTrackBar_MouseDown(object sender, EventArgs e)
+        {
+            Timer_Music.Stop();
+        }
+
+        /// <summary>
+        /// 松开后从指定进度开始播放
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mTrackBar_MouseUp(object sender, EventArgs e)
+        {
+            try
+            {
+                double newValue = mTrackBar_Music.M_Value / mTrackBar_Music.M_Maximum * AWMP.currentMedia.duration;
+                //播放中
+                if (AWMP.playState == WMPPlayState.wmppsPlaying)
+                {
+                    AWMP.Ctlcontrols.currentPosition = newValue;//为播放控件赋予新进度
+                    AWMP.Ctlcontrols.play();
+                    Timer_Music.Start();
+                }
+                //其他情况下
+                else
+                {
+                    AWMP.Ctlcontrols.currentPosition = newValue;
+                }
+            }
+            catch(Exception ce)
+            {
+                Console.WriteLine(ce.Message);
+            }
+        }
+
+        /// <summary>
+        /// 单曲循环
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_SingleLoop_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Panel_Mode.Hide();
+                //清空播放列表其他音乐
+                int count = AWMP.currentPlaylist.count;
+                int index = 0;
+                for(int i =0;i< count; i++)
+                {
+                    if (AWMP.currentMedia.sourceURL == AWMP.currentPlaylist.Item[i].sourceURL)
+                    {
+                        index = i;
+                    }
+                }
+                AWMP.currentPlaylist.moveItem(index, 0);
+                for(int i = 0; i < count-1; i++)
+                {
+                    AWMP.currentPlaylist.removeItem(AWMP.currentPlaylist.Item[AWMP.currentPlaylist.count - 1]);
+                }
+
+                Btn_Mode.Text = Btn_SingleLoop.Text;
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine(ce.Message + "单曲循环失败");
+            }
+        }
+
+        /// <summary>
+        /// 默认设置列表循环
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_Loop_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Panel_Mode.Hide();
+                //清空播放列表其他音乐
+                int count = AWMP.currentPlaylist.count;
+                int index = 0;
+                for (int i = 0; i < count; i++)
+                {
+                    if (AWMP.currentMedia.sourceURL == AWMP.currentPlaylist.Item[i].sourceURL)
+                    {
+                        index = i;
+                    }
+                }
+                AWMP.currentPlaylist.moveItem(index, 0);
+                for (int i = 0; i < count - 1; i++)
+                {
+                    AWMP.currentPlaylist.removeItem(AWMP.currentPlaylist.Item[AWMP.currentPlaylist.count - 1]);
+                }
+                //加载新播放列表
+                bool locate = false;
+                foreach(Music music in myMusicApp.PlayingMusicList)
+                {
+                    if (music.FileURL.ToString() == AWMP.currentMedia.sourceURL.ToString())
+                    {
+                        locate = true;
+                        continue;
+                    }
+                    IWMPMedia media = AWMP.newMedia(music.FileURL);
+                    if (locate)
+                    {
+                        AWMP.currentPlaylist.appendItem(media);
+                    }
+                    else
+                    {
+                        AWMP.currentPlaylist.insertItem(AWMP.currentPlaylist.count - 1, media);
+                    }
+                }
+
+                Btn_Mode.Text = Btn_Loop.Text;
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine(ce.Message + "列表循环失败");
+            }
+        }
+
+        /// <summary>
+        /// 列表循环
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_Sequential_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Panel_Mode.Hide();
+                //清空播放列表其他音乐
+                int count = AWMP.currentPlaylist.count;
+                int index = 0;
+                for (int i = 0; i < count; i++)
+                {
+                    if (AWMP.currentMedia.sourceURL == AWMP.currentPlaylist.Item[i].sourceURL)
+                    {
+                        index = i;
+                    }
+                }
+                AWMP.currentPlaylist.moveItem(index, 0);
+                for (int i = 0; i < count - 1; i++)
+                {
+                    AWMP.currentPlaylist.removeItem(AWMP.currentPlaylist.Item[AWMP.currentPlaylist.count - 1]);
+                }
+                //加载新播放列表
+                bool locate = false;
+                foreach (Music music in myMusicApp.PlayingMusicList)
+                {
+                    if (music.FileURL.ToString() == AWMP.currentMedia.sourceURL.ToString())
+                    {
+                        locate = true;
+                        continue;
+                    }
+                    IWMPMedia media = AWMP.newMedia(music.FileURL);
+                    if (locate)
+                    {
+                        AWMP.currentPlaylist.appendItem(media);
+                    }
+                    else
+                    {
+                        AWMP.currentPlaylist.insertItem(AWMP.currentPlaylist.count - 1, media);
+                    }
+                }
+
+                Btn_Mode.Text = Btn_Sequential.Text;
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine(ce.Message + "顺序播放失败");
+            }
+        }
+
+        /// <summary>
+        /// 随机播放
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_Random_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Panel_Mode.Hide();
+                //清空播放列表其他音乐
+                int count = AWMP.currentPlaylist.count;
+                int index = 0;
+                for (int i = 0; i < count; i++)
+                {
+                    if (AWMP.currentMedia.sourceURL == AWMP.currentPlaylist.Item[i].sourceURL)
+                    {
+                        index = i;
+                    }
+                }
+                AWMP.currentPlaylist.moveItem(index, 0);
+                for (int i = 0; i < count - 1; i++)
+                {
+                    AWMP.currentPlaylist.removeItem(AWMP.currentPlaylist.Item[AWMP.currentPlaylist.count - 1]);
+                }
+                //加载新播放列表
+                count = myMusicApp.PlayingMusicList.Count;
+                Random rd = new Random();
+                foreach (Music music in myMusicApp.PlayingMusicList)
+                {
+                    if (music.FileURL.ToString() == AWMP.currentMedia.sourceURL.ToString())
+                    {
+                        continue;
+                    }
+                    IWMPMedia media = AWMP.newMedia(music.FileURL);
+                    AWMP.currentPlaylist.insertItem(rd.Next(0, AWMP.currentPlaylist.count), media);
+                }
+                Btn_Mode.Text = Btn_Random.Text;
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine(ce.Message + "随机播放失败");
+            }
+        }
+
+        /// <summary>
+        /// 实时调节音量
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mTrackBar_Volume_ValueChanged(object sender, MEventArgs e)
+        {
+            try
+            {
+                int volume = (int)(100 * mTrackBar_Volume.M_Value / mTrackBar_Volume.M_Maximum);
+                Lbl_Volume.Text = volume.ToString() + "%";
+                AWMP.settings.volume = volume;
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine(ce.Message);
+            }
+        }
+
         #endregion
 
 
@@ -466,8 +846,8 @@ namespace GuGuGuMusic
                             Size = new System.Drawing.Size(panel1.Width, 64),
                             TabStop = false,
                             BackColor = Color.Transparent,
-                            M_music = music
-                        
+                            M_music = music,
+                            Index = i,
                         };
                         b.DoubleClick += new EventHandler(PlayChoosedMusic);
                         b.Location = new Point(0, 64 * i);
@@ -494,20 +874,13 @@ namespace GuGuGuMusic
         {
             try
             {
+                MButton mButton = (MButton)sender;
+                myMusicApp.PlayingMusicList.Musics = ChoosedListButton.MusicList.Musics;
+                myMusicApp.UpdateMusicList(myMusicApp.PlayingMusicList);
+                InitAWMP(myMusicApp.PlayingMusicList, mButton.Index);
+                AWMP.Ctlcontrols.play();
+                Timer_Music.Start();
                 Btn_Play.Text = "||";
-                MButton MB = (MButton)sender;
-
-                MB.BackColor = System.Drawing.SystemColors.ButtonShadow;
-                ChoosedMButton.BackColor = Color.Transparent;
-                ChoosedMButton = MB;
-
-                Music music = MB.M_music;
-                myMusicApp.PlayMusic(music);
-                
-
-                WMP.URL = MB.M_music.FileURL.ToString();
-                WMP.currentMedia.name = music.Name + " - " + music.Singer;
-                WMP.Ctlcontrols.play();
             }
             catch(Exception ce)
             {
@@ -543,7 +916,6 @@ namespace GuGuGuMusic
                     Font = new System.Drawing.Font("微軟正黑體 Light", 10F),
                     Margin = new System.Windows.Forms.Padding(0),
                     Size = new Size(160, 30),
-                    Name = "            ",
                     TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
                 };
                 button.Click += new EventHandler(CreatedListBtn_Click);
@@ -561,8 +933,9 @@ namespace GuGuGuMusic
                 button.Show();
                 TextBox textBox = new TextBox()
                 {
-                    Text = "新建歌单" + number,
-                    Location = new Point(20, 0)
+                    Text = "            新建歌单" + number,
+                    Location = new Point(40, 0),
+                    Font = new System.Drawing.Font("微軟正黑體 Light", 10F),
                 };
                 MLB_Name = textBox.Text.ToString();
                 textBox.LostFocus += new EventHandler(CreatedListBtnNamed_LostFocus);
@@ -608,13 +981,19 @@ namespace GuGuGuMusic
         private void CreatedListBtnNamed_LostFocus(object sender,EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
+            if (textBox.Focused)
+            {
+
+            }
+            else { }
             MLB_Name = textBox.Text.ToString();
-            CreatingBtn.Text = CreatingBtn.Name.ToString() + MLB_Name;
+            CreatingBtn.Text = MLB_Name;
             CreatingBtn.Enabled = true;
             Panel_CreatedList.Controls.Remove(textBox);
             textBox.Dispose();
             Timer_CreatingList.Dispose();
         }
+
 
         /// <summary>
         /// 歌单默认点击事件，点击显示歌单详情
@@ -713,6 +1092,17 @@ namespace GuGuGuMusic
             ShowList(myMusicApp.PopMusicList.Musics);
         }
 
+        /// <summary>
+        ///  单击左键显示我喜欢音乐
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_Liked_Click(object sender, EventArgs e)
+        {
+            ResetChoosedListButton(sender);
+            ShowList(myMusicApp.LikedMusicList.Musics);
+        }
+
         #endregion
 
 
@@ -726,6 +1116,7 @@ namespace GuGuGuMusic
         {
             try
             {
+                Lbl_Number.Text = "  " + myMusicApp.PlayingMusicList.Count + "首歌曲";
                 PlayListUpdate(myMusicApp.PlayingMusicList);
                 Panel_PlayList.BringToFront();
                 Panel_PlayList.Show();
@@ -787,8 +1178,21 @@ namespace GuGuGuMusic
                 Console.WriteLine(e.Message);
             }
         }
+
+
+
         #endregion
 
+        private void Timer_MusicName_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                Btn_MusicName.Text = AWMP.currentMedia.name.ToString();
+            }catch(Exception ce)
+            {
+                Console.WriteLine(ce.Message);
+            }
+        }
     }
 
 }

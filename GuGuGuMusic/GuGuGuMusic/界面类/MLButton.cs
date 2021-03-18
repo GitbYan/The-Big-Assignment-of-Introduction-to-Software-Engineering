@@ -13,9 +13,9 @@ namespace GuGuGuMusic
         {
 
         }
-        public MLButton(MusicList mGroup)
+        public MLButton(MusicList musicList)
         {
-            MusicList = mGroup;
+            MusicList = musicList;
         }
 
         /// <summary>
