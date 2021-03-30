@@ -129,7 +129,6 @@ namespace GuGuGuMusic
         {
             try
             {
-                #region 更新本地歌单
                 string filepath = "";
                 List<string> lines = new List<string>();
                 if (musicList.ListName.ToString() == "本地与下载")
@@ -140,9 +139,10 @@ namespace GuGuGuMusic
                         lines.Add(music.FileURL);
                     }
                     File.WriteAllLines(filepath, lines.ToArray());
+                    return 0;
                     
                 }
-                if (musicList.ListName.ToString() == "播放列表")
+                else if (musicList.ListName.ToString() == "播放列表")
                 {
                     filepath = "../local/playing.txt";
                     foreach (Music music in musicList.Musics)
@@ -150,23 +150,21 @@ namespace GuGuGuMusic
                         lines.Add(music.FileURL);
                     }
                     File.WriteAllLines(filepath, lines.ToArray());
+                    return 0;
                 }
-                #endregion
-
-                #region 更新数据库
-                int n = 0;
-                string sql1 = "DELETE FROM musiclistinfo WHERE user_id = '" + musicList.User_Id + "' and Listname = '" + musicList.ListName + "'";
-                n += ExcuteNonQuery(sql1);
-                foreach (Music music in musicList.Musics)
+                else
                 {
-                    string sql2 = "INSERT INTO musiclistinfo VALUES('" + musicList.ListName + "','" + musicList.User_Id + "','" + music.FileURL.Replace("\\", "/") + "') ON DUPLICATE KEY UPDATE Fileurl = '" + music.FileURL.Replace("\\", "/") + "'";
-                    n += ExcuteNonQuery(sql2);
-                }  
-                Console.WriteLine("数据库修改成功，修改数据条数" + n);
-                return n;
-
-                #endregion
-
+                    int n = 0;
+                    string sql1 = "DELETE FROM musiclistinfo WHERE user_id = '" + musicList.User_Id + "' and Listname = '" + musicList.ListName + "'";
+                    n += ExcuteNonQuery(sql1);
+                    foreach (Music music in musicList.Musics)
+                    {
+                        string sql2 = "INSERT INTO musiclistinfo VALUES('" + musicList.ListName + "','" + musicList.User_Id + "','" + music.FileURL.Replace("\\", "/") + "') ON DUPLICATE KEY UPDATE Fileurl = '" + music.FileURL.Replace("\\", "/") + "'";
+                        n += ExcuteNonQuery(sql2);
+                    }  
+                    Console.WriteLine("数据库修改成功，修改数据条数" + n);
+                    return n;
+                }
             }
             catch (Exception e)
             {
@@ -218,14 +216,14 @@ namespace GuGuGuMusic
         }
 
         /// <summary>
-        /// 从数据库读取全部歌单信息（不包括音乐文件，仅读取 歌单-用户 的匹配数目）
+        /// 从数据库读取用户歌单信息
         /// </summary>
         /// <returns></returns>
         public MusicList[] GetMusicList(User user)
         {
             try
             {
-                string sql = "SELECT Listname FROM musiclistinfo WHERE user_id = '" + user.User_Id + "'";
+                string sql = "SELECT Listname FROM user_musiclist_info WHERE user_id = '" + user.User_Id + "'";
                 MySqlDataReader rd = Read(sql);
                 List<string> listNames = new List<string>();
                 while (rd.Read())
@@ -240,7 +238,6 @@ namespace GuGuGuMusic
                 }
                 Console.WriteLine("读取数据库成功");
                 return musicLists;
-
             }
             catch (Exception e)
             {

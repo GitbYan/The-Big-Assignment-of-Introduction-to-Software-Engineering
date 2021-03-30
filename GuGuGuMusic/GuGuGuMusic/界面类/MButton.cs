@@ -11,7 +11,7 @@ namespace GuGuGuMusic
     {
         public MButton()
         {
-
+            
         }
 
         public MButton(Music music)
@@ -68,6 +68,8 @@ namespace GuGuGuMusic
             }
         }
         #endregion
+
+
     }
 
 

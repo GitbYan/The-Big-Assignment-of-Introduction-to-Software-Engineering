@@ -124,7 +124,6 @@ namespace GuGuGuMusic
                     }
                 }
                 Music music = new Music(name, singer, "", fileurl);
-                Console.WriteLine("成功解析音乐路径:" + name + " : " + singer + " : " + fileurl);
                 return music;
             }
             catch (Exception e)

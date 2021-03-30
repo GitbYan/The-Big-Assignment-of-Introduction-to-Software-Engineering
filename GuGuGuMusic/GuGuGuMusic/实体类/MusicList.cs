@@ -75,13 +75,11 @@ namespace GuGuGuMusic
             {
                 if (Contains(music))
                 {
-                    Console.WriteLine("音乐已存在");
                     return 0;
                 }
                 else
                 {
                     Musics.Add(music);
-                    Console.WriteLine("list对象音乐添加成功");
                     Count++;
                     return 1;
                 }
