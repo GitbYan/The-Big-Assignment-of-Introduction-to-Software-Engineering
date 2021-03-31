@@ -92,6 +92,22 @@ namespace GuGuGuMusic
             return userInfoDataSet;
         }
 
+        public string GetUserPassword(string userid)
+        {
+            string sql = "select * from userinfo where userid = '" + userid + "'";
+            string password = "";
+            MySqlDataReader rd = Read(sql);
+            while (rd.Read())
+            {
+                password = rd["password"].ToString();
+            }
+            rd.Close();
+            return password;
+        }
+
+
+
+        #region 歌曲部分
         /// <summary>
         /// 执行sql语句返回所有music信息
         /// </summary>
@@ -108,17 +124,18 @@ namespace GuGuGuMusic
                     Music music = new Music(rd["Name"].ToString(), rd["Singer"].ToString(), rd["Album"].ToString(), rd["Fileurl"].ToString().Replace("/", "\\"));
                     Musics.Add(music);
                 }
+                rd.Close();
                 Console.WriteLine("读取数据库成功");
                 return Musics;
 
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message + "读取数据库失败");
                 return null;
             }
         }
-
-        #region 歌单部分
+        
         /// <summary>
         /// 修改数据库中对应的音乐表，返回操作涉及的项数，失败返回-1
         /// </summary>
@@ -260,6 +277,7 @@ namespace GuGuGuMusic
                 Music music = new Music(rd["Fileurl"].ToString().Replace("/", "\\"));
                 musicList.Add(music);
             }
+            rd.Close();
             return musicList;
         }
         
