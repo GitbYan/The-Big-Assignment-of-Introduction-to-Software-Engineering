@@ -1,4 +1,5 @@
 # The-Big-Assignment-of-Introduction-to-Software-Engineering
+
 # C#Windows窗体程序开发-音乐播放器
 
 #### 产品名称：
@@ -88,7 +89,5 @@ Microsoft Visual Studio
 C#
 
 MySQL -version:8.0.19
-
-
 
 
