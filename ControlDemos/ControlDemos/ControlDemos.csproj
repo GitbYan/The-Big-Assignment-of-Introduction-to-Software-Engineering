@@ -49,6 +49,9 @@
     <Compile Include="MListBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MScrollBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MSearchBox.cs" />
     <Compile Include="MTrackBar.cs">
       <SubType>Component</SubType>

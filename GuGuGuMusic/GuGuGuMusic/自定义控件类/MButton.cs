@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,12 +12,19 @@ namespace GuGuGuMusic
     {
         public MButton()
         {
-            
+            FlatStyle = FlatStyle.Flat;
+            TabStop = false;
+            TextAlign = ContentAlignment.MiddleLeft;
+            Cursor = System.Windows.Forms.Cursors.Hand;
         }
 
         public MButton(Music music)
         {
             _music = music;
+            FlatStyle = FlatStyle.Flat;
+            TabStop = false;
+            TextAlign = ContentAlignment.MiddleLeft;
+            Cursor = System.Windows.Forms.Cursors.Hand;
         }
 
         private Music _music = new Music();
@@ -37,7 +45,8 @@ namespace GuGuGuMusic
         /// 保存音乐在歌单的位置
         /// </summary>
         public int Index { get; set; }
-        #region 重定义鼠标双击事件
+
+
         public new event EventHandler DoubleClick;
 
         DateTime clickTime;
@@ -67,8 +76,6 @@ namespace GuGuGuMusic
                 clickTime = DateTime.Now;
             }
         }
-        #endregion
-
 
     }
 

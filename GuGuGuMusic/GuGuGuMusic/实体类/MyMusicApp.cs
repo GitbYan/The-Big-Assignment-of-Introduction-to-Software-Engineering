@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * 5
+ */
 namespace GuGuGuMusic
 {
     public class MyMusicApp
@@ -20,14 +23,36 @@ namespace GuGuGuMusic
             //默认登陆时，读取用户信息
             if (IsLogin)
             {
-                HistoryMusicList = mDB.GetMusicList(new MusicList("历史播放列表", user.User_Id));
-                CreatedMusicList = mDB.GetMusicList(user);
-                for (int i = 0; i < CreatedMusicList.Count(); i++) 
-                {
-                    CreatedMusicList[i] = mDB.GetMusicList(CreatedMusicList[i]);
-                }
+                InitLoginInfo(user);
             }
 
+        }
+
+        public void InitLoginInfo(User user)
+        {
+            try
+            {
+                this.user = user;
+                //defaultlist
+                HistoryMusicList.User_Id = user.User_Id;
+                HistoryMusicList = mDB.GetMusicList(HistoryMusicList);
+                LikedMusicList.User_Id = user.User_Id;
+                LikedMusicList = mDB.GetMusicList(LikedMusicList);
+                //createdlist
+                AllMusicLists = mDB.GetAllMusicList(user);
+                for (int i = 0; i < AllMusicLists.Count(); i++)
+                {
+                    if (DefaultList.Contains(AllMusicLists[i].ListName))
+                    {
+                        continue;
+                    }
+                    CreatedMusicList.Add(mDB.GetMusicList(AllMusicLists[i]).ListName, i);
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("5001:"+e.Message);
+            }
         }
     
         /// <summary>
@@ -50,17 +75,21 @@ namespace GuGuGuMusic
                     FileInfo myFile = new FileInfo(path + fileName);
                     StreamWriter streamWriter = myFile.CreateText();
                     streamWriter.Close();
-                    Console.WriteLine("本地存储目录创建成功");
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message + "本地txt创建失败");
+                Console.WriteLine("5002:"+e.Message);
             }
         }
-
-        private MDB mDB = new MDB();//连接数据库
-
+        /// <summary>
+        /// 数据库连接
+        /// </summary>
+        private MDB mDB = new MDB();
+        /// <summary>
+        /// 自定义歌单数量上限
+        /// </summary>
+        public static readonly int ListLimits = 20;
         #region 属性
         /// <summary>
         /// 是否登录
@@ -70,30 +99,43 @@ namespace GuGuGuMusic
         /// 当前登陆用户
         /// </summary>
         public User user { get; set; } = new User();
+
+        public static readonly List<string> DefaultList = new List<string>
+        {
+            "播放列表",
+            "本地与下载",
+            "播放历史",
+            "流行音乐",
+            "我喜欢"
+        };
         /// <summary>
-        /// 当前播放列表
+        /// 当前播放列表 -- 绑定本地
         /// </summary>
         public MusicList PlayingMusicList { get; set; } = new MusicList("播放列表");
         /// <summary>
-        /// 本地和下载列表
+        /// 本地和下载列表 -- 绑定本地
         /// </summary>
         public MusicList LocalMusicList { get; set; } = new MusicList("本地与下载");
         /// <summary>
-        /// 历史播放列表
+        /// 历史播放列表 -- 绑定用户
         /// </summary>
-        public MusicList HistoryMusicList { get; set; } = new MusicList("历史播放列表");
+        public MusicList HistoryMusicList { get; set; } = new MusicList("播放历史");
         /// <summary>
         /// 流行音乐列表
         /// </summary>
         public MusicList PopMusicList { get; set; } = new MusicList("流行音乐");
         /// <summary>
-        /// 我喜欢列表
+        /// 我喜欢列表 -- 绑定用户
         /// </summary>
         public MusicList LikedMusicList { get; set; } = new MusicList("我喜欢");
         /// <summary>
-        /// 创建的列表 
+        /// 创建的列表 储存musiclist名以及对应allmusiclist中的index
         /// </summary>
-        public MusicList[] CreatedMusicList { get; set; } = new MusicList[100];
+        public Dictionary<string, int> CreatedMusicList = new Dictionary<string, int>();
+        /// <summary>
+        /// 创建的列表
+        /// </summary>
+        public List<MusicList> AllMusicLists = new List<MusicList>();
         /// <summary>
         /// 正在播放的音乐
         /// </summary>
@@ -106,17 +148,64 @@ namespace GuGuGuMusic
         /// 播放列表中下一首音乐
         /// </summary>
         public Music NextMusic { get; set; } = new Music();
-
         #endregion
 
         #region 歌单部分
         /// <summary>
-        /// 创建自定义歌单
+        /// 判断是否能继续创建自定义歌单
         /// </summary>
         /// <returns></returns>
-        public bool CreateMusicList()
+        public bool CanCreateMusicList()
         {
-            return CreatedMusicList.Count() < 100;
+            try
+            {
+                return GetCreatedMusicListNumber() < ListLimits;
+            }catch(Exception e)
+            {
+                Console.WriteLine("5003:"+e.Message);
+                return false;
+            }
+        }
+        /// <summary>
+        /// 查询自定义歌单数量
+        /// </summary>
+        /// <returns></returns>
+        public int GetCreatedMusicListNumber()
+        {
+            try
+            {
+                return CreatedMusicList.Count();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("5004:"+e.Message);
+                return -1;
+            }
+        }
+        /// <summary>
+        /// 创建自定义歌单
+        /// </summary>
+        /// <param name="musicList"></param>
+        /// <returns></returns>
+        public bool CreateMusicList(MusicList musicList)
+        {
+            try
+            {
+                int n = 0;
+                if (GetCreatedMusicListNumber() < ListLimits)
+                {
+                    n = mDB.CreateMusicList(musicList);
+                    int i = AllMusicLists.Count();
+                    AllMusicLists.Add(musicList);
+                    CreatedMusicList.Add(musicList.ListName, i);
+                }
+                return n >= 0;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("5005:"+e.Message);
+                return false;
+            }
         }
         /// <summary>
         /// 更新对应歌单（MusicList）的相关信息
@@ -126,14 +215,17 @@ namespace GuGuGuMusic
         {
             try
             {
-                int n = 0;
-                n = mDB.UpdateMusicList(musicList);
-                Console.WriteLine(musicList.ListName + "更新数据库成功");
-                return (n >= 0);
+                if (musicList != null)
+                {
+                    int n = 0;
+                    n = mDB.UpdateMusicList(musicList);
+                    return (n >= 0);
+                }
+                return false;
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.Message + musicList.ListName + "更新数据库失败");
+                Console.WriteLine("5006:"+e.Message);
                 return false;
             }
         }
@@ -146,14 +238,21 @@ namespace GuGuGuMusic
         {
             try
             {
-                int n = mDB.UpdateMusicList(musicList, ListName);
-                musicList.ListName = ListName;
-                Console.WriteLine(musicList.ListName + "重命名成功");
-                return (n >= 0);
+                if (musicList != null)
+                {
+                    int index = CreatedMusicList[musicList.ListName];
+                    CreatedMusicList.Remove(musicList.ListName);
+                    int n = mDB.UpdateMusicList(musicList, ListName);
+                    musicList.ListName = ListName;
+                    AllMusicLists[index].ListName = ListName;
+                    CreatedMusicList.Add(musicList.ListName, index);
+                    return (n >= 0);
+                }
+                return false;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message + musicList.ListName + "重命名失败");
+                Console.WriteLine("5007:"+e.Message);
                 return false;
             }
         }
@@ -167,12 +266,12 @@ namespace GuGuGuMusic
             try
             {
                 bool n = mDB.DeleteMusicList(musicList);
-                Console.WriteLine(musicList.ListName + "歌单删除成功");
+                CreatedMusicList.Remove(musicList.ListName);
                 return n;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message + musicList.ListName + "歌单删除失败");
+                Console.WriteLine("5008:"+e.Message);
                 return false;
             }
         }

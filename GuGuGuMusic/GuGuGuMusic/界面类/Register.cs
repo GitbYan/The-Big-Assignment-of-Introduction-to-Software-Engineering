@@ -11,13 +11,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 /*
- * 1
+ * 3
  */
 
 namespace GuGuGuMusic
 {
-    public partial class Login : Form
+    public partial class Register : Form
     {
+
         #region 无边框
         /// 实现窗体边框阴影
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
@@ -115,110 +116,94 @@ namespace GuGuGuMusic
         private const int edgeX = 4;//4px的间距来实现缩放
         private const int edgeY = 4;
         #endregion
-        
-        public Login(Main m)
+
+        public Register()
         {
             InitializeComponent();
             //设置双缓冲减少屏幕闪烁
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.MouseDown += new MouseEventHandler(Form_MouseDown);
-            main = m;
-        }
-
-        public static Main main;
-
-        public static Login login;
-
-        private void Btn_Close_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                this.Close();
-            }
-            catch(Exception ce)
-            {
-                Console.WriteLine("1001:" + ce.Message);
-            }
-        }
-
-        private void Btn_OnMouseHover(object sender,EventArgs e)
-        {
-            try
-            {
-                Button b = (Button)sender;
-                b.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            }
-            catch(Exception ce)
-            {
-                Console.WriteLine("1002:"+ce.Message);
-            }
-        }
-
-        private void Btn_OnMouseLeave(object sender, EventArgs e)
-        {
-            try
-            {
-                Button b = (Button)sender;
-                b.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            }
-            catch (Exception ce)
-            {
-                Console.WriteLine("1003:"+ce.Message);
-            }
-        }
-
-        private void Btn_Register_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                TxtBox_Account.Text = "";
-                TxtBox_Password.Text = "";
-                Register register = new Register()
-                {
-                    TopLevel = false,
-                    Location = new Point(0, 0)
-                };
-                register.MouseDown += new MouseEventHandler(Form_MouseDown);
-                foreach(Control control in this.Controls)
-                {
-                    control.Hide();
-                }
-                this.Controls.Add(register);
-                register.Show();
-                login = this;
-            }
-            catch(Exception ce)
-            {
-                Console.WriteLine("1004:"+ce.Message);
-            }
-        }
-
-        private void Btn_Forgot_Click(object sender, EventArgs e)
-        {
-            try
-            {
-
-            }
-            catch (Exception ce)
-            {
-                Console.WriteLine("1005:"+ce.Message);
-            }
+            
         }
 
         private void Btn_Login_Click(object sender, EventArgs e)
         {
             try
             {
-                TryLogin();
+                TryRegister();
             }
             catch (Exception ce)
             {
-                Console.WriteLine("1006:"+ce.Message);
+                Console.WriteLine("3001:"+ce.Message);
             }
         }
 
-        private void TxtBox_GotFocus(object sender,EventArgs e)
+        private void TryRegister()
+        {
+            try
+            {
+                string userid = TxtBox_Account.Text.ToString();
+                string password = TxtBox_Password.Text.ToString();
+                ///
+                var sha256 = new SHA256Managed();
+                var Asc = new ASCIIEncoding();
+                var tmpByte = Asc.GetBytes(password);
+                var EncryptBytes = sha256.ComputeHash(tmpByte);
+                password = BitConverter.ToString(EncryptBytes).Replace("-", "");
+                sha256.Clear();
+                ///
+                if (CreateAccount(userid, password))
+                {
+                    Login.login.Close();
+                    Login.main.Login(new User(userid));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("3002:"+e.Message);
+            }
+        }
+
+        private bool CreateAccount(string Account, string Password)
+        {
+            try
+            {
+                MDB mDB = new MDB();
+                if (mDB.ExistUser(Account))
+                {
+                    return false;
+                }
+                else
+                {
+                    return mDB.CreateUser(Account, Password) >= 0;
+                }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("3003:" + ce.Message);
+                return false;
+            }
+        }
+
+        private void Btn_Back_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TxtBox_Account.Text = "";
+                TxtBox_Password.Text = "";
+                this.Close();
+                foreach(Control control in Login.login.Controls)
+                {
+                    control.Show();
+                }
+            }
+            catch(Exception ce)
+            {
+                Console.WriteLine("3004:"+ce.Message);
+            }
+        }
+
+        private void TxtBox_GotFocus(object sender, EventArgs e)
         {
             try
             {
@@ -237,10 +222,17 @@ namespace GuGuGuMusic
                             Lbl_Tip2.ForeColor = System.Drawing.SystemColors.Menu;
                         }
                         break;
+                    case "TxtBox_Confirm":
+                        if (Lbl_Tip3.Visible)
+                        {
+                            Lbl_Tip2.ForeColor = System.Drawing.SystemColors.Menu;
+                        }
+                        break;
                 }
-            }catch(Exception ce)
+            }
+            catch (Exception ce)
             {
-                Console.WriteLine("1007:"+ce.Message);
+                Console.WriteLine("3005:"+ce.Message);
             }
         }
 
@@ -263,11 +255,17 @@ namespace GuGuGuMusic
                             Lbl_Tip2.ForeColor = System.Drawing.SystemColors.GrayText;
                         }
                         break;
+                    case "TxtBox_Confirm":
+                        if (Lbl_Tip3.Visible)
+                        {
+                            Lbl_Tip2.ForeColor = System.Drawing.SystemColors.GrayText;
+                        }
+                        break;
                 }
             }
             catch (Exception ce)
             {
-                Console.WriteLine("1008:"+ce.Message);
+                Console.WriteLine("3006:"+ce.Message);
             }
         }
 
@@ -286,8 +284,9 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine("1009:" + ce.Message);
+                Console.WriteLine("3007:" + ce.Message);
             }
+
         }
 
 
@@ -306,8 +305,29 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine("1010:" + ce.Message);
+                Console.WriteLine("3008:" + ce.Message);
             }
+
+        }
+
+        private void TxtBox_ConfirmPassword_TextChanged(object sender,EventArgs e)
+        {
+            try
+            {
+                if (TxtBox_ConfirmPassword.Text == "")
+                {
+                    Lbl_Tip3.Show();
+                }
+                else
+                {
+                    Lbl_Tip3.Hide();
+                }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("3009:" + ce.Message);
+            }
+
         }
 
         private void TxtBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -321,54 +341,12 @@ namespace GuGuGuMusic
                 }
                 if (mTextBox.Name == "TxtBox_Password" && e.KeyChar == 13)
                 {
-                    TryLogin();
+                    
                 }
-            }catch(Exception ce)
-            {
-                Console.WriteLine("1011:"+ce.Message);
             }
-        }
-
-        private void TryLogin()
-        {
-            try
+            catch (Exception ce)
             {
-                string userid = TxtBox_Account.Text.ToString();
-                string password = TxtBox_Password.Text.ToString();
-                ///
-                var sha256 = new SHA256Managed();
-                var Asc = new ASCIIEncoding();
-                var tmpByte = Asc.GetBytes(password);
-                var EncryptBytes = sha256.ComputeHash(tmpByte);
-                password = BitConverter.ToString(EncryptBytes).Replace("-","");
-                sha256.Clear();
-                ///
-                if (ValidateAccount(userid, password))
-                {
-                    this.Close();
-                    main.Login(new User(userid));
-                }
-                
-            }catch(Exception e)
-            {
-                Console.WriteLine("1012:"+e.Message);
-            }
-        }
-
-        private bool ValidateAccount(string Account,string Password)
-        {
-            try
-            {
-                MDB mDB = new MDB();
-                if(mDB.GetUserPassword(Account)!=""&&Password == mDB.GetUserPassword(Account))
-                {
-                    return true;
-                }
-                return false;
-            }catch(Exception ce)
-            {
-                Console.WriteLine("1013:" + ce.Message);
-                return false;
+                Console.WriteLine("3010:"+ce.Message);
             }
         }
     }

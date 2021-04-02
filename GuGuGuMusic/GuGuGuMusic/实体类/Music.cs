@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+/*
+ * 6
+ */
 namespace GuGuGuMusic
 {
     public class Music
@@ -15,10 +17,10 @@ namespace GuGuGuMusic
 
         public Music(string FileURL)
         {
-            Name = InitMusic(FileURL).Name;
-            Singer = InitMusic(FileURL).Singer;
-            Album = InitMusic(FileURL).Album;
-            FileURL = InitMusic(FileURL).FileURL;
+            this.Name = InitMusic(FileURL).Name;
+            this.Singer = InitMusic(FileURL).Singer;
+            this.Album = InitMusic(FileURL).Album;
+            this.FileURL = InitMusic(FileURL).FileURL;
         }
 
         public Music(string Name,string Singer,string Album,string FileURL)
@@ -119,7 +121,7 @@ namespace GuGuGuMusic
                     {
                         fileurl += s;
                         string[] str_ = s.Split('-');
-                        name = str_[1];
+                        name = str_[1].Split('.')[0];
                         singer = str_[0];
                     }
                 }
@@ -128,7 +130,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message + "\n" + "解析音乐路径失败");
+                Console.WriteLine("6001:"+e.Message);
                 return null;
             }
         }

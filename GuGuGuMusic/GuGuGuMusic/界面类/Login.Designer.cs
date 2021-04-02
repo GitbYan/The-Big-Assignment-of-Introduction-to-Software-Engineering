@@ -45,6 +45,7 @@
             this.Btn_Login.BackColor = System.Drawing.SystemColors.Highlight;
             this.Btn_Login.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_Login.FlatAppearance.BorderSize = 0;
+            this.Btn_Login.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.Highlight;
             this.Btn_Login.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_Login.Font = new System.Drawing.Font("微软雅黑", 12F);
             this.Btn_Login.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
@@ -52,7 +53,6 @@
             this.Btn_Login.Name = "Btn_Login";
             this.Btn_Login.Size = new System.Drawing.Size(280, 40);
             this.Btn_Login.TabIndex = 2;
-            this.Btn_Login.TabStop = false;
             this.Btn_Login.Text = "授权并登录";
             this.Btn_Login.UseVisualStyleBackColor = false;
             this.Btn_Login.Click += new System.EventHandler(this.Btn_Login_Click);
@@ -149,6 +149,7 @@
             // TxtBox_Password
             // 
             this.TxtBox_Password.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.TxtBox_Password.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TxtBox_Password.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.TxtBox_Password.Font = new System.Drawing.Font("微软雅黑 Light", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.TxtBox_Password.ForeColor = System.Drawing.SystemColors.WindowFrame;
@@ -197,7 +198,7 @@
             this.Controls.Add(this.TxtBox_Account);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Login";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Login";
             ((System.ComponentModel.ISupportInitialize)(this.PicIcon)).EndInit();
             this.ResumeLayout(false);
