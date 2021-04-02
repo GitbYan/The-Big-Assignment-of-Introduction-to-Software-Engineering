@@ -104,7 +104,13 @@
       <DependentUpon>Login.cs</DependentUpon>
     </Compile>
     <Compile Include="实体类\MCrawler.cs" />
-    <Compile Include="界面类\MButton.cs">
+    <Compile Include="界面类\Register.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="界面类\Register.Designer.cs">
+      <DependentUpon>Register.cs</DependentUpon>
+    </Compile>
+    <Compile Include="自定义控件类\MButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="实体类\MDB.cs" />
@@ -115,7 +121,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="实体类\MusicList.cs" />
-    <Compile Include="界面类\MLButton.cs">
+    <Compile Include="自定义控件类\MLButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="实体类\User.cs" />
@@ -139,6 +145,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="界面类\Register.resx">
+      <DependentUpon>Register.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

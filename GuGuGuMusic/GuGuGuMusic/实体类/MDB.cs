@@ -8,12 +8,7 @@ using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 
 /*
- * 
- * TABLE STRUCTURE:
- *      musicinfo()
- *      userinfo()
- *      musiclistinfo(Listname CHAR(255) PRI, user_id CHAR(255) PRI, Fileurl CHAR(255) PRI)
- *      
+ * 4
  */
 
 namespace GuGuGuMusic
@@ -38,13 +33,11 @@ namespace GuGuGuMusic
             try
             {
                 conn.Open();
-                Console.WriteLine("数据库连接成功");
                 return conn;
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("数据库连接失败");
+                Console.WriteLine("4000:"+e.Message);
                 return null;
             }
         }
@@ -86,26 +79,97 @@ namespace GuGuGuMusic
         /// <returns></returns>
         public DataSet GetUserInfo()
         {
-            MySqlDataAdapter mySqlDataAdapter = new MySqlDataAdapter("select * from userinfo", connection());
-            DataSet userInfoDataSet = new DataSet();
-            mySqlDataAdapter.Fill(userInfoDataSet, "userinfo");
-            return userInfoDataSet;
+            try
+            {
+                MySqlDataAdapter mySqlDataAdapter = new MySqlDataAdapter("select * from userinfo", connection());
+                DataSet userInfoDataSet = new DataSet();
+                mySqlDataAdapter.Fill(userInfoDataSet, "userinfo");
+                return userInfoDataSet;      
+            }catch(Exception e)
+            {
+                Console.WriteLine("4001" + e.Message);
+                return null;
+            }
         }
 
+        /// <summary>
+        /// 获取用户密码(加密字符串)
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
         public string GetUserPassword(string userid)
         {
-            string sql = "select * from userinfo where userid = '" + userid + "'";
-            string password = "";
-            MySqlDataReader rd = Read(sql);
-            while (rd.Read())
+            try
             {
+                string sql = "select * from userinfo where userid = '" + userid + "'";
+                string password = "";
+                MySqlDataReader rd = Read(sql);
+                rd.Read();
                 password = rd["password"].ToString();
+                rd.Close();
+                return password;
+            }catch(Exception e)
+            {
+                Console.WriteLine("4002:"+e.Message);
+                return "";
             }
-            rd.Close();
-            return password;
+
         }
 
+        /// <summary>
+        /// 查询用户是否存在
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
+        public bool ExistUser(string userid)
+        {
+            try
+            {
+                bool exist = false;
+                string sql = "select * from userinfo where userid = '" + userid + "'";
+                MySqlDataReader rd = Read(sql);
+                while (rd.Read())
+                {
+                    exist = true;
+                }
+                rd.Close();
+                return exist;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("4003:"+e.Message);
+                return true;
+            }
 
+        }
+
+        /// <summary>
+        /// 在数据库中添加用户信息
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public int CreateUser(string userid,string password)
+        {
+            try
+            {
+                int n = 0;
+                //userinfo表
+                string sql1 = "INSERT INTO userinfo VALUES('" + userid + "','" + password+ "','none')";
+                n += ExcuteNonQuery(sql1);
+                //user_musiclist_info表
+                string sql2 = "INSERT INTO user_musiclist_info VALUES('" + userid + "','我喜欢')";
+                n += ExcuteNonQuery(sql2);
+                string sql3 = "INSERT INTO user_musiclist_info VALUES('" + userid + "','播放历史')";
+                n += ExcuteNonQuery(sql3);
+                return n;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("4004:"+e.Message);
+                return -1;
+            }
+        }
 
         #region 歌曲部分
         /// <summary>
@@ -125,14 +189,66 @@ namespace GuGuGuMusic
                     Musics.Add(music);
                 }
                 rd.Close();
-                Console.WriteLine("读取数据库成功");
                 return Musics;
 
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message + "读取数据库失败");
+                Console.WriteLine("4005:"+e.Message);
                 return null;
+            }
+        }
+
+        public List<Music> GetMusics(MusicList musicList)
+        {
+            try
+            {
+                string sql = "SELECT * FROM musiclistinfo where ListName='"+musicList.ListName+"' and user_id ='"+musicList.User_Id+"'";
+                MySqlDataReader rd = Read(sql);
+                List<Music> Musics = new List<Music>();
+                while (rd.Read())
+                {
+                    string filename = rd["Fileurl"].ToString().Replace("/", "\\");
+                    Music music = new Music(filename);
+                    Musics.Add(music);
+                }
+                rd.Close();
+                return Musics;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("4005:" + e.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 在数据库中添加新建歌单
+        /// </summary>
+        /// <param name="musicList"></param>
+        /// <returns></returns>
+        public int CreateMusicList(MusicList musicList)
+        {
+            try
+            {
+                int n = 0;
+                string sql1 = "INSERT INTO user_musiclist_info VALUES('" + musicList.User_Id + "','" + musicList.ListName + "')";
+                n += ExcuteNonQuery(sql1);
+                foreach (Music music in musicList.Musics)
+                {
+                    if (music.FileURL != "")
+                    {
+                        string sql2 = "INSERT INTO musiclistinfo VALUES('" + musicList.ListName + "','" + musicList.User_Id + "','" + music.FileURL.Replace("\\", "/") + "') ON DUPLICATE KEY UPDATE Fileurl = '" + music.FileURL.Replace("\\", "/") + "'";
+                        n += ExcuteNonQuery(sql2);
+                    }
+                }
+                return n;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("4006:"+e.Message);
+                return -1;
             }
         }
         
@@ -179,13 +295,12 @@ namespace GuGuGuMusic
                         string sql2 = "INSERT INTO musiclistinfo VALUES('" + musicList.ListName + "','" + musicList.User_Id + "','" + music.FileURL.Replace("\\", "/") + "') ON DUPLICATE KEY UPDATE Fileurl = '" + music.FileURL.Replace("\\", "/") + "'";
                         n += ExcuteNonQuery(sql2);
                     }  
-                    Console.WriteLine("数据库修改成功，修改数据条数" + n);
                     return n;
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message+"数据库musiclist表操作失败");
+                Console.WriteLine("4007:"+e.Message);
                 return -1;
             }
         }
@@ -199,15 +314,15 @@ namespace GuGuGuMusic
         {
             try
             {
-                musicList.ListName = ListName;
-                string sql = "UPDATE musiclistinfo SET Listname = '"+ListName+ "' WHERE  user_id = '" + musicList.User_Id + "' and Listname = '" + musicList.ListName + "'";
-                int n = ExcuteNonQuery(sql);
-                Console.WriteLine(musicList.ListName + "重命名成功");
+                string sql1 = "UPDATE musiclistinfo SET Listname = '"+ListName+ "' WHERE  user_id = '" + musicList.User_Id + "' and Listname = '" + musicList.ListName + "'";
+                int n = ExcuteNonQuery(sql1);
+                string sql2 = "UPDATE user_musiclist_info SET Listname = '" + ListName + "' WHERE  user_id = '" + musicList.User_Id + "' and Listname = '" + musicList.ListName + "'";
+                n += ExcuteNonQuery(sql2);
                 return n;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message + musicList.ListName + "重命名失败");
+                Console.WriteLine("4008:"+e.Message);
                 return -1;
             }
         }
@@ -221,13 +336,14 @@ namespace GuGuGuMusic
         {
             try
             {
-                string sql = "DELETE FROM musiclistinfo WHERE Listname = '" + musicList.ListName + "'";
-                int n = ExcuteNonQuery(sql);
-                Console.WriteLine(musicList.ListName + "表删除成功，共删除" + n + "项数据");
+                string sql1 = "DELETE FROM musiclistinfo WHERE Listname = '" + musicList.ListName + "' and user_id = '" + musicList.User_Id + "'";
+                int n = ExcuteNonQuery(sql1);
+                string sql2 = "DELETE FROM user_musiclist_info WHERE Listname = '" + musicList.ListName + "' and user_id = '"+musicList.User_Id+"'";
+                n += ExcuteNonQuery(sql2);
                 return true;
             }catch(Exception e)
             {
-                Console.WriteLine(e.Message + "删除表失败");
+                Console.WriteLine("4009:"+e.Message);
                 return false;
             }
         }
@@ -236,7 +352,7 @@ namespace GuGuGuMusic
         /// 从数据库读取用户歌单信息
         /// </summary>
         /// <returns></returns>
-        public MusicList[] GetMusicList(User user)
+        public List<MusicList> GetAllMusicList(User user)
         {
             try
             {
@@ -245,20 +361,21 @@ namespace GuGuGuMusic
                 List<string> listNames = new List<string>();
                 while (rd.Read())
                 {
-                    listNames.Add(rd["Listname"].ToString());                   
+                    listNames.Add(rd["Listname"].ToString());
                 }
                 rd.Close();
-                MusicList[] musicLists = new MusicList[listNames.Count];
-                foreach (string s in listNames)
+                List<MusicList> musicLists = new List<MusicList>();
+                for(int i = 0;i< listNames.Count; i++) 
                 {
-                    MusicList musicList = new MusicList(s, user.User_Id);
+                    MusicList musicList = new MusicList(listNames[i], user.User_Id);
+                    musicList.Musics = GetMusics(musicList);
+                    musicLists.Add(musicList);
                 }
-                Console.WriteLine("读取数据库成功");
                 return musicLists;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message + "读取数据库失败");
+                Console.WriteLine("4010:"+e.Message);
                 return null;
             }
         }
@@ -270,15 +387,23 @@ namespace GuGuGuMusic
         /// <returns></returns>
         public MusicList GetMusicList(MusicList musicList)
         {
-            string sql = "SELECT Fileurl FROM musiclistinfo WHERE user_id = '" + musicList.User_Id + "' and Listname = '" + musicList.ListName + "'";
-            MySqlDataReader rd = Read(sql);
-            while (rd.Read())
+            try
             {
-                Music music = new Music(rd["Fileurl"].ToString().Replace("/", "\\"));
-                musicList.Add(music);
+                string sql = "SELECT * FROM musiclistinfo WHERE user_id = '" + musicList.User_Id + "' and Listname = '" + musicList.ListName + "'";
+                MySqlDataReader rd = Read(sql);
+                while (rd.Read())
+                {
+                    Music music = new Music(rd["Fileurl"].ToString().Replace("/", "\\"));
+                    musicList.Add(music);
+                }
+                rd.Close();
+                return musicList;
             }
-            rd.Close();
-            return musicList;
+            catch (Exception e)
+            {
+                Console.WriteLine("4011:"+e.Message);
+                return null;
+            }
         }
         
         /// <summary>
@@ -289,9 +414,10 @@ namespace GuGuGuMusic
         {
             try
             {
-                FileInfo myFile = new FileInfo("../local/local.txt");
+                FileInfo myFile;
                 if(musicList.ListName.ToString()== "本地与下载")
                 {
+
                     myFile = new FileInfo("../local/local.txt");
                 }
                 else
@@ -302,7 +428,7 @@ namespace GuGuGuMusic
                 string nextLine;
                 while ((nextLine = sR.ReadLine()) != null)
                 {
-                    Music music = new Music().InitMusic(nextLine);
+                    Music music = new Music().InitMusic(nextLine.ToString());
                     musicList.Add(music);
                 }
                 sR.Close();
@@ -310,7 +436,7 @@ namespace GuGuGuMusic
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.Message+"读取本地歌单失败");
+                Console.WriteLine("4012:"+e.Message);
                 return new MusicList();
             }
         }

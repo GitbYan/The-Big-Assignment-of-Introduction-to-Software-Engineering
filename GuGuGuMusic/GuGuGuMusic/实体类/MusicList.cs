@@ -6,6 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * 7
+ */
 namespace GuGuGuMusic
 {
     public class MusicList:IList
@@ -40,6 +43,9 @@ namespace GuGuGuMusic
         /// </summary>
         public string ListName { get; set; } = "";
 
+        /// <summary>
+        /// 开始播放位置
+        /// </summary>
         public int StartIndex { get; set; } = 0;
 
         public bool IsReadOnly => throw new NotImplementedException();
@@ -86,7 +92,7 @@ namespace GuGuGuMusic
                     
             }catch(Exception e)
             {
-                Console.WriteLine(e.Message + ListName + "添加" + music.Name + "失败");
+                Console.WriteLine("7001:"+e.Message);
                 return -1;
             }
         }
@@ -117,7 +123,7 @@ namespace GuGuGuMusic
 
             }catch(Exception e)
             {
-                Console.WriteLine(e.Message + "音乐列表contain判断失败");
+                Console.WriteLine("7002:"+e.Message);
                 return true;
             }
         }
@@ -129,7 +135,7 @@ namespace GuGuGuMusic
 
             }catch(Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("7003:"+e.Message);
             }
         }
 
@@ -155,7 +161,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message+"没有找到目标音乐");
+                Console.WriteLine("7004"+e.Message);
                 return -1;
             }
         }
@@ -168,7 +174,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("7005:"+e.Message);
             }
         }
 
@@ -183,11 +189,10 @@ namespace GuGuGuMusic
                 Music music = (Music)value;
                 Musics.Remove(music);
                 Count--;
-                Console.WriteLine("移除音乐成功");
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message+"移除音乐失败");
+                Console.WriteLine("7006:"+e.Message);
             }
         }
 
@@ -195,11 +200,11 @@ namespace GuGuGuMusic
         {
             try
             {
-
+                Musics.RemoveAt(index);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("7007:"+e.Message);
             }
         }
 
@@ -211,7 +216,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("7008:"+e.Message);
             }
         }
 
@@ -227,7 +232,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message+"返回musiclist枚举数失败");
+                Console.WriteLine("7009:"+e.Message);
                 return null;
             }
         }

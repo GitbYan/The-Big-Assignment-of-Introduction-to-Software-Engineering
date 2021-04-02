@@ -29,10 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            GuGuGuMusic.Music music1 = new GuGuGuMusic.Music();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.Main_Panel = new System.Windows.Forms.Panel();
             this.Panel_Detail = new System.Windows.Forms.Panel();
             this.Panel_MusicList = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.mButton1 = new GuGuGuMusic.MButton();
             this.Btn_AddLocalMusic = new System.Windows.Forms.Button();
             this.Panel_Play = new System.Windows.Forms.Panel();
             this.Panel_PlayStatus = new System.Windows.Forms.Panel();
@@ -49,9 +52,10 @@
             this.mTrackBar_Music = new ControlDemos.MTrackBar();
             this.Panel_Tool = new System.Windows.Forms.Panel();
             this.CMS_Main = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.登陆ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.切换账号ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.退出听听鸽ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.Btn_User = new System.Windows.Forms.Button();
+            this.Btn_Login = new System.Windows.Forms.Button();
             this.Btn_Menu = new System.Windows.Forms.Button();
             this.Btn_Line = new System.Windows.Forms.Button();
             this.Btn_MinSize = new System.Windows.Forms.Button();
@@ -66,8 +70,8 @@
             this.Btn_ShowCreatedList = new System.Windows.Forms.Button();
             this.Panel_MyMusicMenuList = new System.Windows.Forms.Panel();
             this.Btn_Liked = new GuGuGuMusic.MLButton();
-            this.CMS默认歌单 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.播放ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CMS歌单 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.播放 = new System.Windows.Forms.ToolStripMenuItem();
             this.删除ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重命名ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Btn_History = new GuGuGuMusic.MLButton();
@@ -87,7 +91,8 @@
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Panel_PlayList = new System.Windows.Forms.Panel();
             this.Btn_Shut = new System.Windows.Forms.Button();
-            this.Panel_PlayingMusicLIst = new System.Windows.Forms.Panel();
+            this.Panel_PlayingMusicList = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.Lbl_Number = new System.Windows.Forms.Label();
             this.Lbl_PlayList = new System.Windows.Forms.Button();
             this.Timer_NamingList = new System.Windows.Forms.Timer(this.components);
@@ -97,10 +102,6 @@
             this.Lbl_Volume = new System.Windows.Forms.Label();
             this.mTrackBar_Volume = new ControlDemos.MTrackBar();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.CMS自定义歌单 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.播放 = new System.Windows.Forms.ToolStripMenuItem();
-            this.删除 = new System.Windows.Forms.ToolStripMenuItem();
-            this.重命名 = new System.Windows.Forms.ToolStripMenuItem();
             this.CMS歌曲 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.播放ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.添加到ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -108,8 +109,10 @@
             this.Timer_ClosePlayList = new System.Windows.Forms.Timer(this.components);
             this.Timer_PlayingMode = new System.Windows.Forms.Timer(this.components);
             this.Timer_Volume = new System.Windows.Forms.Timer(this.components);
+            this.Timer_Loading = new System.Windows.Forms.Timer(this.components);
             this.Main_Panel.SuspendLayout();
             this.Panel_Detail.SuspendLayout();
+            this.Panel_MusicList.SuspendLayout();
             this.Panel_Play.SuspendLayout();
             this.Panel_PlayStatus.SuspendLayout();
             this.Panel_Control.SuspendLayout();
@@ -119,14 +122,14 @@
             this.Panel_MenuList.SuspendLayout();
             this.Panel_CreateList.SuspendLayout();
             this.Panel_MyMusicMenuList.SuspendLayout();
-            this.CMS默认歌单.SuspendLayout();
+            this.CMS歌单.SuspendLayout();
             this.Panel_OnlineMusicMenuList.SuspendLayout();
             this.Panel_Icon.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Icon_pictureBox)).BeginInit();
             this.Panel_PlayList.SuspendLayout();
+            this.Panel_PlayingMusicList.SuspendLayout();
             this.Panel_Mode.SuspendLayout();
             this.Panel_Volume.SuspendLayout();
-            this.CMS自定义歌单.SuspendLayout();
             this.CMS歌曲.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -159,13 +162,47 @@
             // 
             // Panel_MusicList
             // 
+            this.Panel_MusicList.Controls.Add(this.button2);
+            this.Panel_MusicList.Controls.Add(this.mButton1);
             this.Panel_MusicList.Location = new System.Drawing.Point(30, 77);
             this.Panel_MusicList.Name = "Panel_MusicList";
             this.Panel_MusicList.Size = new System.Drawing.Size(640, 400);
             this.Panel_MusicList.TabIndex = 2;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(20, 95);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(319, 34);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "用于定位到  添加到事件 函数";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.添加到歌单ToolStripMenuItem_Click);
+            // 
+            // mButton1
+            // 
+            this.mButton1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.mButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.mButton1.Index = 0;
+            this.mButton1.Location = new System.Drawing.Point(20, 35);
+            music1.Album = "";
+            music1.Duration = "";
+            music1.FileURL = "";
+            music1.Name = "我的音乐";
+            music1.Singer = "我";
+            this.mButton1.M_music = music1;
+            this.mButton1.Name = "mButton1";
+            this.mButton1.Size = new System.Drawing.Size(319, 30);
+            this.mButton1.TabIndex = 0;
+            this.mButton1.TabStop = false;
+            this.mButton1.Text = "用于定位到 单机歌曲事件 函数";
+            this.mButton1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.mButton1.UseVisualStyleBackColor = true;
+            this.mButton1.Click += new System.EventHandler(this.PlayChoosedMusic);
+            // 
             // Btn_AddLocalMusic
             // 
+            this.Btn_AddLocalMusic.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_AddLocalMusic.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
             this.Btn_AddLocalMusic.FlatAppearance.BorderSize = 0;
             this.Btn_AddLocalMusic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -341,6 +378,7 @@
             // 
             // Btn_Playlist
             // 
+            this.Btn_Playlist.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_Playlist.Dock = System.Windows.Forms.DockStyle.Right;
             this.Btn_Playlist.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
             this.Btn_Playlist.FlatAppearance.BorderSize = 0;
@@ -381,7 +419,7 @@
             // 
             this.Panel_Tool.BackColor = System.Drawing.Color.WhiteSmoke;
             this.Panel_Tool.ContextMenuStrip = this.CMS_Main;
-            this.Panel_Tool.Controls.Add(this.Btn_User);
+            this.Panel_Tool.Controls.Add(this.Btn_Login);
             this.Panel_Tool.Controls.Add(this.Btn_Menu);
             this.Panel_Tool.Controls.Add(this.Btn_Line);
             this.Panel_Tool.Controls.Add(this.Btn_MinSize);
@@ -398,16 +436,26 @@
             // CMS_Main
             // 
             this.CMS_Main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.登陆ToolStripMenuItem,
             this.切换账号ToolStripMenuItem,
             this.退出听听鸽ToolStripMenuItem});
             this.CMS_Main.Name = "Icon_contextMenuStrip";
-            this.CMS_Main.Size = new System.Drawing.Size(137, 48);
+            this.CMS_Main.Size = new System.Drawing.Size(137, 70);
+            this.CMS_Main.Opening += new System.ComponentModel.CancelEventHandler(this.CMS_Main_Opening);
+            // 
+            // 登陆ToolStripMenuItem
+            // 
+            this.登陆ToolStripMenuItem.Name = "登陆ToolStripMenuItem";
+            this.登陆ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.登陆ToolStripMenuItem.Text = "登陆";
+            this.登陆ToolStripMenuItem.Click += new System.EventHandler(this.登陆ToolStripMenuItem_Click);
             // 
             // 切换账号ToolStripMenuItem
             // 
             this.切换账号ToolStripMenuItem.Name = "切换账号ToolStripMenuItem";
             this.切换账号ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.切换账号ToolStripMenuItem.Text = "切换账号";
+            this.切换账号ToolStripMenuItem.Click += new System.EventHandler(this.切换账号ToolStripMenuItem_Click);
             // 
             // 退出听听鸽ToolStripMenuItem
             // 
@@ -416,30 +464,34 @@
             this.退出听听鸽ToolStripMenuItem.Text = "退出听听鸽";
             this.退出听听鸽ToolStripMenuItem.Click += new System.EventHandler(this.退出听听鸽ToolStripMenuItem_Click);
             // 
-            // Btn_User
+            // Btn_Login
             // 
-            this.Btn_User.Dock = System.Windows.Forms.DockStyle.Right;
-            this.Btn_User.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
-            this.Btn_User.FlatAppearance.BorderSize = 0;
-            this.Btn_User.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.Btn_User.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.Btn_User.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_User.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.Btn_User.Location = new System.Drawing.Point(435, 0);
-            this.Btn_User.Name = "Btn_User";
-            this.Btn_User.Size = new System.Drawing.Size(135, 60);
-            this.Btn_User.TabIndex = 5;
-            this.Btn_User.TabStop = false;
-            this.Btn_User.Text = "登陆";
-            this.Btn_User.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.Btn_User.UseVisualStyleBackColor = true;
-            this.Btn_User.Click += new System.EventHandler(this.Btn_User_Click);
+            this.Btn_Login.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Btn_Login.Dock = System.Windows.Forms.DockStyle.Right;
+            this.Btn_Login.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
+            this.Btn_Login.FlatAppearance.BorderSize = 0;
+            this.Btn_Login.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_Login.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_Login.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Login.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Btn_Login.Location = new System.Drawing.Point(435, 0);
+            this.Btn_Login.Name = "Btn_Login";
+            this.Btn_Login.Size = new System.Drawing.Size(135, 60);
+            this.Btn_Login.TabIndex = 5;
+            this.Btn_Login.TabStop = false;
+            this.Btn_Login.Text = "登陆";
+            this.Btn_Login.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Btn_Login.UseVisualStyleBackColor = true;
+            this.Btn_Login.Click += new System.EventHandler(this.Btn_Login_Click);
             // 
             // Btn_Menu
             // 
+            this.Btn_Menu.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_Menu.Dock = System.Windows.Forms.DockStyle.Right;
             this.Btn_Menu.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
             this.Btn_Menu.FlatAppearance.BorderSize = 0;
+            this.Btn_Menu.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_Menu.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.Btn_Menu.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_Menu.Location = new System.Drawing.Point(570, 0);
             this.Btn_Menu.Name = "Btn_Menu";
@@ -467,6 +519,7 @@
             // 
             // Btn_MinSize
             // 
+            this.Btn_MinSize.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_MinSize.Dock = System.Windows.Forms.DockStyle.Right;
             this.Btn_MinSize.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
             this.Btn_MinSize.FlatAppearance.BorderSize = 0;
@@ -485,6 +538,7 @@
             // 
             // Btn_MaxSize
             // 
+            this.Btn_MaxSize.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_MaxSize.Dock = System.Windows.Forms.DockStyle.Right;
             this.Btn_MaxSize.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
             this.Btn_MaxSize.FlatAppearance.BorderSize = 0;
@@ -503,6 +557,7 @@
             // 
             // Btn_Close
             // 
+            this.Btn_Close.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_Close.Dock = System.Windows.Forms.DockStyle.Right;
             this.Btn_Close.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
             this.Btn_Close.FlatAppearance.BorderSize = 0;
@@ -640,7 +695,8 @@
             // 
             // Btn_Liked
             // 
-            this.Btn_Liked.ContextMenuStrip = this.CMS默认歌单;
+            this.Btn_Liked.ContextMenuStrip = this.CMS歌单;
+            this.Btn_Liked.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_Liked.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.Btn_Liked.FlatAppearance.BorderSize = 0;
             this.Btn_Liked.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
@@ -658,40 +714,42 @@
             this.Btn_Liked.Visible = false;
             this.Btn_Liked.Click += new System.EventHandler(this.Btn_Liked_Click);
             // 
-            // CMS默认歌单
+            // CMS歌单
             // 
-            this.CMS默认歌单.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.播放ToolStripMenuItem,
+            this.CMS歌单.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.播放,
             this.删除ToolStripMenuItem,
             this.重命名ToolStripMenuItem});
-            this.CMS默认歌单.Name = "Icon_contextMenuStrip";
-            this.CMS默认歌单.Size = new System.Drawing.Size(113, 70);
-            this.CMS默认歌单.Opening += new System.ComponentModel.CancelEventHandler(this.CMS默认歌单_Opening);
+            this.CMS歌单.Name = "Icon_contextMenuStrip";
+            this.CMS歌单.Size = new System.Drawing.Size(113, 70);
+            this.CMS歌单.Opening += new System.ComponentModel.CancelEventHandler(this.CMS歌单_Opening);
             // 
-            // 播放ToolStripMenuItem
+            // 播放
             // 
-            this.播放ToolStripMenuItem.Name = "播放ToolStripMenuItem";
-            this.播放ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
-            this.播放ToolStripMenuItem.Text = "播放";
-            this.播放ToolStripMenuItem.Click += new System.EventHandler(this.播放ToolStripMenuItem_Click);
+            this.播放.Name = "播放";
+            this.播放.Size = new System.Drawing.Size(112, 22);
+            this.播放.Text = "播放";
+            this.播放.Click += new System.EventHandler(this.播放ToolStripMenuItem_Click);
             // 
             // 删除ToolStripMenuItem
             // 
-            this.删除ToolStripMenuItem.Enabled = false;
             this.删除ToolStripMenuItem.Name = "删除ToolStripMenuItem";
             this.删除ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.删除ToolStripMenuItem.Text = "删除";
+            this.删除ToolStripMenuItem.Click += new System.EventHandler(this.删除_Click);
             // 
             // 重命名ToolStripMenuItem
             // 
-            this.重命名ToolStripMenuItem.Enabled = false;
             this.重命名ToolStripMenuItem.Name = "重命名ToolStripMenuItem";
             this.重命名ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.重命名ToolStripMenuItem.Text = "重命名";
+            this.重命名ToolStripMenuItem.Click += new System.EventHandler(this.重命名_Click);
             // 
             // Btn_History
             // 
-            this.Btn_History.ContextMenuStrip = this.CMS默认歌单;
+            this.Btn_History.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Btn_History.ContextMenuStrip = this.CMS歌单;
+            this.Btn_History.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_History.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.Btn_History.FlatAppearance.BorderSize = 0;
             this.Btn_History.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
@@ -705,13 +763,15 @@
             this.Btn_History.Text = "            播放历史";
             this.Btn_History.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.Btn_History.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.Btn_History.UseVisualStyleBackColor = true;
+            this.Btn_History.UseVisualStyleBackColor = false;
+            this.Btn_History.Visible = false;
             this.Btn_History.Click += new System.EventHandler(this.Btn_History_Click);
             // 
             // Btn_Local
             // 
             this.Btn_Local.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.Btn_Local.ContextMenuStrip = this.CMS默认歌单;
+            this.Btn_Local.ContextMenuStrip = this.CMS歌单;
+            this.Btn_Local.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_Local.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.Btn_Local.FlatAppearance.BorderSize = 0;
             this.Btn_Local.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
@@ -754,7 +814,8 @@
             // 
             // Btn_PopMusic
             // 
-            this.Btn_PopMusic.ContextMenuStrip = this.CMS默认歌单;
+            this.Btn_PopMusic.ContextMenuStrip = this.CMS歌单;
+            this.Btn_PopMusic.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_PopMusic.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.Btn_PopMusic.FlatAppearance.BorderSize = 0;
             this.Btn_PopMusic.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
@@ -890,7 +951,7 @@
             // 
             this.Panel_PlayList.BackColor = System.Drawing.Color.White;
             this.Panel_PlayList.Controls.Add(this.Btn_Shut);
-            this.Panel_PlayList.Controls.Add(this.Panel_PlayingMusicLIst);
+            this.Panel_PlayList.Controls.Add(this.Panel_PlayingMusicList);
             this.Panel_PlayList.Controls.Add(this.Lbl_Number);
             this.Panel_PlayList.Controls.Add(this.Lbl_PlayList);
             this.Panel_PlayList.Location = new System.Drawing.Point(608, 0);
@@ -900,6 +961,7 @@
             // 
             // Btn_Shut
             // 
+            this.Btn_Shut.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Btn_Shut.FlatAppearance.BorderSize = 0;
             this.Btn_Shut.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_Shut.Font = new System.Drawing.Font("宋体", 20F);
@@ -911,14 +973,25 @@
             this.Btn_Shut.UseVisualStyleBackColor = true;
             this.Btn_Shut.Click += new System.EventHandler(this.Btn_Shut_Click);
             // 
-            // Panel_PlayingMusicLIst
+            // Panel_PlayingMusicList
             // 
-            this.Panel_PlayingMusicLIst.AutoScroll = true;
-            this.Panel_PlayingMusicLIst.Location = new System.Drawing.Point(0, 68);
-            this.Panel_PlayingMusicLIst.MinimumSize = new System.Drawing.Size(300, 512);
-            this.Panel_PlayingMusicLIst.Name = "Panel_PlayingMusicLIst";
-            this.Panel_PlayingMusicLIst.Size = new System.Drawing.Size(300, 512);
-            this.Panel_PlayingMusicLIst.TabIndex = 8;
+            this.Panel_PlayingMusicList.AutoScroll = true;
+            this.Panel_PlayingMusicList.Controls.Add(this.button1);
+            this.Panel_PlayingMusicList.Location = new System.Drawing.Point(0, 68);
+            this.Panel_PlayingMusicList.MinimumSize = new System.Drawing.Size(300, 512);
+            this.Panel_PlayingMusicList.Name = "Panel_PlayingMusicList";
+            this.Panel_PlayingMusicList.Size = new System.Drawing.Size(300, 512);
+            this.Panel_PlayingMusicList.TabIndex = 8;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(17, 38);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.PlayChoosedMusic2);
             // 
             // Lbl_Number
             // 
@@ -1015,37 +1088,6 @@
             this.toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem2.Text = "退出听听鸽";
             // 
-            // CMS自定义歌单
-            // 
-            this.CMS自定义歌单.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.播放,
-            this.删除,
-            this.重命名});
-            this.CMS自定义歌单.Name = "Icon_contextMenuStrip";
-            this.CMS自定义歌单.Size = new System.Drawing.Size(113, 70);
-            this.CMS自定义歌单.Opening += new System.ComponentModel.CancelEventHandler(this.CMS自定义歌单_Opening);
-            // 
-            // 播放
-            // 
-            this.播放.Name = "播放";
-            this.播放.Size = new System.Drawing.Size(112, 22);
-            this.播放.Text = "播放";
-            this.播放.Click += new System.EventHandler(this.播放ToolStripMenuItem_Click);
-            // 
-            // 删除
-            // 
-            this.删除.Name = "删除";
-            this.删除.Size = new System.Drawing.Size(112, 22);
-            this.删除.Text = "删除";
-            this.删除.Click += new System.EventHandler(this.删除_Click);
-            // 
-            // 重命名
-            // 
-            this.重命名.Name = "重命名";
-            this.重命名.Size = new System.Drawing.Size(112, 22);
-            this.重命名.Text = "重命名";
-            this.重命名.Click += new System.EventHandler(this.重命名_Click);
-            // 
             // CMS歌曲
             // 
             this.CMS歌曲.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1074,6 +1116,7 @@
             this.移除ToolStripMenuItem.Name = "移除ToolStripMenuItem";
             this.移除ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.移除ToolStripMenuItem.Text = "移除";
+            this.移除ToolStripMenuItem.Click += new System.EventHandler(this.移除ToolStripMenuItem_Click);
             // 
             // Timer_ClosePlayList
             // 
@@ -1090,16 +1133,20 @@
             this.Timer_Volume.Interval = 10;
             this.Timer_Volume.Tick += new System.EventHandler(this.Timer_Volume_Tick);
             // 
+            // Timer_Loading
+            // 
+            this.Timer_Loading.Tick += new System.EventHandler(this.Timer_Loading_Tick);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.ClientSize = new System.Drawing.Size(908, 648);
-            this.Controls.Add(this.Panel_PlayList);
             this.Controls.Add(this.Panel_Volume);
             this.Controls.Add(this.Panel_Mode);
             this.Controls.Add(this.Main_Panel);
+            this.Controls.Add(this.Panel_PlayList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(908, 648);
@@ -1109,6 +1156,7 @@
             this.Resize += new System.EventHandler(this.Main_Resize);
             this.Main_Panel.ResumeLayout(false);
             this.Panel_Detail.ResumeLayout(false);
+            this.Panel_MusicList.ResumeLayout(false);
             this.Panel_Play.ResumeLayout(false);
             this.Panel_PlayStatus.ResumeLayout(false);
             this.Panel_Control.ResumeLayout(false);
@@ -1119,14 +1167,14 @@
             this.Panel_MenuList.PerformLayout();
             this.Panel_CreateList.ResumeLayout(false);
             this.Panel_MyMusicMenuList.ResumeLayout(false);
-            this.CMS默认歌单.ResumeLayout(false);
+            this.CMS歌单.ResumeLayout(false);
             this.Panel_OnlineMusicMenuList.ResumeLayout(false);
             this.Panel_Icon.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Icon_pictureBox)).EndInit();
             this.Panel_PlayList.ResumeLayout(false);
+            this.Panel_PlayingMusicList.ResumeLayout(false);
             this.Panel_Mode.ResumeLayout(false);
             this.Panel_Volume.ResumeLayout(false);
-            this.CMS自定义歌单.ResumeLayout(false);
             this.CMS歌曲.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -1157,7 +1205,7 @@
         private System.Windows.Forms.Button Btn_MusicName;
         private System.Windows.Forms.Button Btn_MusicPic;
         private System.Windows.Forms.Button Btn_Process;
-        private System.Windows.Forms.Button Btn_User;
+        private System.Windows.Forms.Button Btn_Login;
         private System.Windows.Forms.Button Btn_Menu;
         private System.Windows.Forms.Button Btn_Line;
         private System.Windows.Forms.Button Btn_MinSize;
@@ -1183,7 +1231,7 @@
         private System.Windows.Forms.Panel Panel_PlayList;
         private System.Windows.Forms.Button Lbl_PlayList;
         private System.Windows.Forms.Label Lbl_Number;
-        private System.Windows.Forms.Panel Panel_PlayingMusicLIst;
+        private System.Windows.Forms.Panel Panel_PlayingMusicList;
         private System.Windows.Forms.Button Btn_Shut;
         private System.Windows.Forms.Timer Timer_NamingList;
         private MLButton Btn_Liked;
@@ -1196,15 +1244,11 @@
         private System.Windows.Forms.Panel Panel_Volume;
         private ControlDemos.MTrackBar mTrackBar_Volume;
         private System.Windows.Forms.Label Lbl_Volume;
-        private System.Windows.Forms.ContextMenuStrip CMS默认歌单;
-        private System.Windows.Forms.ToolStripMenuItem 播放ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ContextMenuStrip CMS歌单;
+        private System.Windows.Forms.ToolStripMenuItem 播放;
         private System.Windows.Forms.ToolStripMenuItem 删除ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 重命名ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
-        private System.Windows.Forms.ContextMenuStrip CMS自定义歌单;
-        private System.Windows.Forms.ToolStripMenuItem 播放;
-        private System.Windows.Forms.ToolStripMenuItem 删除;
-        private System.Windows.Forms.ToolStripMenuItem 重命名;
         private System.Windows.Forms.ContextMenuStrip CMS歌曲;
         private System.Windows.Forms.Timer Timer_ClosePlayList;
         private System.Windows.Forms.Timer Timer_PlayingMode;
@@ -1212,6 +1256,11 @@
         private System.Windows.Forms.ToolStripMenuItem 播放ToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem 添加到ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 移除ToolStripMenuItem;
+        private System.Windows.Forms.Timer Timer_Loading;
+        private MButton mButton1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ToolStripMenuItem 登陆ToolStripMenuItem;
     }
 }
 

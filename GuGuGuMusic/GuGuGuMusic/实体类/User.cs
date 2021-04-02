@@ -13,34 +13,24 @@ namespace GuGuGuMusic
         {
 
         }
-        
-        private string user_id = "";
+
+        public User(string userid)
+        {
+            User_Id = userid;
+        }
+
         /// <summary>
         /// 用户名
         /// </summary>
-        public string User_Id
-        {
-            get { return user_id; }
-            set
-            {
-                user_id = value;
-            }
-        }
+        public string User_Id { get; set; } = "";
 
-        private string password = "";
         /// <summary>
         /// 用户密码
         /// </summary>
-        public string Password
-        {
-            get { return password; }
-            set
-            {
-                password = value;
-            }
-        }
+        public string Password { get; set; } = "";
 
         private string _ImageURL = "";
+
         /// <summary>
         /// 用户头像图片地址
         /// </summary>

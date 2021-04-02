@@ -14,9 +14,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WMPLib;
 
+/*
+ * 2
+ */
 namespace GuGuGuMusic
 {
-
     public partial class Main : Form
     {
         #region 无边框
@@ -38,7 +40,7 @@ namespace GuGuGuMusic
         [DllImport("dwmapi.dll")]
         public static extern int DwmIsCompositionEnabled(ref int pfEnabled);
 
-        private bool m_aeroEnabled;                     // variables for box shadow
+        private bool m_aeroEnabled = true;                     // variables for box shadow
         private const int CS_DROPSHADOW = 0x00020000;
         private const int WM_NCPAINT = 0x0085;
         private const int WM_ACTIVATEAPP = 0x001C;
@@ -59,12 +61,8 @@ namespace GuGuGuMusic
         {
             get
             {
-                m_aeroEnabled = CheckAeroEnabled();
-
                 CreateParams cp = base.CreateParams;
-                if (!m_aeroEnabled)
-                    cp.ClassStyle |= CS_DROPSHADOW;
-
+                cp.ExStyle |= 0x02000000;
                 return cp;
             }
         }
@@ -165,52 +163,50 @@ namespace GuGuGuMusic
 
         public Main()
         {
-            m_aeroEnabled = false;
             InitializeComponent();
             //设置双缓冲减少屏幕闪烁
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            
+
             //添加第三方控件AxWindowsMediaPlayer，实例化
             ((System.ComponentModel.ISupportInitialize)(this.AWMP)).BeginInit();
             this.Controls.Add(AWMP);
             ((System.ComponentModel.ISupportInitialize)(this.AWMP)).EndInit();
 
-            
-            //设置默认音乐列表为本地与下载
-            ChoosedMLButton = Btn_Local;
-
             //初始化音乐app(数据初始化
             myMusicApp = new MyMusicApp();
+
+            //设置默认音乐列表为本地与下载
+            ChoosedMLButton = Btn_Local;
 
             //初始化界面的音乐列表，显示本地与下载列表中的音乐文件
             Btn_PopMusic.MusicList = myMusicApp.PopMusicList;
             Btn_History.MusicList = myMusicApp.HistoryMusicList;
-
             Btn_Local.MusicList = myMusicApp.LocalMusicList;
             Btn_Liked.MusicList = myMusicApp.LikedMusicList;           
-            ShowList(myMusicApp.LocalMusicList.Musics);
-
-            AllMusicList.Add(Btn_Liked.MusicList.ListName);
-
-            //初始化自定义歌单
-            InitCreatedList();
+            ShowList(Btn_Local.MusicList.Musics);
 
             //初始化播放器
             InitAWMP(myMusicApp.PlayingMusicList, myMusicApp.PlayingMusicList.StartIndex);
             AWMP.settings.setMode("loop", true);//设置为循环播放
             AWMP.settings.volume = 100;
 
-            if (true)
-            {
-                Panel_CreateList.Show();
-            }
+            base.Opacity = 0;
+            Timer_Loading.Start();
         }
 
         /// <summary>
-        /// 记录所有歌单
+        /// 自定义歌单自动命名
         /// </summary>
-        public List<string> AllMusicList = new List<string>();
+        public Dictionary<string, int> AutoName = new Dictionary<string, int>();
+
+        public enum OperateList
+        {
+            Create,
+            Delete,
+            Rename,
+        }
+        public OperateList Operation = OperateList.Create;
 
         /// <summary>
         /// 音乐app，所有对数据的操作、事务逻辑都由其实现
@@ -244,15 +240,22 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_AddLocalMusic_Click(object sender, EventArgs e)
         {
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            try
             {
-                mTrackBar_Music.M_Value = 0;
-                Music music = new Music().InitMusic(openFileDialog.FileName);
-                myMusicApp.LocalMusicList.Add(music);
-                Btn_Local.MusicList = myMusicApp.LocalMusicList;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    mTrackBar_Music.M_Value = 0;
+                    Music music = new Music().InitMusic(openFileDialog.FileName);
+                    myMusicApp.LocalMusicList.Add(music);
+                    Btn_Local.MusicList = myMusicApp.LocalMusicList;
 
-                myMusicApp.UpdateMusicList(myMusicApp.LocalMusicList);
-                ShowList(myMusicApp.LocalMusicList.Musics);
+                    myMusicApp.UpdateMusicList(myMusicApp.LocalMusicList);
+                    ShowList(myMusicApp.LocalMusicList.Musics);
+                }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2001:" + ce.Message);
             }
         }
 
@@ -299,8 +302,15 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_Close_Click(object sender, EventArgs e)
         {
-            this.Hide();
-            SetVisibleCore(false);
+            try
+            {
+                this.Hide();
+                SetVisibleCore(false);
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2002:" + ce.Message);
+            }
         }
 
         /// <summary>
@@ -310,16 +320,24 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_MaxSize_Click(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Normal)
+            try
             {
-                this.WindowState = FormWindowState.Maximized;
-                toolTip.SetToolTip(Btn_MaxSize, "还原");
+                if (this.WindowState == FormWindowState.Normal)
+                {
+                    this.WindowState = FormWindowState.Maximized;
+                    toolTip.SetToolTip(Btn_MaxSize, "还原");
+                }
+                else
+                {
+                    this.WindowState = FormWindowState.Normal;
+                    toolTip.SetToolTip(Btn_MaxSize, "最大化");
+                }
             }
-            else
+            catch (Exception ce)
             {
-                this.WindowState = FormWindowState.Normal;
-                toolTip.SetToolTip(Btn_MaxSize, "最大化");
+                Console.WriteLine("2003:" + ce.Message);
             }
+
         }
 
         /// <summary>
@@ -329,7 +347,15 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_MinSize_Click(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Minimized;
+            try
+            {
+                this.WindowState = FormWindowState.Minimized;
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2004:" + ce.Message);
+            }
+            
         }
 
         /// <summary>
@@ -339,9 +365,17 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_Menu_Click(object sender, EventArgs e)
         {
-            Point p = new Point(0, 0);
-            p = Btn_Menu.PointToScreen(p);
-            CMS_Main.Show(p.X - CMS_Main.Width / 2, p.Y + Btn_Menu.Height);
+            try
+            {
+                Point p = new Point(0, 0);
+                p = Btn_Menu.PointToScreen(p);
+                CMS_Main.Show(p.X - CMS_Main.Width / 2, p.Y + Btn_Menu.Height);
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2005:" + ce.Message);
+            }
+
         }
 
         #endregion
@@ -356,18 +390,26 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void notifyIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Left)
+            try
             {
-                if (this.Visible)
+                if (e.Button == MouseButtons.Left)
                 {
-                    this.Hide();
-                }
-                else
-                {
-                    this.BringToFront();
-                    this.Show();
+                    if (this.Visible)
+                    {
+                        this.Hide();
+                    }
+                    else
+                    {
+                        this.BringToFront();
+                        this.Show();
+                    }
                 }
             }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2006:" + ce.Message);
+            }
+
         }
         
         private void 退出听听鸽ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -389,7 +431,7 @@ namespace GuGuGuMusic
         {
             try
             {
-                if (musicList != null && musicList.Musics != null)
+                if (musicList != null && musicList.Musics.Count() != 0)
                 {
                     IWMPPlaylist playList = AWMP.playlistCollection.newPlaylist("MyPlayList");
                     IWMPMedia media = AWMP.newMedia(musicList.Musics[index].FileURL);
@@ -410,7 +452,7 @@ namespace GuGuGuMusic
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.Message+"初始化AWMP播放列表失败");
+                Console.WriteLine("2007:"+e.Message);
             }            
         }
 
@@ -434,7 +476,7 @@ namespace GuGuGuMusic
                 Panel_Mode.Visible = Panel_Mode.Visible == true ? false : true;                
             }catch(Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2008:"+ce.Message);
             }
         }
 
@@ -461,7 +503,7 @@ namespace GuGuGuMusic
             }
             catch(Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2009:"+ce.Message);
             }
         }
 
@@ -478,7 +520,7 @@ namespace GuGuGuMusic
             }
             catch(Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2010:"+ce.Message);
             }
         }
         /// <summary>
@@ -496,7 +538,7 @@ namespace GuGuGuMusic
                 }
             }catch(Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2011:"+ce.Message);
             }
         }
 
@@ -528,7 +570,7 @@ namespace GuGuGuMusic
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message + "\n音乐播放失败");
+                Console.WriteLine("2012:"+ex.Message);
             }
         }
 
@@ -552,7 +594,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + "\n音乐播放失败");
+                Console.WriteLine("2013:"+ex.Message);
             }
         }
 
@@ -576,7 +618,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + "\n音乐播放失败");
+                Console.WriteLine("2014:"+ex.Message);
             }
         }
 
@@ -605,7 +647,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2058:"+ce.Message);
             }
         }
 
@@ -627,7 +669,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2015:"+ce.Message);
             }
 
         }
@@ -639,7 +681,14 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void mTrackBar_MouseDown(object sender, EventArgs e)
         {
-            Timer_Music.Stop();
+            try
+            {
+                Timer_Music.Stop();
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2016:" + ce.Message);
+            }
         }
 
         /// <summary>
@@ -667,7 +716,7 @@ namespace GuGuGuMusic
             }
             catch(Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2017:"+ce.Message);
             }
         }
 
@@ -701,7 +750,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message + "单曲循环失败");
+                Console.WriteLine("2018:"+ce.Message);
             }
         }
 
@@ -754,7 +803,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message + "列表循环失败");
+                Console.WriteLine("2019:"+ce.Message);
             }
         }
 
@@ -807,7 +856,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message + "顺序播放失败");
+                Console.WriteLine("2020:"+ce.Message);
             }
         }
 
@@ -852,7 +901,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message + "随机播放失败");
+                Console.WriteLine("2021:"+ce.Message);
             }
         }
 
@@ -871,7 +920,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2022:"+ce.Message);
             }
         }
 
@@ -889,21 +938,19 @@ namespace GuGuGuMusic
             {
                 Panel_MusicList.Controls.Clear();
                 int i = 0;
-                if(Musics != null)
+                if(Musics.Count() != 0)
                 {
                     foreach (Music music in Musics)
                     {
                         MButton b = new MButton()
                         {
-                            FlatStyle = FlatStyle.Flat,
                             Size = new System.Drawing.Size(Panel_MusicList.Width, 30),
-                            TabStop = false,
                             BackColor = Color.Transparent,
                             M_music = music,
                             Index = i,
                             ContextMenuStrip = CMS歌曲,
-                            TextAlign = ContentAlignment.MiddleLeft
                         };
+                        b.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
                         b.DoubleClick += new EventHandler(PlayChoosedMusic);
                         b.Location = new Point(0, b.Height * i);
                         b.Text = music.Name;
@@ -916,7 +963,7 @@ namespace GuGuGuMusic
 
             }catch(Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("2023:"+e.Message);
             }
         }
 
@@ -944,7 +991,7 @@ namespace GuGuGuMusic
             }
             catch(Exception ce)
             {
-                Console.WriteLine(ce.Message+"音乐播放失败");
+                Console.WriteLine("2024:"+ce.Message);
             }
         }
         #endregion
@@ -956,10 +1003,6 @@ namespace GuGuGuMusic
         /// 正在创建的列表
         /// </summary>
         private MLButton CreatingBtn = new MLButton();
-        /// <summary>
-        /// 正在创建的列表名
-        /// </summary>
-        private string MLB_Name = "";
 
         /// <summary>
         /// 创建歌单按钮Click事件
@@ -970,63 +1013,58 @@ namespace GuGuGuMusic
         {
             try
             {
-                MLButton button = new MLButton()
+                if (Btn_Spread.Text == "↑")
                 {
-                    FlatStyle = System.Windows.Forms.FlatStyle.Flat,
-                    Font = new System.Drawing.Font("微軟正黑體 Light", 10F),
-                    Margin = new System.Windows.Forms.Padding(0),
-                    Size = new Size(160, 30),
-                    TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
-                    ContextMenuStrip = CMS自定义歌单,
-                };
-                button.Click += new EventHandler(CreatedListBtn_Click);
-                button.FlatAppearance.BorderSize = 0;
-
-                int newindex = 1;
-                int[] AllIndex = new int[Panel_CreatedList.Controls.Count];
-                int j = 0;
-                foreach (Control control in Panel_CreatedList.Controls)
-                {
-                    control.Location = new Point(20, control.Location.Y + button.Height);
-                    MLButton mLButton = (MLButton)control;
-                    if (mLButton.Text.ToString() == "            新建歌单" + mLButton.index) 
-                    {
-                        AllIndex[j++] = mLButton.index;
-                    }
-                    newindex++;
+                    Btn_Spread.Text = "↓";
+                    Panel_CreatedList.Show();
                 }
-                for(int i = 0; i < AllIndex.Count(); i++)
-                {
-                    if (!AllIndex.Contains(i+1))
+                Operation = OperateList.Create;
+                if(myMusicApp.CanCreateMusicList()){
+                    MLButton button = new MLButton()
                     {
-                        newindex = i + 1;
-                        break;
+                        ContextMenuStrip = CMS歌单,
+                        Enabled = false,
+                        Location = new Point(20, 0),
+                    };
+                    int newindex = MyMusicApp.ListLimits;
+                    string autoname = "新建歌单" + newindex;
+                    foreach(KeyValuePair<string,int> keyValuePair in AutoName)
+                    {
+                        int tmp = keyValuePair.Value;
+                        if (tmp > 0 && tmp < newindex) 
+                        {
+                            newindex = tmp;
+                            autoname = keyValuePair.Key;
+                        }
                     }
+                    button.MusicList = new MusicList(autoname, myMusicApp.user.User_Id);
+                    button.Click += new EventHandler(CreatedListBtn_Click);
+                    button.FlatAppearance.BorderSize = 0;
+                    CreatingBtn = button;
+                    foreach(MLButton mLButton in Panel_CreatedList.Controls)
+                    {
+                        mLButton.Location = new Point(mLButton.Location.X, mLButton.Location.Y + mLButton.Height);
+                    }
+                    Panel_CreatedList.Controls.Add(button);
+                    TextBox textBox = new TextBox()
+                    {
+                        Text = autoname,
+                        Location = new Point(20, 0),
+                        Font = new System.Drawing.Font("微軟正黑體 Light", 11F),
+                        Size = new Size(160, 30),
+                        TextAlign = HorizontalAlignment.Center,
+                    };
+                    textBox.LostFocus += new EventHandler(CreatedListBtnNamed_LostFocus);
+                    Panel_CreatedList.Controls.Add(textBox);
+                    textBox.Show();
+                    textBox.BringToFront();
+                    textBox.Focus();
+                    Timer_NamingList.Start();
                 }
-                button.index = newindex;
 
-                button.Location = new Point(20, 0);
-                button.Enabled = false;
-                CreatingBtn = button;
-                Panel_CreatedList.Controls.Add(button);
-                TextBox textBox = new TextBox()
-                {
-                    Text = "新建歌单" + button.index,
-                    Location = new Point(20, 0),
-                    Font = new System.Drawing.Font("微軟正黑體 Light", 11F),
-                    Size = new Size(160, 30),
-                    TextAlign = HorizontalAlignment.Center,
-                };
-                
-                textBox.LostFocus += new EventHandler(CreatedListBtnNamed_LostFocus);//当lostfocus时表面命名结束，生成/更新button
-                Panel_CreatedList.Controls.Add(textBox);
-                textBox.Show();
-                textBox.BringToFront();
-                textBox.Focus();
-                Timer_NamingList.Start();
             }catch(Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2025:"+ce.Message);
             }
 
         }
@@ -1038,8 +1076,14 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void CreatedList_OnMouseHover(object sender, EventArgs e)
         {
-            Button button = (Button)sender;
-            button.ForeColor = System.Drawing.SystemColors.ControlText;
+            try
+            {
+                Button button = (Button)sender;
+                button.ForeColor = System.Drawing.SystemColors.ControlText;
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2026:"+ce.Message);
+            }
         }
 
         /// <summary>
@@ -1049,8 +1093,14 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void CreatedList_OnMouseLeave(object sender, EventArgs e)
         {
-            Button button = (Button)sender;
-            button.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            try
+            {
+                Button button = (Button)sender;
+                button.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2027:" + ce.Message);
+            }
         }
 
         /// <summary>
@@ -1060,15 +1110,53 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void CreatedListBtnNamed_LostFocus(object sender,EventArgs e)
         {
-            TextBox textBox = (TextBox)sender;
-            MLB_Name = "            "+textBox.Text.ToString().Replace(" ","");
-            CreatingBtn.Text = MLB_Name;
-            CreatingBtn.MusicList.ListName = MLB_Name.Replace(" ", "");
-            CreatingBtn.Enabled = true;
-            Panel_CreatedList.Controls.Remove(textBox);
-            Timer_NamingList.Dispose();
-            CreatingBtn.Show();
-            ResetChoosedMLButton(ChoosedMLButton);
+            try
+            {
+                TextBox textBox = (TextBox)sender;
+                string oldListName = CreatingBtn.MusicList.ListName;
+                switch (Operation)
+                {
+                    case OperateList.Create:
+                        myMusicApp.CreateMusicList(CreatingBtn.MusicList);
+                        if (AutoName.ContainsKey(CreatingBtn.MusicList.ListName))
+                        {
+                            AutoName[CreatingBtn.MusicList.ListName] = -AutoName[CreatingBtn.MusicList.ListName];
+                        }
+                        break;
+                    case OperateList.Rename:
+                        bool exist = false;
+                        foreach(string listname in myMusicApp.CreatedMusicList.Keys)
+                        {
+                            if(listname == textBox.Text.ToString())
+                            {
+                                exist = true;
+                            }
+                        }
+                        if (!exist)
+                        {
+                            myMusicApp.UpdateMusicList(CreatingBtn.MusicList, textBox.Text.ToString());
+                            if (AutoName.ContainsKey(oldListName))
+                            {
+                                AutoName[oldListName] = -AutoName[oldListName];
+                            }
+                            if (AutoName.ContainsKey(CreatingBtn.MusicList.ListName))
+                            {
+                                AutoName[CreatingBtn.MusicList.ListName] = -AutoName[CreatingBtn.MusicList.ListName];
+                            }
+                        }
+                        break;
+                }
+                CreatingBtn.Text = "            "+CreatingBtn.MusicList.ListName;
+                CreatingBtn.Enabled = true;
+                Panel_CreatedList.Controls.Remove(textBox);
+                Timer_NamingList.Dispose();
+                CreatingBtn.Show();
+                ResetChoosedMLButton(ChoosedMLButton);
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2028:"+ce.Message);
+            }
+            
         }
 
 
@@ -1079,9 +1167,15 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void CreatedListBtn_Click(object sender, EventArgs e)
         {
-            ResetChoosedMLButton(sender);
-            MLButton button = (MLButton)sender;
-            ShowList(button.MusicList.Musics);
+            try
+            {
+                ResetChoosedMLButton(sender);
+                ShowList(ChoosedMLButton.MusicList.Musics);
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2029:" + ce.Message);
+            }
+
         }
 
         /// <summary>
@@ -1091,13 +1185,21 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Timer_NamingList_Tick(object sender, EventArgs e)
         {
-            if (MouseButtons == MouseButtons.Left || MouseButtons == MouseButtons.Right)
+            try
             {
-                if (!InBox(new Size(160,30),new Point(20 +this.Left + Main_Panel.Left + Panel_MenuList.Left + Panel_CreatedList.Left + Panel_Nav.Left, CreatingBtn.Location.Y + this.Top + Main_Panel.Top + Panel_MenuList.Top + Panel_CreatedList.Top +  Panel_Nav.Top)))
+                if (MouseButtons == MouseButtons.Left || MouseButtons == MouseButtons.Right)
                 {
-                    this.Focus();
+                    if (!InBox(new Size(160,30),new Point(20 +this.Left + Main_Panel.Left + Panel_MenuList.Left + Panel_CreatedList.Left + Panel_Nav.Left, CreatingBtn.Location.Y + this.Top + Main_Panel.Top + Panel_MenuList.Top + Panel_CreatedList.Top +  Panel_Nav.Top)))
+                    {
+                        this.Focus();
+                    }
                 }
             }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2030:" + ce.Message);
+            }
+
         }
 
         /// <summary>
@@ -1108,13 +1210,22 @@ namespace GuGuGuMusic
         /// <returns></returns>
         private bool InBox(Size size,Point point)
         {
-            int x = MousePosition.X;
-            int y = MousePosition.Y;
-            if (x < point.X || x > point.X+size.Width || y < point.Y || y > point.Y+size.Height) 
+            try
             {
+                int x = MousePosition.X;
+                int y = MousePosition.Y;
+                if (x < point.X || x > point.X+size.Width || y < point.Y || y > point.Y+size.Height) 
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2031:" + ce.Message);
                 return false;
             }
-            return true;
+
         }
 
         /// <summary>
@@ -1124,15 +1235,21 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_Spread_Click(object sender, EventArgs e)
         {
-            if (Btn_Spread.Text == "↑")
+            try
             {
-                Btn_Spread.Text = "↓";
-                Panel_CreatedList.Show();
-            }
-            else
+                if (Btn_Spread.Text == "↑")
+                {
+                    Btn_Spread.Text = "↓";
+                    Panel_CreatedList.Show();
+                }
+                else
+                {
+                    Btn_Spread.Text = "↑";
+                    Panel_CreatedList.Hide();
+                }
+            }catch(Exception ce)
             {
-                Btn_Spread.Text = "↑";
-                Panel_CreatedList.Hide();
+                Console.WriteLine("2032:"+ce.Message);
             }
         }
         #endregion
@@ -1161,7 +1278,7 @@ namespace GuGuGuMusic
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("2033:"+e.Message);
             }
         }
         /// <summary>
@@ -1172,16 +1289,11 @@ namespace GuGuGuMusic
         {
             try
             {
-                MButton oldChoosedMButton = (MButton)ChoosedMButton;
-                oldChoosedMButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-
-                MButton newChoosedMButton = (MButton)sender;
-                newChoosedMButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
                 ChoosedMButton = (MButton)sender;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("2034:"+e.Message);
             }
         }
 
@@ -1193,10 +1305,18 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_Local_Click(object sender, EventArgs e)
         {
-            Btn_AddLocalMusic.BringToFront();
-            Btn_AddLocalMusic.Show();
-            ResetChoosedMLButton(sender);
-            ShowList(myMusicApp.LocalMusicList.Musics);
+            try
+            {
+                Btn_AddLocalMusic.BringToFront();
+                Btn_AddLocalMusic.Show();
+                ResetChoosedMLButton(sender);
+                ShowList(myMusicApp.LocalMusicList.Musics);
+
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2035:" + ce.Message);
+            }
         }
 
         /// <summary>
@@ -1206,8 +1326,16 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_History_Click(object sender, EventArgs e)
         {
-            ResetChoosedMLButton(sender);
-            ShowList(myMusicApp.HistoryMusicList.Musics);
+            try
+            {
+                ResetChoosedMLButton(sender);
+                ShowList(myMusicApp.HistoryMusicList.Musics);
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2036:" + ce.Message);
+            }
+
         }
 
         /// <summary>
@@ -1217,8 +1345,16 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_PopMusic_Click(object sender, EventArgs e)
         {
-            ResetChoosedMLButton(sender);
-            ShowList(myMusicApp.PopMusicList.Musics);
+            try
+            {
+                ResetChoosedMLButton(sender);
+                ShowList(myMusicApp.PopMusicList.Musics);
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2037:" + ce.Message);
+            }
+ 
         }
 
         /// <summary>
@@ -1228,8 +1364,16 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_Liked_Click(object sender, EventArgs e)
         {
-            ResetChoosedMLButton(sender);
-            ShowList(myMusicApp.LikedMusicList.Musics);
+            try
+            {
+                ResetChoosedMLButton(sender);
+                ShowList(Btn_Liked.MusicList.Musics);
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2038:" + ce.Message);
+            }
+
         }
 
         #endregion
@@ -1255,7 +1399,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2039:"+ce.Message);
             }
         }
 
@@ -1266,8 +1410,16 @@ namespace GuGuGuMusic
         /// <param name="e"></param>
         private void Btn_Shut_Click(object sender, EventArgs e)
         {
-            Panel_PlayList.Width = 0;
-            Panel_PlayList.Hide();
+            try
+            {
+                Panel_PlayList.Width = 0;
+                Panel_PlayList.Hide();
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2040:" + ce.Message);
+            }
+
         }
 
         /// <summary>
@@ -1278,8 +1430,8 @@ namespace GuGuGuMusic
         {
             try
             {
-                Panel_PlayingMusicLIst.Controls.Clear();
-                if (PlayingMusicList != null && PlayingMusicList.Musics != null)
+                Panel_PlayingMusicList.Controls.Clear();
+                if (PlayingMusicList != null && PlayingMusicList.Musics.Count() != 0)
                 {
                     int i = 0;
                     foreach (Music music in PlayingMusicList.Musics)
@@ -1297,7 +1449,7 @@ namespace GuGuGuMusic
                         b.Location = new Point(0, 64 * i);
                         b.Text = music.Name;
                         b.FlatAppearance.BorderSize = 0;
-                        Panel_PlayingMusicLIst.Controls.Add(b);
+                        Panel_PlayingMusicList.Controls.Add(b);
                         b.Show();
                         i++;
                     }
@@ -1306,7 +1458,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("2041:"+e.Message);
             }
         }
         /// <summary>
@@ -1326,7 +1478,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message + "音乐播放失败");
+                Console.WriteLine("2042:"+ce.Message);
             }
         }
 
@@ -1338,10 +1490,50 @@ namespace GuGuGuMusic
         {
             try
             {
-
-            }catch(Exception ce)
+                for(int i = 1; i <= MyMusicApp.ListLimits; i++)
+                {
+                    AutoName.Add("新建歌单" + i , i );
+                }
+                int index = 0;
+                foreach(KeyValuePair<string,int> keyValuePair in myMusicApp.CreatedMusicList) 
+                {
+                    if (MyMusicApp.DefaultList.Contains(keyValuePair.Key))
+                    {
+                        continue;
+                    }
+                    MLButton button = new MLButton()
+                    {
+                        ContextMenuStrip = CMS歌单,
+                    };
+                    button.Click += new EventHandler(CreatedListBtn_Click);
+                    button.FlatAppearance.BorderSize = 0;
+                    button.MusicList = myMusicApp.AllMusicLists[keyValuePair.Value];
+                    button.Text = "            " + button.MusicList.ListName.ToString();
+                    button.Location = new Point(20, (myMusicApp.GetCreatedMusicListNumber() - 1 - index) * button.Height);
+                    index++;
+                    Panel_CreatedList.Controls.Add(button);
+                    button.Show();
+                    AutoName[button.MusicList.ListName] = -AutoName[button.MusicList.ListName];
+                }
+            }
+            catch(Exception ce)
             {
-                Console.WriteLine(ce.Message + ":初始化自定义歌单失败");
+                Console.WriteLine("2043:"+ce.Message);
+            }
+        }
+
+        private void InitDefaultList()
+        {
+            try
+            {
+                Btn_Liked.MusicList = myMusicApp.LikedMusicList;
+                Btn_History.MusicList = myMusicApp.HistoryMusicList;
+                Btn_Liked.Show();
+                Btn_History.Show();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("2058:"+e.Message);
             }
         }
 
@@ -1361,31 +1553,71 @@ namespace GuGuGuMusic
                 Btn_Play.Text = "||";
             }catch(Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2044:"+ce.Message);
             }
 
         }
 
         private void CMS默认歌单_Opening(object sender, CancelEventArgs e)
         {
-            MLButton mLButton = (MLButton)((ContextMenuStrip)sender).SourceControl;
-            ResetChoosedMLButton(mLButton);
-            ShowList(mLButton.MusicList.Musics);
+            try
+            {
+                MLButton mLButton = (MLButton)((ContextMenuStrip)sender).SourceControl;
+                ResetChoosedMLButton(mLButton);
+                ShowList(mLButton.MusicList.Musics);
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2045:"+ce.Message);
+            }
+
         }
 
-        private void CMS自定义歌单_Opening(object sender, CancelEventArgs e)
+        private void CMS歌单_Opening(object sender, CancelEventArgs e)
         {
-            MLButton mLButton = (MLButton)((ContextMenuStrip)sender).SourceControl;
-            CreatingBtn = mLButton;
-            ResetChoosedMLButton(mLButton);
-            ShowList(mLButton.MusicList.Musics);
+            try
+            {
+                MLButton mLButton = (MLButton)((ContextMenuStrip)sender).SourceControl;
+                string listname = mLButton.MusicList.ListName;
+                if (MyMusicApp.DefaultList.Contains(listname))
+                {
+                    删除ToolStripMenuItem.Enabled = false;
+                    重命名ToolStripMenuItem.Enabled = false;
+                }
+                else
+                {
+                    删除ToolStripMenuItem.Enabled = true;
+                    重命名ToolStripMenuItem.Enabled = true;
+                }
+                if (mLButton.MusicList.Musics.Count() != 0)
+                {
+                    播放.Enabled = true;
+                }
+                else
+                {
+                    播放.Enabled = false;
+                }
+                CreatingBtn = mLButton;
+                ResetChoosedMLButton(mLButton);
+                ShowList(mLButton.MusicList.Musics);
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2046:"+ce.Message);
+            }
         }
 
         private void 删除_Click(object sender, EventArgs e)
         {
             try
             {
-                Panel_CreatedList.Controls.Remove(ChoosedMLButton);
+                Operation = OperateList.Delete;
+                MusicList ListToDelete = CreatingBtn.MusicList;
+                myMusicApp.DeleteMusicList(CreatingBtn.MusicList);
+                if (AutoName.Keys.Contains(ListToDelete.ListName))
+                {
+                    AutoName[ListToDelete.ListName] = -AutoName[ListToDelete.ListName];
+                }
+                Panel_CreatedList.Controls.Remove(CreatingBtn);
                 MLButton mLButton = (MLButton)Panel_CreatedList.Controls[Panel_CreatedList.Controls.Count-1];
                 ResetChoosedMLButton(mLButton);
                 ShowList(mLButton.MusicList.Musics);
@@ -1393,7 +1625,7 @@ namespace GuGuGuMusic
             }
             catch(Exception ce)
             {
-                Console.WriteLine(ce.Message + ":删除歌单失败");
+                Console.WriteLine("2047:"+ce.Message);
             }
         }
 
@@ -1409,7 +1641,7 @@ namespace GuGuGuMusic
                 }
             }catch(Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("2048:"+e.Message);
             }
         }
 
@@ -1417,10 +1649,11 @@ namespace GuGuGuMusic
         {
             try
             {
-                CreatingBtn.Hide();                
+                Operation = OperateList.Rename;
+                CreatingBtn.Hide();
                 TextBox textBox = new TextBox()
                 {
-                    Text = CreatingBtn.Text.ToString().Replace(" ",""),
+                    Text = CreatingBtn.MusicList.ListName.ToString(),
                     Location = new Point(CreatingBtn.Location.X, CreatingBtn.Location.Y),
                     Font = new System.Drawing.Font("微軟正黑體 Light", 11F),
                     Size = new Size(160, 30),
@@ -1435,7 +1668,7 @@ namespace GuGuGuMusic
             }
             catch(Exception ce)
             {
-                Console.WriteLine(ce.Message + ":重命名歌单失败");
+                Console.WriteLine("2049:"+ce.Message);
             }
         }
 
@@ -1455,7 +1688,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message+":关闭播放列表失败");
+                Console.WriteLine("2050:"+ce.Message);
             }
         }
 
@@ -1475,7 +1708,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2051:"+ce.Message);
             }
         }
 
@@ -1496,18 +1729,18 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message);
+                Console.WriteLine("2052:"+ce.Message);
             }
         }
 
-        private void Btn_User_Click(object sender, EventArgs e)
+        private void Btn_Login_Click(object sender, EventArgs e)
         {
             try
             {
-                new Login().ShowDialog();
+                new Login(this).ShowDialog();
             }catch(Exception ce)
             {
-                Console.WriteLine("登录窗口打开失败" + ce.Message);
+                Console.WriteLine("2053:"+ce.Message);
             }
         }
 
@@ -1529,26 +1762,189 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine(ce.Message + "音乐播放失败");
+                Console.WriteLine("2054:"+ce.Message);
             }
         }
 
         private void CMS歌曲_Opening(object sender, CancelEventArgs e)
         {
-            MButton mButton = (MButton)((ContextMenuStrip)sender).SourceControl;
-            ResetChoosedMButton(mButton);
-            this.添加到ToolStripMenuItem.DropDownItems.Clear();
-            //我喜欢
-            ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(Btn_Liked.MusicList.ListName.ToString());
-            this.添加到ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem });
-            //播放队列
-            toolStripMenuItem = new ToolStripMenuItem(myMusicApp.PlayingMusicList.ListName);
-            this.添加到ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem });
-
-            foreach (MLButton mLButton in Panel_CreatedList.Controls)
+            try
             {
-                toolStripMenuItem = new ToolStripMenuItem(mLButton.MusicList.ListName.ToString());
+                MButton mButton = (MButton)((ContextMenuStrip)sender).SourceControl;
+                ResetChoosedMButton(mButton);
+                this.添加到ToolStripMenuItem.DropDownItems.Clear();
+                ToolStripMenuItem toolStripMenuItem;
+                //我喜欢
+                if (Btn_Liked.Visible)
+                {
+                    toolStripMenuItem = new ToolStripMenuItem(Btn_Liked.MusicList.ListName.ToString());
+                    toolStripMenuItem.Name = Btn_Liked.MusicList.ListName.ToString();
+                    toolStripMenuItem.Click += new EventHandler(添加到歌单ToolStripMenuItem_Click);
+                    this.添加到ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem });
+                }
+                //播放队列
+                toolStripMenuItem = new ToolStripMenuItem(myMusicApp.PlayingMusicList.ListName);
+                toolStripMenuItem.Name = myMusicApp.PlayingMusicList.ListName;
+                toolStripMenuItem.Click += new EventHandler(添加到歌单ToolStripMenuItem_Click);
                 this.添加到ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem });
+                //自定义歌单
+                foreach (MLButton mLButton in Panel_CreatedList.Controls)
+                {
+                    toolStripMenuItem = new ToolStripMenuItem(mLButton.MusicList.ListName.ToString());
+                    toolStripMenuItem.Name = mLButton.MusicList.ListName.ToString();
+                    toolStripMenuItem.Click += new EventHandler(添加到歌单ToolStripMenuItem_Click);
+                    this.添加到ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem });
+                }
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2055:"+ce.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// 点击歌曲将歌曲添加到歌单事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 添加到歌单ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ToolStripMenuItem toolStripMenuItem = (ToolStripMenuItem)sender;
+                MButton mButton = ChoosedMButton;
+                MusicList ListToUpdate = new MusicList();
+                //向所选歌单中添加所选歌曲
+                //自定义歌单
+                foreach(MLButton mLButton in Panel_CreatedList.Controls)
+                {
+                    if(mLButton.MusicList.ListName.ToString() == toolStripMenuItem.Name.ToString())
+                    {
+                        mLButton.MusicList.Add(mButton.M_music);
+                        ListToUpdate = mLButton.MusicList;
+                    }
+                }
+                //默认歌单
+                if(Btn_Liked.MusicList.ListName == toolStripMenuItem.Name)
+                {
+                    Btn_Liked.MusicList.Add(mButton.M_music);
+                    ListToUpdate = Btn_Liked.MusicList;
+                }
+                //播放列表
+                if(myMusicApp.PlayingMusicList.ListName == toolStripMenuItem.Name)
+                {
+                    myMusicApp.PlayingMusicList.Add(mButton.M_music);
+                    myMusicApp.UpdateMusicList(myMusicApp.PlayingMusicList);
+                }
+                //更新musiclist和数据库
+                myMusicApp.UpdateMusicList(ListToUpdate);
+            }
+            catch(Exception ce)
+            {
+                Console.WriteLine("2056:"+ce.Message);
+            }
+        }
+
+        private void Timer_Loading_Tick(object sender, EventArgs e)
+        {
+            if (this.Opacity >= 1)
+            {
+                Timer_Loading.Stop();
+            }
+            else
+            {
+                base.Opacity += 0.2;
+            }
+        }
+
+        public void Login(User user)
+        {
+            try
+            {
+                //
+                Btn_Login.Enabled = false;
+                Btn_Login.Text = "欢迎您: " + user.User_Id;
+                //
+                myMusicApp.InitLoginInfo(user);
+                Panel_CreateList.Show();
+                InitCreatedList();
+                InitDefaultList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("2057:"+e.Message);
+            }
+        }
+
+        private void 移除ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ToolStripMenuItem toolStripMenuItem = (ToolStripMenuItem)sender;
+                MButton mButton = ChoosedMButton;
+                MusicList ListToUpdate = new MusicList();
+                //对应歌单中删除所选歌曲
+                ChoosedMLButton.MusicList.Remove(mButton.M_music);
+                ShowList(ChoosedMLButton.MusicList.Musics);
+                ListToUpdate = ChoosedMLButton.MusicList;
+                //播放列表
+                if (PlayingMusicListName == ChoosedMLButton.MusicList.ListName)
+                {
+                    myMusicApp.PlayingMusicList.Remove(mButton.M_music);
+                    myMusicApp.UpdateMusicList(myMusicApp.PlayingMusicList);
+                }
+                //更新musiclist和数据库
+                myMusicApp.UpdateMusicList(ListToUpdate);
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2061:" + ce.Message);
+            }
+        }
+
+        private void 切换账号ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Main main = new Main();
+                main.Show();
+                this.Close();
+                new Login(main).ShowDialog();
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2058:" + ce.Message);
+            }
+        }
+
+        private void CMS_Main_Opening(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                if (myMusicApp.IsLogin)
+                {
+                    CMS_Main.Items.Remove(登陆ToolStripMenuItem);
+                    CMS_Main.Items.Insert(0, 切换账号ToolStripMenuItem);
+                }
+                else
+                {
+                    CMS_Main.Items.Remove(切换账号ToolStripMenuItem);
+                    CMS_Main.Items.Insert(0, 登陆ToolStripMenuItem);
+                }
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2059:" + ce.Message);
+            }
+        }
+
+        private void 登陆ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                new Login(this).ShowDialog();
+            }
+            catch(Exception ce)
+            {
+                Console.WriteLine("2060:" + ce.Message);
             }
         }
     }
