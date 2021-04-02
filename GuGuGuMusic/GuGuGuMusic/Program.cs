@@ -16,7 +16,8 @@ namespace GuGuGuMusic
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Main());
+            new Main().Show();
+            Application.Run();
         }
     }
 }

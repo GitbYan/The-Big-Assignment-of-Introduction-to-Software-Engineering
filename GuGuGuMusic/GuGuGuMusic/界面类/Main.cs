@@ -19,9 +19,6 @@ using WMPLib;
  */
 namespace GuGuGuMusic
 {
-
-    
-
     public partial class Main : Form
     {
         #region 无边框
@@ -1736,11 +1733,11 @@ namespace GuGuGuMusic
             }
         }
 
-        private void Btn_User_Click(object sender, EventArgs e)
+        private void Btn_Login_Click(object sender, EventArgs e)
         {
             try
             {
-                new Login(this).Show();
+                new Login(this).ShowDialog();
             }catch(Exception ce)
             {
                 Console.WriteLine("2053:"+ce.Message);
@@ -1864,6 +1861,10 @@ namespace GuGuGuMusic
         {
             try
             {
+                //
+                Btn_Login.Enabled = false;
+                Btn_Login.Text = "欢迎您: " + user.User_Id;
+                //
                 myMusicApp.InitLoginInfo(user);
                 Panel_CreateList.Show();
                 InitCreatedList();
@@ -1877,10 +1878,74 @@ namespace GuGuGuMusic
 
         private void 移除ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            try
+            {
+                ToolStripMenuItem toolStripMenuItem = (ToolStripMenuItem)sender;
+                MButton mButton = ChoosedMButton;
+                MusicList ListToUpdate = new MusicList();
+                //对应歌单中删除所选歌曲
+                ChoosedMLButton.MusicList.Remove(mButton.M_music);
+                ShowList(ChoosedMLButton.MusicList.Musics);
+                ListToUpdate = ChoosedMLButton.MusicList;
+                //播放列表
+                if (PlayingMusicListName == ChoosedMLButton.MusicList.ListName)
+                {
+                    myMusicApp.PlayingMusicList.Remove(mButton.M_music);
+                    myMusicApp.UpdateMusicList(myMusicApp.PlayingMusicList);
+                }
+                //更新musiclist和数据库
+                myMusicApp.UpdateMusicList(ListToUpdate);
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2061:" + ce.Message);
+            }
         }
 
+        private void 切换账号ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Main main = new Main();
+                main.Show();
+                this.Close();
+                new Login(main).ShowDialog();
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2058:" + ce.Message);
+            }
+        }
 
+        private void CMS_Main_Opening(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                if (myMusicApp.IsLogin)
+                {
+                    CMS_Main.Items.Remove(登陆ToolStripMenuItem);
+                    CMS_Main.Items.Insert(0, 切换账号ToolStripMenuItem);
+                }
+                else
+                {
+                    CMS_Main.Items.Remove(切换账号ToolStripMenuItem);
+                    CMS_Main.Items.Insert(0, 登陆ToolStripMenuItem);
+                }
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2059:" + ce.Message);
+            }
+        }
 
+        private void 登陆ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                new Login(this).ShowDialog();
+            }
+            catch(Exception ce)
+            {
+                Console.WriteLine("2060:" + ce.Message);
+            }
+        }
     }
 }

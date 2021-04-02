@@ -32,6 +32,7 @@ namespace GuGuGuMusic
         {
             try
             {
+                IsLogin = true;
                 this.user = user;
                 //defaultlist
                 HistoryMusicList.User_Id = user.User_Id;

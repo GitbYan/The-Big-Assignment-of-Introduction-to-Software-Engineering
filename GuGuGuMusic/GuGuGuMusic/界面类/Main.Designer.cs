@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            GuGuGuMusic.Music music2 = new GuGuGuMusic.Music();
+            GuGuGuMusic.Music music1 = new GuGuGuMusic.Music();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.Main_Panel = new System.Windows.Forms.Panel();
             this.Panel_Detail = new System.Windows.Forms.Panel();
@@ -52,9 +52,10 @@
             this.mTrackBar_Music = new ControlDemos.MTrackBar();
             this.Panel_Tool = new System.Windows.Forms.Panel();
             this.CMS_Main = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.登陆ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.切换账号ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.退出听听鸽ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.Btn_User = new System.Windows.Forms.Button();
+            this.Btn_Login = new System.Windows.Forms.Button();
             this.Btn_Menu = new System.Windows.Forms.Button();
             this.Btn_Line = new System.Windows.Forms.Button();
             this.Btn_MinSize = new System.Windows.Forms.Button();
@@ -172,9 +173,9 @@
             // 
             this.button2.Location = new System.Drawing.Point(20, 95);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(319, 34);
             this.button2.TabIndex = 1;
-            this.button2.Text = "button2";
+            this.button2.Text = "用于定位到  添加到事件 函数";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.添加到歌单ToolStripMenuItem_Click);
             // 
@@ -184,17 +185,17 @@
             this.mButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.mButton1.Index = 0;
             this.mButton1.Location = new System.Drawing.Point(20, 35);
-            music2.Album = "";
-            music2.Duration = "";
-            music2.FileURL = "";
-            music2.Name = "我的音乐";
-            music2.Singer = "我";
-            this.mButton1.M_music = music2;
+            music1.Album = "";
+            music1.Duration = "";
+            music1.FileURL = "";
+            music1.Name = "我的音乐";
+            music1.Singer = "我";
+            this.mButton1.M_music = music1;
             this.mButton1.Name = "mButton1";
-            this.mButton1.Size = new System.Drawing.Size(143, 23);
+            this.mButton1.Size = new System.Drawing.Size(319, 30);
             this.mButton1.TabIndex = 0;
             this.mButton1.TabStop = false;
-            this.mButton1.Text = "mButton1";
+            this.mButton1.Text = "用于定位到 单机歌曲事件 函数";
             this.mButton1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.mButton1.UseVisualStyleBackColor = true;
             this.mButton1.Click += new System.EventHandler(this.PlayChoosedMusic);
@@ -211,7 +212,6 @@
             this.Btn_AddLocalMusic.TabIndex = 1;
             this.Btn_AddLocalMusic.Text = "添加本地音乐";
             this.Btn_AddLocalMusic.UseVisualStyleBackColor = true;
-            this.Btn_AddLocalMusic.Visible = false;
             this.Btn_AddLocalMusic.Click += new System.EventHandler(this.Btn_AddLocalMusic_Click);
             // 
             // Panel_Play
@@ -419,7 +419,7 @@
             // 
             this.Panel_Tool.BackColor = System.Drawing.Color.WhiteSmoke;
             this.Panel_Tool.ContextMenuStrip = this.CMS_Main;
-            this.Panel_Tool.Controls.Add(this.Btn_User);
+            this.Panel_Tool.Controls.Add(this.Btn_Login);
             this.Panel_Tool.Controls.Add(this.Btn_Menu);
             this.Panel_Tool.Controls.Add(this.Btn_Line);
             this.Panel_Tool.Controls.Add(this.Btn_MinSize);
@@ -436,16 +436,26 @@
             // CMS_Main
             // 
             this.CMS_Main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.登陆ToolStripMenuItem,
             this.切换账号ToolStripMenuItem,
             this.退出听听鸽ToolStripMenuItem});
             this.CMS_Main.Name = "Icon_contextMenuStrip";
-            this.CMS_Main.Size = new System.Drawing.Size(137, 48);
+            this.CMS_Main.Size = new System.Drawing.Size(137, 70);
+            this.CMS_Main.Opening += new System.ComponentModel.CancelEventHandler(this.CMS_Main_Opening);
+            // 
+            // 登陆ToolStripMenuItem
+            // 
+            this.登陆ToolStripMenuItem.Name = "登陆ToolStripMenuItem";
+            this.登陆ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.登陆ToolStripMenuItem.Text = "登陆";
+            this.登陆ToolStripMenuItem.Click += new System.EventHandler(this.登陆ToolStripMenuItem_Click);
             // 
             // 切换账号ToolStripMenuItem
             // 
             this.切换账号ToolStripMenuItem.Name = "切换账号ToolStripMenuItem";
             this.切换账号ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.切换账号ToolStripMenuItem.Text = "切换账号";
+            this.切换账号ToolStripMenuItem.Click += new System.EventHandler(this.切换账号ToolStripMenuItem_Click);
             // 
             // 退出听听鸽ToolStripMenuItem
             // 
@@ -454,25 +464,25 @@
             this.退出听听鸽ToolStripMenuItem.Text = "退出听听鸽";
             this.退出听听鸽ToolStripMenuItem.Click += new System.EventHandler(this.退出听听鸽ToolStripMenuItem_Click);
             // 
-            // Btn_User
+            // Btn_Login
             // 
-            this.Btn_User.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.Btn_User.Dock = System.Windows.Forms.DockStyle.Right;
-            this.Btn_User.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
-            this.Btn_User.FlatAppearance.BorderSize = 0;
-            this.Btn_User.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.Btn_User.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.Btn_User.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_User.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.Btn_User.Location = new System.Drawing.Point(435, 0);
-            this.Btn_User.Name = "Btn_User";
-            this.Btn_User.Size = new System.Drawing.Size(135, 60);
-            this.Btn_User.TabIndex = 5;
-            this.Btn_User.TabStop = false;
-            this.Btn_User.Text = "登陆";
-            this.Btn_User.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.Btn_User.UseVisualStyleBackColor = true;
-            this.Btn_User.Click += new System.EventHandler(this.Btn_User_Click);
+            this.Btn_Login.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Btn_Login.Dock = System.Windows.Forms.DockStyle.Right;
+            this.Btn_Login.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
+            this.Btn_Login.FlatAppearance.BorderSize = 0;
+            this.Btn_Login.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_Login.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_Login.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Login.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Btn_Login.Location = new System.Drawing.Point(435, 0);
+            this.Btn_Login.Name = "Btn_Login";
+            this.Btn_Login.Size = new System.Drawing.Size(135, 60);
+            this.Btn_Login.TabIndex = 5;
+            this.Btn_Login.TabStop = false;
+            this.Btn_Login.Text = "登陆";
+            this.Btn_Login.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Btn_Login.UseVisualStyleBackColor = true;
+            this.Btn_Login.Click += new System.EventHandler(this.Btn_Login_Click);
             // 
             // Btn_Menu
             // 
@@ -1133,10 +1143,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.ClientSize = new System.Drawing.Size(908, 648);
-            this.Controls.Add(this.Panel_PlayList);
             this.Controls.Add(this.Panel_Volume);
             this.Controls.Add(this.Panel_Mode);
             this.Controls.Add(this.Main_Panel);
+            this.Controls.Add(this.Panel_PlayList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(908, 648);
@@ -1195,7 +1205,7 @@
         private System.Windows.Forms.Button Btn_MusicName;
         private System.Windows.Forms.Button Btn_MusicPic;
         private System.Windows.Forms.Button Btn_Process;
-        private System.Windows.Forms.Button Btn_User;
+        private System.Windows.Forms.Button Btn_Login;
         private System.Windows.Forms.Button Btn_Menu;
         private System.Windows.Forms.Button Btn_Line;
         private System.Windows.Forms.Button Btn_MinSize;
@@ -1250,6 +1260,7 @@
         private MButton mButton1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ToolStripMenuItem 登陆ToolStripMenuItem;
     }
 }
 

@@ -200,7 +200,7 @@ namespace GuGuGuMusic
         {
             try
             {
-
+                Musics.RemoveAt(index);
             }
             catch (Exception e)
             {
