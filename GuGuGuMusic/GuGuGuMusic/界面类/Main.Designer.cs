@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            GuGuGuMusic.Music music1 = new GuGuGuMusic.Music();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.Main_Panel = new System.Windows.Forms.Panel();
             this.Panel_Detail = new System.Windows.Forms.Panel();
@@ -55,6 +54,9 @@
             this.登陆ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.切换账号ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.退出听听鸽ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Btn_Search = new System.Windows.Forms.Button();
+            this.TxtBox_SearchBox = new System.Windows.Forms.TextBox();
+            this.Btn_SearchBorder = new System.Windows.Forms.Button();
             this.Btn_Login = new System.Windows.Forms.Button();
             this.Btn_Menu = new System.Windows.Forms.Button();
             this.Btn_Line = new System.Windows.Forms.Button();
@@ -110,6 +112,8 @@
             this.Timer_PlayingMode = new System.Windows.Forms.Timer(this.components);
             this.Timer_Volume = new System.Windows.Forms.Timer(this.components);
             this.Timer_Loading = new System.Windows.Forms.Timer(this.components);
+            this.Timer_Searching = new System.Windows.Forms.Timer(this.components);
+            this.Timer_Net = new System.Windows.Forms.Timer(this.components);
             this.Main_Panel.SuspendLayout();
             this.Panel_Detail.SuspendLayout();
             this.Panel_MusicList.SuspendLayout();
@@ -185,12 +189,7 @@
             this.mButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.mButton1.Index = 0;
             this.mButton1.Location = new System.Drawing.Point(20, 35);
-            music1.Album = "";
-            music1.Duration = "";
-            music1.FileURL = "";
-            music1.Name = "我的音乐";
-            music1.Singer = "我";
-            this.mButton1.M_music = music1;
+            this.mButton1.M_music = null;
             this.mButton1.Name = "mButton1";
             this.mButton1.Size = new System.Drawing.Size(319, 30);
             this.mButton1.TabIndex = 0;
@@ -419,6 +418,9 @@
             // 
             this.Panel_Tool.BackColor = System.Drawing.Color.WhiteSmoke;
             this.Panel_Tool.ContextMenuStrip = this.CMS_Main;
+            this.Panel_Tool.Controls.Add(this.Btn_Search);
+            this.Panel_Tool.Controls.Add(this.TxtBox_SearchBox);
+            this.Panel_Tool.Controls.Add(this.Btn_SearchBorder);
             this.Panel_Tool.Controls.Add(this.Btn_Login);
             this.Panel_Tool.Controls.Add(this.Btn_Menu);
             this.Panel_Tool.Controls.Add(this.Btn_Line);
@@ -463,6 +465,49 @@
             this.退出听听鸽ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.退出听听鸽ToolStripMenuItem.Text = "退出听听鸽";
             this.退出听听鸽ToolStripMenuItem.Click += new System.EventHandler(this.退出听听鸽ToolStripMenuItem_Click);
+            // 
+            // Btn_Search
+            // 
+            this.Btn_Search.BackColor = System.Drawing.Color.LightGray;
+            this.Btn_Search.FlatAppearance.BorderSize = 0;
+            this.Btn_Search.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Search.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Btn_Search.Location = new System.Drawing.Point(286, 18);
+            this.Btn_Search.Name = "Btn_Search";
+            this.Btn_Search.Size = new System.Drawing.Size(24, 24);
+            this.Btn_Search.TabIndex = 8;
+            this.Btn_Search.TabStop = false;
+            this.Btn_Search.Text = "♬";
+            this.Btn_Search.UseVisualStyleBackColor = false;
+            this.Btn_Search.Click += new System.EventHandler(this.Btn_Search_Click);
+            // 
+            // TxtBox_SearchBox
+            // 
+            this.TxtBox_SearchBox.BackColor = System.Drawing.Color.LightGray;
+            this.TxtBox_SearchBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.TxtBox_SearchBox.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.TxtBox_SearchBox.Location = new System.Drawing.Point(30, 22);
+            this.TxtBox_SearchBox.Name = "TxtBox_SearchBox";
+            this.TxtBox_SearchBox.Size = new System.Drawing.Size(250, 16);
+            this.TxtBox_SearchBox.TabIndex = 7;
+            this.TxtBox_SearchBox.TabStop = false;
+            this.TxtBox_SearchBox.Text = "🔍搜索音乐";
+            this.TxtBox_SearchBox.TextChanged += new System.EventHandler(this.TxtBox_SearchBox_TextChanged);
+            this.TxtBox_SearchBox.GotFocus += new System.EventHandler(this.TxtBox_GotFocus);
+            this.TxtBox_SearchBox.LostFocus += new System.EventHandler(this.TxtBox_LostFocus);
+            // 
+            // Btn_SearchBorder
+            // 
+            this.Btn_SearchBorder.BackColor = System.Drawing.Color.LightGray;
+            this.Btn_SearchBorder.Enabled = false;
+            this.Btn_SearchBorder.FlatAppearance.BorderSize = 0;
+            this.Btn_SearchBorder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SearchBorder.Location = new System.Drawing.Point(20, 12);
+            this.Btn_SearchBorder.Name = "Btn_SearchBorder";
+            this.Btn_SearchBorder.Size = new System.Drawing.Size(300, 36);
+            this.Btn_SearchBorder.TabIndex = 6;
+            this.Btn_SearchBorder.TabStop = false;
+            this.Btn_SearchBorder.UseVisualStyleBackColor = false;
             // 
             // Btn_Login
             // 
@@ -704,6 +749,7 @@
             this.Btn_Liked.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
             this.Btn_Liked.Location = new System.Drawing.Point(20, 96);
             this.Btn_Liked.Margin = new System.Windows.Forms.Padding(0);
+            this.Btn_Liked.MusicList = null;
             this.Btn_Liked.Name = "Btn_Liked";
             this.Btn_Liked.Size = new System.Drawing.Size(160, 30);
             this.Btn_Liked.TabIndex = 4;
@@ -757,6 +803,7 @@
             this.Btn_History.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
             this.Btn_History.Location = new System.Drawing.Point(20, 66);
             this.Btn_History.Margin = new System.Windows.Forms.Padding(0);
+            this.Btn_History.MusicList = null;
             this.Btn_History.Name = "Btn_History";
             this.Btn_History.Size = new System.Drawing.Size(160, 30);
             this.Btn_History.TabIndex = 3;
@@ -779,6 +826,7 @@
             this.Btn_Local.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
             this.Btn_Local.Location = new System.Drawing.Point(20, 36);
             this.Btn_Local.Margin = new System.Windows.Forms.Padding(0);
+            this.Btn_Local.MusicList = null;
             this.Btn_Local.Name = "Btn_Local";
             this.Btn_Local.Size = new System.Drawing.Size(160, 30);
             this.Btn_Local.TabIndex = 2;
@@ -823,6 +871,7 @@
             this.Btn_PopMusic.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
             this.Btn_PopMusic.Location = new System.Drawing.Point(20, 36);
             this.Btn_PopMusic.Margin = new System.Windows.Forms.Padding(0);
+            this.Btn_PopMusic.MusicList = null;
             this.Btn_PopMusic.Name = "Btn_PopMusic";
             this.Btn_PopMusic.Size = new System.Drawing.Size(160, 30);
             this.Btn_PopMusic.TabIndex = 1;
@@ -1137,6 +1186,14 @@
             // 
             this.Timer_Loading.Tick += new System.EventHandler(this.Timer_Loading_Tick);
             // 
+            // Timer_Searching
+            // 
+            this.Timer_Searching.Tick += new System.EventHandler(this.Timer_Searching_Tick);
+            // 
+            // Timer_Net
+            // 
+            this.Timer_Net.Tick += new System.EventHandler(this.Timer_Net_Tick);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1161,6 +1218,7 @@
             this.Panel_PlayStatus.ResumeLayout(false);
             this.Panel_Control.ResumeLayout(false);
             this.Panel_Tool.ResumeLayout(false);
+            this.Panel_Tool.PerformLayout();
             this.CMS_Main.ResumeLayout(false);
             this.Panel_Nav.ResumeLayout(false);
             this.Panel_MenuList.ResumeLayout(false);
@@ -1218,11 +1276,11 @@
         private System.Windows.Forms.Button Btn_ShowCreatedList;
         private System.Windows.Forms.Panel Panel_CreateList;
         private System.Windows.Forms.Panel Panel_MyMusicMenuList;
-        private MLButton Btn_History;
-        private MLButton Btn_Local;
+        private MLButton Btn_History = new MLButton();
+        private MLButton Btn_Local = new MLButton();
         private System.Windows.Forms.Button Lbl_MyMusic;
         private System.Windows.Forms.Panel Panel_OnlineMusicMenuList;
-        private MLButton Btn_PopMusic;
+        private MLButton Btn_PopMusic = new MLButton();
         private System.Windows.Forms.Button Lbl_OnlineMusic;
         private System.Windows.Forms.Button Btn_Spread;
         private System.Windows.Forms.Button Btn_CteateList;
@@ -1234,7 +1292,7 @@
         private System.Windows.Forms.Panel Panel_PlayingMusicList;
         private System.Windows.Forms.Button Btn_Shut;
         private System.Windows.Forms.Timer Timer_NamingList;
-        private MLButton Btn_Liked;
+        private MLButton Btn_Liked = new MLButton();
         private System.Windows.Forms.Timer Timer_Music;
         private System.Windows.Forms.Panel Panel_Mode;
         private System.Windows.Forms.Button Btn_Random;
@@ -1257,10 +1315,15 @@
         private System.Windows.Forms.ToolStripMenuItem 添加到ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 移除ToolStripMenuItem;
         private System.Windows.Forms.Timer Timer_Loading;
-        private MButton mButton1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ToolStripMenuItem 登陆ToolStripMenuItem;
+        private System.Windows.Forms.Button Btn_SearchBorder;
+        private System.Windows.Forms.TextBox TxtBox_SearchBox;
+        private System.Windows.Forms.Button Btn_Search;
+        private System.Windows.Forms.Timer Timer_Searching;
+        private MButton mButton1;
+        private System.Windows.Forms.Timer Timer_Net;
     }
 }
 

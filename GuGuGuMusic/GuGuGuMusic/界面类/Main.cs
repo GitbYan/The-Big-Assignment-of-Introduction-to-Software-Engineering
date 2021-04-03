@@ -1,5 +1,6 @@
 ﻿using AxWMPLib;
 using ControlDemos;
+using Shell32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -211,7 +212,7 @@ namespace GuGuGuMusic
         /// <summary>
         /// 音乐app，所有对数据的操作、事务逻辑都由其实现
         /// </summary>
-        public MyMusicApp myMusicApp;
+        public MyMusicApp myMusicApp = new MyMusicApp();
 
         /// <summary>
         /// 独立的音乐播放控件，软件核心
@@ -244,11 +245,30 @@ namespace GuGuGuMusic
             {
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    mTrackBar_Music.M_Value = 0;
-                    Music music = new Music().InitMusic(openFileDialog.FileName);
+
+                    string filename = openFileDialog.FileName;
+                    ShellClass sh = new ShellClass();
+                    Folder dir = sh.NameSpace(Path.GetDirectoryName(filename));
+                    FolderItem item = dir.ParseName(Path.GetFileName(filename));
+                    string name = dir.GetDetailsOf(item, 21);
+                    string[] s = name.Split('.');
+                    name = s[0];
+                    for(int i = 0; i < name.Length; i++)
+                    {
+                        if(name[i]==' ')
+                        {
+                            continue;
+                        }
+                        name = name.Substring(i);
+                        break;
+                    }
+                    string singer = dir.GetDetailsOf(item, 13);
+                    string fileurl = filename;
+                    string album = dir.GetDetailsOf(item, 14);
+                    Music music = new Music(name, singer, album, fileurl);
+
                     myMusicApp.LocalMusicList.Add(music);
                     Btn_Local.MusicList = myMusicApp.LocalMusicList;
-
                     myMusicApp.UpdateMusicList(myMusicApp.LocalMusicList);
                     ShowList(myMusicApp.LocalMusicList.Musics);
                 }
@@ -431,24 +451,45 @@ namespace GuGuGuMusic
         {
             try
             {
-                if (musicList != null && musicList.Musics.Count() != 0)
+                bool test = true;
+                if (test)
                 {
-                    IWMPPlaylist playList = AWMP.playlistCollection.newPlaylist("MyPlayList");
-                    IWMPMedia media = AWMP.newMedia(musicList.Musics[index].FileURL);
-                    playList.appendItem(media);
-                    for(int i = 0; i < musicList.Musics.Count; i++) 
-                    {
-                        if (i == index)
-                        {
-                            continue;
-                        }
-                        string url = musicList.Musics[i].FileURL.ToString();
-                        media = AWMP.newMedia(url);
-                        playList.appendItem(media);
-                    }
-                    AWMP.currentPlaylist = playList;
-                    AWMP.Ctlcontrols.stop();
+                    string url = myMusicApp.MusicInfo[0].FileURL.Replace('\\', '/');
+                    //url = "https://webfs.yun.kugou.com/202104040626/fce5de6a104541af0c72a8b94add15c7/part/0/960992/G077/M00/07/11/LZQEAFguky2AU7OFAEHk-4CpoG8440.mp3";
+                    url = "//freetyst.nf.migu.cn/public/product11/2018/06/07/2013%E5%B9%B47%E6%9C%888%E6%97%A5%E7%B4%A7%E6%80%A5%E5%87%86%E5%85%A5%E7%BA%B5%E6%A8%AA%E4%B8%96%E4%BB%A330%E9%A6%96/%E6%AD%8C%E6%9B%B2%E4%B8%8B%E8%BD%BD/MP3_40_16_Stero/%E9%BE%99%E9%97%A8%E6%BE%A1%E5%A0%82(%E5%91%A8%E6%9D%B0%E4%BC%A6%E5%A4%A9%E5%8F%B0%E7%94%B5%E5%BD%B1%E5%8E%9F%E5%A3%B0%E5%B8%A6)-%E6%BC%94%E5%A5%8F%E6%9B%B2.mp3?key=e0c13318f99de6fe&Tim=1617472968450&channelid=00&msisdn=bd13a1215fa14ff1a56a7250d9fcfcd3&CI=600547039162600907000000528998&F=000009";
+                    Console.WriteLine(url);
+                    AxWindowsMediaPlayer a = new AxWindowsMediaPlayer();
+                    ((System.ComponentModel.ISupportInitialize)(this.AWMP)).BeginInit();
+                    this.Controls.Add(a);
+                    ((System.ComponentModel.ISupportInitialize)(this.AWMP)).EndInit();
+                    a.URL = url;
+                    
+                    a.Ctlcontrols.play();
+                    //AWMP.Ctlcontrols.play();
                 }
+                else
+                {
+                    if (musicList != null && musicList.Musics.Count() != 0)
+                    {
+                        IWMPPlaylist playList = AWMP.playlistCollection.newPlaylist("MyPlayList");
+                        IWMPMedia media = AWMP.newMedia(musicList.Musics[index].FileURL);
+                        playList.appendItem(media);
+                        for (int i = 0; i < musicList.Musics.Count; i++)
+                        {
+                            if (i == index)
+                            {
+                                continue;
+                            }
+                            string url = musicList.Musics[i].FileURL.ToString();
+                            media = AWMP.newMedia(url);
+                            playList.appendItem(media);
+                        }
+                        AWMP.currentPlaylist = playList;
+                        AWMP.Ctlcontrols.stop();
+                    }
+                }
+
+
             }
             catch(Exception e)
             {
@@ -655,16 +696,19 @@ namespace GuGuGuMusic
         {
             try
             {
-                double duration = AWMP.currentMedia.duration;
-                double currentPosition = (mTrackBar_Music.M_Value / mTrackBar_Music.M_Maximum) * duration;
-                //用数字实时显示播放进度
-                string max_minute = (int)(duration / 60) >= 10 ? ((int)(duration / 60)).ToString() : "0" + ((int)(duration / 60)).ToString();
-                string max_second = (int)(duration % 60) >= 10 ? ((int)(duration % 60)).ToString() : "0" + ((int)(duration % 60)).ToString();
-                string cur_minute = (int)(currentPosition / 60) >= 10 ? ((int)(currentPosition / 60)).ToString() : "0" + ((int)(currentPosition / 60)).ToString();
-                string cur_second = (int)(currentPosition % 60) >= 10 ? ((int)(currentPosition % 60)).ToString() : "0" + ((int)(currentPosition % 60)).ToString();
-                if (cur_minute.Length > 2) { cur_minute = "00"; }
-                if (cur_second.Length > 2) { cur_second = "00"; }
-                Btn_Process.Text = cur_minute + ":" + cur_second + " / " + max_minute + ":" + max_second;
+                if (AWMP.currentMedia != null)
+                {
+                    double duration = AWMP.currentMedia.duration;
+                    double currentPosition = (mTrackBar_Music.M_Value / mTrackBar_Music.M_Maximum) * duration;
+                    //用数字实时显示播放进度
+                    string max_minute = (int)(duration / 60) >= 10 ? ((int)(duration / 60)).ToString() : "0" + ((int)(duration / 60)).ToString();
+                    string max_second = (int)(duration % 60) >= 10 ? ((int)(duration % 60)).ToString() : "0" + ((int)(duration % 60)).ToString();
+                    string cur_minute = (int)(currentPosition / 60) >= 10 ? ((int)(currentPosition / 60)).ToString() : "0" + ((int)(currentPosition / 60)).ToString();
+                    string cur_second = (int)(currentPosition % 60) >= 10 ? ((int)(currentPosition % 60)).ToString() : "0" + ((int)(currentPosition % 60)).ToString();
+                    if (cur_minute.Length > 2) { cur_minute = "00"; }
+                    if (cur_second.Length > 2) { cur_second = "00"; }
+                    Btn_Process.Text = cur_minute + ":" + cur_second + " / " + max_minute + ":" + max_second;
+                }
 
             }
             catch (Exception ce)
@@ -886,7 +930,7 @@ namespace GuGuGuMusic
                     AWMP.currentPlaylist.removeItem(AWMP.currentPlaylist.Item[AWMP.currentPlaylist.count - 1]);
                 }
                 //加载新播放列表
-                count = myMusicApp.PlayingMusicList.Count;
+                count = myMusicApp.PlayingMusicList.Count();
                 Random rd = new Random();
                 foreach (Music music in myMusicApp.PlayingMusicList)
                 {
@@ -1389,7 +1433,7 @@ namespace GuGuGuMusic
         {
             try
             {
-                Lbl_Number.Text = "  " + myMusicApp.PlayingMusicList.Count + "首歌曲";
+                Lbl_Number.Text = "  " + myMusicApp.PlayingMusicList.Count() + "首歌曲";
                 PlayListUpdate(myMusicApp.PlayingMusicList);
                 Panel_PlayList.BringToFront();
                 Panel_PlayList.Show();
@@ -1946,6 +1990,118 @@ namespace GuGuGuMusic
             {
                 Console.WriteLine("2060:" + ce.Message);
             }
+        }
+
+        private void Btn_Search_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Search();
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2064:" + ce.Message);
+            }
+        }
+
+        private void Search()
+        {
+            try
+            {
+                string s = "";
+                foreach(Music music in myMusicApp.MusicInfo)
+                {
+                    Console.WriteLine(music.Name);
+                    s = music.FileURL.Replace('\\','/');
+                }
+                Console.WriteLine(s);
+                IWMPMedia media = AWMP.newMedia(s);
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2067:" + ce.Message);
+            }
+        }
+
+        private void TxtBox_SearchBox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                foreach(Music music in myMusicApp.MusicInfo)
+                {
+                    Console.WriteLine(music.Name);
+                }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2065:" + ce.Message);
+            }
+        }
+
+
+        private void TxtBox_GotFocus(object sender, EventArgs e)
+        {
+            try
+            {
+                TxtBox_SearchBox.Text = "";
+                Timer_Searching.Start();
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2062:" + ce.Message);
+            }
+        }
+
+        private void TxtBox_LostFocus(object sender, EventArgs e)
+        {
+            try
+            {
+                Timer_Searching.Stop();
+                TxtBox_SearchBox.Text = "🔍搜索音乐";
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2063:" + ce.Message);
+            }
+        }
+
+        private void TxtBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            try
+            {
+                TextBox mTextBox = (TextBox)sender;
+                if (mTextBox.Text.ToString() != "" && e.KeyChar == 13)
+                {
+                    Search();
+                }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2066:" + ce.Message);
+            }
+        }
+
+        private void Timer_Searching_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (MouseButtons == MouseButtons.Left || MouseButtons == MouseButtons.Right)
+                {
+                    if (!InBox(new Size(300, 36), new Point(20 + Panel_Tool.Left + this.Left + Main_Panel.Left, 12 + this.Top + Main_Panel.Top + Panel_Tool.Top)))
+                    {
+                        ChoosedMLButton.Focus();
+                    }
+                }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2068:" + ce.Message);
+            }
+        }
+
+        private void Timer_Net_Tick(object sender, EventArgs e)
+        {
+
         }
     }
 }

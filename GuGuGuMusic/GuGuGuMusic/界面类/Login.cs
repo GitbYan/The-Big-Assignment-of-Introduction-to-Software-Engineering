@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -115,7 +116,7 @@ namespace GuGuGuMusic
         private const int edgeX = 4;//4px的间距来实现缩放
         private const int edgeY = 4;
         #endregion
-        
+
         public Login(Main m)
         {
             InitializeComponent();
@@ -123,6 +124,8 @@ namespace GuGuGuMusic
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.MouseDown += new MouseEventHandler(Form_MouseDown);
+
+
             main = m;
         }
 
@@ -136,22 +139,22 @@ namespace GuGuGuMusic
             {
                 this.Close();
             }
-            catch(Exception ce)
+            catch (Exception ce)
             {
                 Console.WriteLine("1001:" + ce.Message);
             }
         }
 
-        private void Btn_OnMouseHover(object sender,EventArgs e)
+        private void Btn_OnMouseHover(object sender, EventArgs e)
         {
             try
             {
                 Button b = (Button)sender;
                 b.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             }
-            catch(Exception ce)
+            catch (Exception ce)
             {
-                Console.WriteLine("1002:"+ce.Message);
+                Console.WriteLine("1002:" + ce.Message);
             }
         }
 
@@ -164,7 +167,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine("1003:"+ce.Message);
+                Console.WriteLine("1003:" + ce.Message);
             }
         }
 
@@ -180,7 +183,7 @@ namespace GuGuGuMusic
                     Location = new Point(0, 0)
                 };
                 register.MouseDown += new MouseEventHandler(Form_MouseDown);
-                foreach(Control control in this.Controls)
+                foreach (Control control in this.Controls)
                 {
                     control.Hide();
                 }
@@ -188,9 +191,9 @@ namespace GuGuGuMusic
                 register.Show();
                 login = this;
             }
-            catch(Exception ce)
+            catch (Exception ce)
             {
-                Console.WriteLine("1004:"+ce.Message);
+                Console.WriteLine("1004:" + ce.Message);
             }
         }
 
@@ -202,7 +205,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine("1005:"+ce.Message);
+                Console.WriteLine("1005:" + ce.Message);
             }
         }
 
@@ -210,15 +213,18 @@ namespace GuGuGuMusic
         {
             try
             {
-                TryLogin();
+                if (TryLogin())
+                {
+                    this.Close();
+                }
             }
             catch (Exception ce)
             {
-                Console.WriteLine("1006:"+ce.Message);
+                Console.WriteLine("1006:" + ce.Message);
             }
         }
 
-        private void TxtBox_GotFocus(object sender,EventArgs e)
+        private void TxtBox_GotFocus(object sender, EventArgs e)
         {
             try
             {
@@ -238,9 +244,10 @@ namespace GuGuGuMusic
                         }
                         break;
                 }
-            }catch(Exception ce)
+            }
+            catch (Exception ce)
             {
-                Console.WriteLine("1007:"+ce.Message);
+                Console.WriteLine("1007:" + ce.Message);
             }
         }
 
@@ -267,7 +274,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine("1008:"+ce.Message);
+                Console.WriteLine("1008:" + ce.Message);
             }
         }
 
@@ -321,15 +328,19 @@ namespace GuGuGuMusic
                 }
                 if (mTextBox.Name == "TxtBox_Password" && e.KeyChar == 13)
                 {
-                    TryLogin();
+                    if (TryLogin())
+                    {
+                        this.Close();
+                    }
                 }
-            }catch(Exception ce)
+            }
+            catch (Exception ce)
             {
-                Console.WriteLine("1011:"+ce.Message);
+                Console.WriteLine("1011:" + ce.Message);
             }
         }
 
-        private void TryLogin()
+        private bool TryLogin()
         {
             try
             {
@@ -340,36 +351,62 @@ namespace GuGuGuMusic
                 var Asc = new ASCIIEncoding();
                 var tmpByte = Asc.GetBytes(password);
                 var EncryptBytes = sha256.ComputeHash(tmpByte);
-                password = BitConverter.ToString(EncryptBytes).Replace("-","");
+                password = BitConverter.ToString(EncryptBytes).Replace("-", "");
                 sha256.Clear();
                 ///
                 if (ValidateAccount(userid, password))
                 {
-                    this.Close();
                     main.Login(new User(userid));
+                    return true;
                 }
-                
-            }catch(Exception e)
+                return false;
+            }
+            catch (Exception e)
             {
-                Console.WriteLine("1012:"+e.Message);
+                Console.WriteLine("1012:" + e.Message);
+                return false;
             }
         }
 
-        private bool ValidateAccount(string Account,string Password)
+        private bool ValidateAccount(string Account, string Password)
         {
             try
             {
                 MDB mDB = new MDB();
-                if(mDB.GetUserPassword(Account)!=""&&Password == mDB.GetUserPassword(Account))
+                if (mDB.GetUserPassword(Account) != "" && Password == mDB.GetUserPassword(Account))
                 {
                     return true;
                 }
                 return false;
-            }catch(Exception ce)
+            }
+            catch (Exception ce)
             {
                 Console.WriteLine("1013:" + ce.Message);
                 return false;
             }
         }
+        public Panel panel = new Panel()
+        {
+            Location = new Point(0, 0),
+            BackColor = Color.Red,
+            Visible = false,
+        };
+        public bool SuccessLogin = false;
+        public bool LoginOrFailed = false;//记录登陆验证过程是否结束
+        private void Timer_Logining_Tick(object sender, EventArgs e)
+        {
+            if (SuccessLogin)
+            {
+                this.Close();
+            }
+            panel.BringToFront();
+            panel.Show();
+            if (LoginOrFailed)
+            {
+                Timer_Logining.Stop();
+                panel.Hide();
+            }
+        }
+
     }
 }

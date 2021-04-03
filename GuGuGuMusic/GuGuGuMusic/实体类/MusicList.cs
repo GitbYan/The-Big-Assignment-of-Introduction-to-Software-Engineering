@@ -11,7 +11,8 @@ using System.Threading.Tasks;
  */
 namespace GuGuGuMusic
 {
-    public class MusicList:IList
+    [Serializable]
+    public class MusicList : IList
     {
         public MusicList()
         {
@@ -52,7 +53,26 @@ namespace GuGuGuMusic
 
         public bool IsFixedSize => throw new NotImplementedException();
 
-        public int Count { get; set; } = 0;
+        public int Count()
+        {
+            try
+            {
+                int count = 0;
+                foreach (Music music in Musics)
+                {
+                    if (music.Name != "")
+                    {
+                        count++;
+                    }
+                }
+                return count;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("7010:" + e.Message);
+                return 0;
+            }
+        }
 
         public object SyncRoot => throw new NotImplementedException();
 
@@ -68,6 +88,8 @@ namespace GuGuGuMusic
         /// 歌单内容
         /// </summary>
         public List<Music> Musics { get; set; } = new List<Music>();
+
+        int ICollection.Count => throw new NotImplementedException();
 
         /// <summary>
         /// 向列表中添加音乐,已有返回0，成功返回1，失败返回-1
@@ -86,13 +108,13 @@ namespace GuGuGuMusic
                 else
                 {
                     Musics.Add(music);
-                    Count++;
                     return 1;
                 }
-                    
-            }catch(Exception e)
+
+            }
+            catch (Exception e)
             {
-                Console.WriteLine("7001:"+e.Message);
+                Console.WriteLine("7001:" + e.Message);
                 return -1;
             }
         }
@@ -108,7 +130,7 @@ namespace GuGuGuMusic
             {
                 Music music = (Music)value;
                 bool IsExist = false;
-                foreach(Music m in Musics)
+                foreach (Music m in Musics)
                 {
                     if (m.FileURL == music.FileURL)
                     {
@@ -121,9 +143,10 @@ namespace GuGuGuMusic
                 }
                 return IsExist;
 
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
-                Console.WriteLine("7002:"+e.Message);
+                Console.WriteLine("7002:" + e.Message);
                 return true;
             }
         }
@@ -133,9 +156,10 @@ namespace GuGuGuMusic
             try
             {
 
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
-                Console.WriteLine("7003:"+e.Message);
+                Console.WriteLine("7003:" + e.Message);
             }
         }
 
@@ -150,9 +174,9 @@ namespace GuGuGuMusic
             {
                 Music music = (Music)value;
                 int i = 0;
-                foreach(Music m in Musics)
+                foreach (Music m in Musics)
                 {
-                    if(m.FileURL == music.FileURL)
+                    if (m.FileURL == music.FileURL)
                     {
                         return i;
                     }
@@ -161,7 +185,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("7004"+e.Message);
+                Console.WriteLine("7004" + e.Message);
                 return -1;
             }
         }
@@ -174,7 +198,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("7005:"+e.Message);
+                Console.WriteLine("7005:" + e.Message);
             }
         }
 
@@ -188,11 +212,10 @@ namespace GuGuGuMusic
             {
                 Music music = (Music)value;
                 Musics.Remove(music);
-                Count--;
             }
             catch (Exception e)
             {
-                Console.WriteLine("7006:"+e.Message);
+                Console.WriteLine("7006:" + e.Message);
             }
         }
 
@@ -204,7 +227,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("7007:"+e.Message);
+                Console.WriteLine("7007:" + e.Message);
             }
         }
 
@@ -216,7 +239,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("7008:"+e.Message);
+                Console.WriteLine("7008:" + e.Message);
             }
         }
 
@@ -232,10 +255,10 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("7009:"+e.Message);
+                Console.WriteLine("7009:" + e.Message);
                 return null;
             }
         }
     }
-    
+
 }

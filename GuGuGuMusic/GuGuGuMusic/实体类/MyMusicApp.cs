@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,12 +22,43 @@ namespace GuGuGuMusic
             //读取本地目录信息
             LocalMusicList = mDB.GetLocalMusicList(LocalMusicList);
             PlayingMusicList = mDB.GetLocalMusicList(PlayingMusicList);
-            //默认登陆时，读取用户信息
+            //默认登陆时，读取用户信息(目前是无用代码)
             if (IsLogin)
             {
                 InitLoginInfo(user);
             }
+            if (Connected = NetLinked())
+            {
+                MusicInfo = mDB.GetMusics();
+            }
+        }
 
+        public bool NetLinked()
+        {
+            try
+            {
+                WebRequest myrequest = WebRequest.Create("http://www.baidu.com");
+                WebResponse webResponse = myrequest.GetResponse();
+                webResponse.Close();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("5009:" + e.Message);
+                return false;
+            }
+        }
+
+        public void InitOnlineMusics()
+        {
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("5010:" + e.Message);
+            }
         }
 
         public void InitLoginInfo(User user)
@@ -50,12 +83,30 @@ namespace GuGuGuMusic
                     CreatedMusicList.Add(mDB.GetMusicList(AllMusicLists[i]).ListName, i);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine("5001:"+e.Message);
+                Console.WriteLine("5001:" + e.Message);
             }
         }
-    
+
+        public void ResetLogoutInfo()
+        {
+            try
+            {
+                IsLogin = false;
+                this.user = new User();
+                HistoryMusicList = new MusicList("播放历史");
+                LikedMusicList = new MusicList("我喜欢");
+                AllMusicLists = new List<MusicList>();
+                CreatedMusicList = new Dictionary<string, int>();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("5009:" + e.Message);
+            }
+        }
+
         /// <summary>
         /// 创建本地存储目录
         /// </summary>
@@ -71,7 +122,7 @@ namespace GuGuGuMusic
                     //如果不存在就创建file文件夹
                     Directory.CreateDirectory(path);
                 }
-                if(!File.Exists(path + fileName))
+                if (!File.Exists(path + fileName))
                 {
                     FileInfo myFile = new FileInfo(path + fileName);
                     StreamWriter streamWriter = myFile.CreateText();
@@ -80,7 +131,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("5002:"+e.Message);
+                Console.WriteLine("5002:" + e.Message);
             }
         }
         /// <summary>
@@ -97,10 +148,13 @@ namespace GuGuGuMusic
         /// </summary>
         public bool IsLogin { get; set; } = false;
         /// <summary>
+        /// 是否联网
+        /// </summary>
+        public bool Connected { get; set; } = false;
+        /// <summary>
         /// 当前登陆用户
         /// </summary>
         public User user { get; set; } = new User();
-
         public static readonly List<string> DefaultList = new List<string>
         {
             "播放列表",
@@ -132,11 +186,11 @@ namespace GuGuGuMusic
         /// <summary>
         /// 创建的列表 储存musiclist名以及对应allmusiclist中的index
         /// </summary>
-        public Dictionary<string, int> CreatedMusicList = new Dictionary<string, int>();
+        public Dictionary<string, int> CreatedMusicList { get; set; } = new Dictionary<string, int>();
         /// <summary>
         /// 创建的列表
         /// </summary>
-        public List<MusicList> AllMusicLists = new List<MusicList>();
+        public List<MusicList> AllMusicLists { get; set; } = new List<MusicList>();
         /// <summary>
         /// 正在播放的音乐
         /// </summary>
@@ -149,6 +203,10 @@ namespace GuGuGuMusic
         /// 播放列表中下一首音乐
         /// </summary>
         public Music NextMusic { get; set; } = new Music();
+        /// <summary>
+        /// 歌曲库
+        /// </summary>
+        public List<Music> MusicInfo { get; set; } = new List<Music>();
         #endregion
 
         #region 歌单部分
@@ -161,9 +219,10 @@ namespace GuGuGuMusic
             try
             {
                 return GetCreatedMusicListNumber() < ListLimits;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
-                Console.WriteLine("5003:"+e.Message);
+                Console.WriteLine("5003:" + e.Message);
                 return false;
             }
         }
@@ -179,7 +238,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("5004:"+e.Message);
+                Console.WriteLine("5004:" + e.Message);
                 return -1;
             }
         }
@@ -202,9 +261,9 @@ namespace GuGuGuMusic
                 }
                 return n >= 0;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine("5005:"+e.Message);
+                Console.WriteLine("5005:" + e.Message);
                 return false;
             }
         }
@@ -224,9 +283,9 @@ namespace GuGuGuMusic
                 }
                 return false;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine("5006:"+e.Message);
+                Console.WriteLine("5006:" + e.Message);
                 return false;
             }
         }
@@ -253,7 +312,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("5007:"+e.Message);
+                Console.WriteLine("5007:" + e.Message);
                 return false;
             }
         }
@@ -272,7 +331,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("5008:"+e.Message);
+                Console.WriteLine("5008:" + e.Message);
                 return false;
             }
         }
@@ -280,7 +339,7 @@ namespace GuGuGuMusic
 
 
     }
-    
+
 
 
 

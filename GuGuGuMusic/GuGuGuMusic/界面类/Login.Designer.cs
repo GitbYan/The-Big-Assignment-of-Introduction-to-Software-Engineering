@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.Btn_Login = new System.Windows.Forms.Button();
             this.Btn_Close = new System.Windows.Forms.Button();
             this.PicIcon = new System.Windows.Forms.PictureBox();
@@ -37,6 +38,7 @@
             this.Lbl_Tip2 = new System.Windows.Forms.Label();
             this.TxtBox_Password = new System.Windows.Forms.TextBox();
             this.TxtBox_Account = new System.Windows.Forms.TextBox();
+            this.Timer_Logining = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.PicIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -181,6 +183,10 @@
             this.TxtBox_Account.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtBox_KeyPress);
             this.TxtBox_Account.LostFocus += new System.EventHandler(this.TxtBox_LostFocus);
             // 
+            // Timer_Logining
+            // 
+            this.Timer_Logining.Tick += new System.EventHandler(this.Timer_Logining_Tick);
+            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -217,5 +223,6 @@
         private System.Windows.Forms.Button Btn_Forgot;
         private System.Windows.Forms.Label Lbl_Tip2;
         private System.Windows.Forms.Label Lbl_Tip1;
+        private System.Windows.Forms.Timer Timer_Logining;
     }
 }
