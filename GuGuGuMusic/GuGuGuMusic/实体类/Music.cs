@@ -8,6 +8,7 @@ using System.Threading.Tasks;
  */
 namespace GuGuGuMusic
 {
+    [Serializable]
     public class Music
     {
         public Music()
@@ -15,15 +16,7 @@ namespace GuGuGuMusic
 
         }
 
-        public Music(string FileURL)
-        {
-            this.Name = InitMusic(FileURL).Name;
-            this.Singer = InitMusic(FileURL).Singer;
-            this.Album = InitMusic(FileURL).Album;
-            this.FileURL = InitMusic(FileURL).FileURL;
-        }
-
-        public Music(string Name,string Singer,string Album,string FileURL)
+        public Music(string Name, string Singer, string Album, string FileURL)
         {
             this.Name = Name;
             this.Singer = Singer;
@@ -99,40 +92,60 @@ namespace GuGuGuMusic
         }
 
         /// <summary>
-        /// 解析音乐文件路径名并返回音乐对象
+        /// 解析音乐文件保存信息,初始化音乐信息
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public Music InitMusic(string filename)
+        public Music ReadLocalMusic(string filename)
         {
             try
             {
+                Music music = new Music();
                 string[] str = filename.Split('\\');
                 string fileurl = "";
-                string name = "";
-                string singer = "";
                 foreach (string s in str)
                 {
-                    if (s != str.Last())
+                    if (s == str.First())
                     {
-                        fileurl = fileurl + s + "\\";
+                        fileurl = s;
                     }
-                    if (s == str.Last())
+                    else if (s != str.Last())
                     {
-                        fileurl += s;
+                        fileurl = fileurl + "\\" + s;
+                    }
+                    else if (s == str.Last())
+                    {
                         string[] str_ = s.Split('-');
-                        name = str_[1].Split('.')[0];
-                        singer = str_[0];
+                        music.Singer = str_[0];
+                        music.Album = str_[1];
+                        music.Name = str_[2];
                     }
                 }
-                Music music = new Music(name, singer, "", fileurl);
+                music.FileURL = fileurl;
                 return music;
             }
             catch (Exception e)
             {
-                Console.WriteLine("6001:"+e.Message);
+                Console.WriteLine("6001:" + e.Message);
                 return null;
             }
         }
+
+        public string WriteLocalMusic()
+        {
+            try
+            {
+                string localstring = "";
+                localstring += FileURL + "\\";
+                localstring += Singer + "-" + Album + "-" + Name;
+                return localstring;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("6002:" + e.Message);
+                return null;
+            }
+        }
+
     }
 }

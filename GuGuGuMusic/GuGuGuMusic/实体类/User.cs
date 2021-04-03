@@ -42,8 +42,8 @@ namespace GuGuGuMusic
                 _ImageURL = value;
             }
         }
-        
 
-        
+
+
     }
 }
