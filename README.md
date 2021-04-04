@@ -38,47 +38,44 @@
 
    ​	版权先鸽掉，听听鸽就好
 
-#### 设计
+#### 数据库设计：
 
-##### 数据库设计：
+musicinfo
 
--音乐表(musicinfo):
+- Name char(200) PRI
 
-​	名称(Name)
+- Singer char(200) PRI
 
-​	歌手(Singer)
+- Fileurl varchar(1024)
 
-​	专辑(Album)
+- Album char(200)
 
-​	音乐文件地址(Fileurl)
 
--用户表(userinfo):
+userinfo
 
-​	账号(user_id)
+- userid char(18) PRI
 
-​	密码(password)
+- password char(255)
 
-​	头像文件地址(imageurl)
+- imageurl char(255)
 
--歌单表(musiclistinfo):
 
-​	歌单名(ListName)
+musiclistinfo
 
-​	用户id(user_id)
+- Listname char(255) PRI
 
-​	音乐文件地址(Fileurl)
+- user_id char(18) PRI
 
--用户-歌单表(user_musiclist_info):
+- Fileurl char(255)
+- musicname char(200) PRI
+- musicsinger char(200) PRI
+- musicalbum char(200)
 
-​	歌单名(ListName)
+user_musiclist_info
 
-​	用户id(user_id)
+- user_id char(18) PRI
 
-##### 模块设计：
-
-界面类：前端界面实现、用户交互设计
-
-实体类：存储信息的基类、数据库接口类
+- ListName char(255) PRI
 
 #### 开发平台
 
@@ -91,5 +88,29 @@ C#
 #### 数据库
 
 MySQL -version:8.0.19
+
+#### 环境搭建
+
+- ##### 安装package.config中标注的所有包
+
+- ##### 必要的引用（包括但不限于）：
+
+  1. ###### COM:Microsoft Shell Controls And Automation
+
+  2. ###### COM:Windows Media Player
+
+  3. ###### Shell32引用属性：嵌入互操作类型=false
+
+- ##### 需要添加App.config文件并修改对应内容：添加\<add\>信息,[]内容必须设置正确
+
+  ```C#
+  <configuration>
+    <appSettings>
+      <add key="DBConnectionString" value="Persist Security Info=False;Database=[数据库名];Server=[数据库地址];Port=3306;User ID=[数据库账号];Password=[数据库密码];Charset=utf8"></add>
+    </appSettings>
+    ...
+  ```
+
+  
 
 
