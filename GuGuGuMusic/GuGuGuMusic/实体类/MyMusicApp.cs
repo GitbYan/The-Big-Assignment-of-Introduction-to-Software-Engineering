@@ -40,6 +40,7 @@ namespace GuGuGuMusic
                 WebRequest myrequest = WebRequest.Create("http://www.baidu.com");
                 WebResponse webResponse = myrequest.GetResponse();
                 webResponse.Close();
+                MusicInfo = mDB.GetMusics();
                 return true;
             }
             catch (Exception e)
@@ -99,7 +100,6 @@ namespace GuGuGuMusic
                 LikedMusicList = new MusicList("我喜欢");
                 AllMusicLists = new List<MusicList>();
                 CreatedMusicList = new Dictionary<string, int>();
-
             }
             catch (Exception e)
             {

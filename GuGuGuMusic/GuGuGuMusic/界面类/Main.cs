@@ -1,5 +1,6 @@
 ﻿using AxWMPLib;
 using ControlDemos;
+using Mono.Web;
 using Shell32;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -174,9 +176,6 @@ namespace GuGuGuMusic
             this.Controls.Add(AWMP);
             ((System.ComponentModel.ISupportInitialize)(this.AWMP)).EndInit();
 
-            //初始化音乐app(数据初始化
-            myMusicApp = new MyMusicApp();
-
             //设置默认音乐列表为本地与下载
             ChoosedMLButton = Btn_Local;
 
@@ -184,8 +183,9 @@ namespace GuGuGuMusic
             Btn_PopMusic.MusicList = myMusicApp.PopMusicList;
             Btn_History.MusicList = myMusicApp.HistoryMusicList;
             Btn_Local.MusicList = myMusicApp.LocalMusicList;
-            Btn_Liked.MusicList = myMusicApp.LikedMusicList;           
-            ShowList(Btn_Local.MusicList.Musics);
+            Btn_Liked.MusicList = myMusicApp.LikedMusicList;
+            Btn_SearchResult.MusicList = SearchMusicList;
+            ShowList(Btn_Local.MusicList);
 
             //初始化播放器
             InitAWMP(myMusicApp.PlayingMusicList, myMusicApp.PlayingMusicList.StartIndex);
@@ -213,6 +213,11 @@ namespace GuGuGuMusic
         /// 音乐app，所有对数据的操作、事务逻辑都由其实现
         /// </summary>
         public MyMusicApp myMusicApp = new MyMusicApp();
+
+        /// <summary>
+        /// 保存搜索结果
+        /// </summary>
+        public MusicList SearchMusicList = new MusicList("搜索结果");
 
         /// <summary>
         /// 独立的音乐播放控件，软件核心
@@ -270,7 +275,7 @@ namespace GuGuGuMusic
                     myMusicApp.LocalMusicList.Add(music);
                     Btn_Local.MusicList = myMusicApp.LocalMusicList;
                     myMusicApp.UpdateMusicList(myMusicApp.LocalMusicList);
-                    ShowList(myMusicApp.LocalMusicList.Musics);
+                    ShowList(myMusicApp.LocalMusicList);
                 }
             }
             catch (Exception ce)
@@ -312,7 +317,7 @@ namespace GuGuGuMusic
             Panel_Volume.Location = new Point((this.Width - 908)/2 + 610, Panel_Volume.Location.Y);
             Btn_Shut.Location = new Point(Btn_Shut.Location.X, Panel_PlayList.Height - 68);
             //刷新
-            ShowList(ChoosedMLButton.MusicList.Musics);
+            ShowList(ChoosedMLButton.MusicList);
         }
 
         /// <summary>
@@ -451,42 +456,24 @@ namespace GuGuGuMusic
         {
             try
             {
-                bool test = true;
-                if (test)
+
+                if (musicList != null && musicList.Musics.Count() != 0)
                 {
-                    string url = myMusicApp.MusicInfo[0].FileURL.Replace('\\', '/');
-                    //url = "https://webfs.yun.kugou.com/202104040626/fce5de6a104541af0c72a8b94add15c7/part/0/960992/G077/M00/07/11/LZQEAFguky2AU7OFAEHk-4CpoG8440.mp3";
-                    url = "//freetyst.nf.migu.cn/public/product11/2018/06/07/2013%E5%B9%B47%E6%9C%888%E6%97%A5%E7%B4%A7%E6%80%A5%E5%87%86%E5%85%A5%E7%BA%B5%E6%A8%AA%E4%B8%96%E4%BB%A330%E9%A6%96/%E6%AD%8C%E6%9B%B2%E4%B8%8B%E8%BD%BD/MP3_40_16_Stero/%E9%BE%99%E9%97%A8%E6%BE%A1%E5%A0%82(%E5%91%A8%E6%9D%B0%E4%BC%A6%E5%A4%A9%E5%8F%B0%E7%94%B5%E5%BD%B1%E5%8E%9F%E5%A3%B0%E5%B8%A6)-%E6%BC%94%E5%A5%8F%E6%9B%B2.mp3?key=e0c13318f99de6fe&Tim=1617472968450&channelid=00&msisdn=bd13a1215fa14ff1a56a7250d9fcfcd3&CI=600547039162600907000000528998&F=000009";
-                    Console.WriteLine(url);
-                    AxWindowsMediaPlayer a = new AxWindowsMediaPlayer();
-                    ((System.ComponentModel.ISupportInitialize)(this.AWMP)).BeginInit();
-                    this.Controls.Add(a);
-                    ((System.ComponentModel.ISupportInitialize)(this.AWMP)).EndInit();
-                    a.URL = url;
-                    
-                    a.Ctlcontrols.play();
-                    //AWMP.Ctlcontrols.play();
-                }
-                else
-                {
-                    if (musicList != null && musicList.Musics.Count() != 0)
+                    IWMPPlaylist playList = AWMP.playlistCollection.newPlaylist("MyPlayList");
+                    IWMPMedia media = AWMP.newMedia(musicList.Musics[index].FileURL);
+                    playList.appendItem(media);
+                    for (int i = 0; i < musicList.Musics.Count; i++)
                     {
-                        IWMPPlaylist playList = AWMP.playlistCollection.newPlaylist("MyPlayList");
-                        IWMPMedia media = AWMP.newMedia(musicList.Musics[index].FileURL);
-                        playList.appendItem(media);
-                        for (int i = 0; i < musicList.Musics.Count; i++)
+                        if (i == index)
                         {
-                            if (i == index)
-                            {
-                                continue;
-                            }
-                            string url = musicList.Musics[i].FileURL.ToString();
-                            media = AWMP.newMedia(url);
-                            playList.appendItem(media);
+                            continue;
                         }
-                        AWMP.currentPlaylist = playList;
-                        AWMP.Ctlcontrols.stop();
+                        string url = musicList.Musics[i].FileURL.ToString();
+                        media = AWMP.newMedia(url);
+                        playList.appendItem(media);
                     }
+                    AWMP.currentPlaylist = playList;
+                    AWMP.Ctlcontrols.stop();
                 }
 
 
@@ -976,10 +963,11 @@ namespace GuGuGuMusic
         /// 在主页显示选择的音乐列表，批量实例化音乐按钮
         /// </summary>
         /// <param name="Musics"></param>
-        private void ShowList(List<Music> Musics)
+        private void ShowList(MusicList musicList)
         {
             try
             {
+                List<Music> Musics = musicList.Musics;
                 Panel_MusicList.Controls.Clear();
                 int i = 0;
                 if(Musics.Count() != 0)
@@ -1214,7 +1202,7 @@ namespace GuGuGuMusic
             try
             {
                 ResetChoosedMLButton(sender);
-                ShowList(ChoosedMLButton.MusicList.Musics);
+                ShowList(ChoosedMLButton.MusicList);
             }catch(Exception ce)
             {
                 Console.WriteLine("2029:" + ce.Message);
@@ -1354,7 +1342,7 @@ namespace GuGuGuMusic
                 Btn_AddLocalMusic.BringToFront();
                 Btn_AddLocalMusic.Show();
                 ResetChoosedMLButton(sender);
-                ShowList(myMusicApp.LocalMusicList.Musics);
+                ShowList(myMusicApp.LocalMusicList);
 
             }
             catch (Exception ce)
@@ -1373,7 +1361,7 @@ namespace GuGuGuMusic
             try
             {
                 ResetChoosedMLButton(sender);
-                ShowList(myMusicApp.HistoryMusicList.Musics);
+                ShowList(myMusicApp.HistoryMusicList);
             }
             catch (Exception ce)
             {
@@ -1392,7 +1380,7 @@ namespace GuGuGuMusic
             try
             {
                 ResetChoosedMLButton(sender);
-                ShowList(myMusicApp.PopMusicList.Musics);
+                ShowList(myMusicApp.PopMusicList);
             }
             catch (Exception ce)
             {
@@ -1411,7 +1399,7 @@ namespace GuGuGuMusic
             try
             {
                 ResetChoosedMLButton(sender);
-                ShowList(Btn_Liked.MusicList.Musics);
+                ShowList(Btn_Liked.MusicList);
             }
             catch (Exception ce)
             {
@@ -1608,7 +1596,7 @@ namespace GuGuGuMusic
             {
                 MLButton mLButton = (MLButton)((ContextMenuStrip)sender).SourceControl;
                 ResetChoosedMLButton(mLButton);
-                ShowList(mLButton.MusicList.Musics);
+                ShowList(mLButton.MusicList);
             }
             catch (Exception ce)
             {
@@ -1643,7 +1631,7 @@ namespace GuGuGuMusic
                 }
                 CreatingBtn = mLButton;
                 ResetChoosedMLButton(mLButton);
-                ShowList(mLButton.MusicList.Musics);
+                ShowList(mLButton.MusicList);
             }catch(Exception ce)
             {
                 Console.WriteLine("2046:"+ce.Message);
@@ -1664,7 +1652,7 @@ namespace GuGuGuMusic
                 Panel_CreatedList.Controls.Remove(CreatingBtn);
                 MLButton mLButton = (MLButton)Panel_CreatedList.Controls[Panel_CreatedList.Controls.Count-1];
                 ResetChoosedMLButton(mLButton);
-                ShowList(mLButton.MusicList.Musics);
+                ShowList(mLButton.MusicList);
                 ResetList();
             }
             catch(Exception ce)
@@ -1929,7 +1917,7 @@ namespace GuGuGuMusic
                 MusicList ListToUpdate = new MusicList();
                 //对应歌单中删除所选歌曲
                 ChoosedMLButton.MusicList.Remove(mButton.M_music);
-                ShowList(ChoosedMLButton.MusicList.Musics);
+                ShowList(ChoosedMLButton.MusicList);
                 ListToUpdate = ChoosedMLButton.MusicList;
                 //播放列表
                 if (PlayingMusicListName == ChoosedMLButton.MusicList.ListName)
@@ -1950,10 +1938,13 @@ namespace GuGuGuMusic
         {
             try
             {
-                Main main = new Main();
-                main.Show();
-                this.Close();
-                new Login(main).ShowDialog();
+                myMusicApp.ResetLogoutInfo();
+                Btn_Liked.MusicList = new MusicList(Btn_Liked.MusicList.ListName);
+                Btn_History.MusicList = new MusicList(Btn_History.MusicList.ListName);
+                Btn_PopMusic.MusicList = new MusicList(Btn_PopMusic.MusicList.ListName);
+                AutoName = new Dictionary<string, int>();
+                Panel_CreatedList.Controls.Clear();
+                Panel_CreateList.Hide();
             }catch(Exception ce)
             {
                 Console.WriteLine("2058:" + ce.Message);
@@ -2004,18 +1995,41 @@ namespace GuGuGuMusic
             }
         }
 
+        private void Btn_Search_MouseDown(object sender,MouseEventArgs e)
+        {
+            try
+            {
+                TxtBox_SearchBox.Focus();
+            }catch(Exception ce)
+            {
+                Console.WriteLine("2068:"+ce.Message);
+            }
+        }
+
         private void Search()
         {
             try
             {
-                string s = "";
-                foreach(Music music in myMusicApp.MusicInfo)
+                if(TxtBox_SearchBox.Text.ToString().Trim(' ') == "")
                 {
-                    Console.WriteLine(music.Name);
-                    s = music.FileURL.Replace('\\','/');
+
                 }
-                Console.WriteLine(s);
-                IWMPMedia media = AWMP.newMedia(s);
+                else
+                {
+                    Btn_SearchResult.MusicList.Clear();
+                    string searchtext = TxtBox_SearchBox.Text.ToString();
+                    Regex regex = new Regex(searchtext);
+                    foreach(Music music in myMusicApp.MusicInfo)
+                    {
+                        Match match = regex.Match(music.Name + music.Singer + music.Album);
+                        if (match.ToString() != "")
+                        {
+                            Btn_SearchResult.MusicList.Add(music);
+                        }
+                    }
+                    ResetChoosedMLButton(Btn_SearchResult);
+                    ShowList(Btn_SearchResult.MusicList);
+                }
             }
             catch (Exception ce)
             {
@@ -2027,10 +2041,7 @@ namespace GuGuGuMusic
         {
             try
             {
-                foreach(Music music in myMusicApp.MusicInfo)
-                {
-                    Console.WriteLine(music.Name);
-                }
+
             }
             catch (Exception ce)
             {
@@ -2043,7 +2054,11 @@ namespace GuGuGuMusic
         {
             try
             {
-                TxtBox_SearchBox.Text = "";
+                if(TxtBox_SearchBox.Text.ToString() == "🔍搜索音乐")
+                {
+                    TxtBox_SearchBox.Text = "";
+                }
+                Btn_Search.Show();
                 Timer_Searching.Start();
             }
             catch (Exception ce)
@@ -2057,7 +2072,11 @@ namespace GuGuGuMusic
             try
             {
                 Timer_Searching.Stop();
-                TxtBox_SearchBox.Text = "🔍搜索音乐";
+                if (TxtBox_SearchBox.Text.ToString().Trim(' ') == "")
+                {
+                    TxtBox_SearchBox.Text = "🔍搜索音乐";
+                    Btn_Search.Hide();
+                }
             }
             catch (Exception ce)
             {
@@ -2095,7 +2114,7 @@ namespace GuGuGuMusic
             }
             catch (Exception ce)
             {
-                Console.WriteLine("2068:" + ce.Message);
+                Console.WriteLine("2069:" + ce.Message);
             }
         }
 

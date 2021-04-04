@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using MySql.Data.MySqlClient;
 
 /*
@@ -187,7 +188,13 @@ namespace GuGuGuMusic
                 List<Music> Musics = new List<Music>();
                 while (rd.Read())
                 {
-                    Music music = new Music(rd["Name"].ToString(), rd["Singer"].ToString(), rd["Album"].ToString(), rd["Fileurl"].ToString().Replace("/", "\\"));
+                    string url = HttpUtility.UrlDecode(rd["Fileurl"].ToString(), System.Text.Encoding.UTF8);
+                    string head = url.Substring(0, 4);
+                    if (head != "http")
+                    {
+                        url = "http:" + url;
+                    }
+                    Music music = new Music(rd["Name"].ToString(), rd["Singer"].ToString(), rd["Album"].ToString(), url);
                     Musics.Add(music);
                 }
                 rd.Close();
@@ -257,6 +264,64 @@ namespace GuGuGuMusic
         }
 
         /// <summary>
+        /// 解析音乐文件保存信息,初始化音乐信息
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public Music ReadLocalMusic(string filename)
+        {
+            try
+            {
+                Music music = new Music();
+                string[] str = filename.Split('\\');
+                string fileurl = "";
+                foreach (string s in str)
+                {
+                    if (s == str.First())
+                    {
+                        fileurl = s;
+                    }
+                    else if (s != str.Last())
+                    {
+                        fileurl = fileurl + "\\" + s;
+                    }
+                    else if (s == str.Last())
+                    {
+                        string[] str_ = s.Split('-');
+                        music.Singer = str_[0];
+                        music.Album = str_[1];
+                        music.Name = str_[2];
+                        Console.WriteLine(s);
+                    }
+                }
+                music.FileURL = fileurl;
+                return music;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("6001:" + e.Message);
+                return null;
+            }
+        }
+
+        public string WriteLocalMusic(Music music)
+        {
+            try
+            {
+                string localstring = "【";
+                localstring += music.FileURL + "\\";
+                localstring += music.Singer + "-" + music.Album + "-" + music.Name;
+                localstring += "】";
+                return localstring;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("6002:" + e.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// 修改数据库中对应的音乐表，返回操作涉及的项数，失败返回-1
         /// </summary>
         /// <param name="musicList">列表对象</param>
@@ -273,7 +338,7 @@ namespace GuGuGuMusic
                     filepath = "../local/local.txt";
                     foreach (Music music in musicList.Musics)
                     {
-                        lines.Add(music.WriteLocalMusic());
+                        lines.Add(WriteLocalMusic(music));
                     }
                     File.WriteAllLines(filepath, lines.ToArray());
                     return 0;
@@ -284,7 +349,7 @@ namespace GuGuGuMusic
                     filepath = "../local/playing.txt";
                     foreach (Music music in musicList.Musics)
                     {
-                        lines.Add(music.WriteLocalMusic());
+                        lines.Add(WriteLocalMusic(music));
                     }
                     File.WriteAllLines(filepath, lines.ToArray());
                     return 0;
@@ -426,19 +491,28 @@ namespace GuGuGuMusic
                 FileInfo myFile;
                 if (musicList.ListName.ToString() == "本地与下载")
                 {
-
+                    Console.WriteLine("读取本地列表");
                     myFile = new FileInfo("../local/local.txt");
                 }
                 else
                 {
+                    Console.WriteLine("读取本地播放列表");
                     myFile = new FileInfo("../local/playing.txt");
                 }
                 StreamReader sR = myFile.OpenText();
+                string filename = "";
+                int i = 0;
                 string nextLine;
                 while ((nextLine = sR.ReadLine()) != null)
                 {
-                    Music music = (new Music()).ReadLocalMusic(nextLine.ToString());
-                    musicList.Add(music);
+                    filename += nextLine.TrimEnd('】').TrimStart('【').TrimEnd('\n');
+                    if (nextLine.Last() == '】')
+                    {
+                        Music music = ReadLocalMusic(filename);
+                        Console.WriteLine(filename);
+                        musicList.Add(music);
+                        filename = "";
+                    }
                 }
                 sR.Close();
                 return musicList;

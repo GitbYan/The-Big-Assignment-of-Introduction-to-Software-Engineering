@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.Main_Panel = new System.Windows.Forms.Panel();
             this.Panel_Detail = new System.Windows.Forms.Panel();
+            this.Btn_SearchResult = new GuGuGuMusic.MLButton();
             this.Panel_MusicList = new System.Windows.Forms.Panel();
             this.button2 = new System.Windows.Forms.Button();
             this.mButton1 = new GuGuGuMusic.MButton();
@@ -155,6 +156,7 @@
             // Panel_Detail
             // 
             this.Panel_Detail.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.Panel_Detail.Controls.Add(this.Btn_SearchResult);
             this.Panel_Detail.Controls.Add(this.Panel_MusicList);
             this.Panel_Detail.Controls.Add(this.Btn_AddLocalMusic);
             this.Panel_Detail.Location = new System.Drawing.Point(200, 80);
@@ -163,6 +165,24 @@
             this.Panel_Detail.Name = "Panel_Detail";
             this.Panel_Detail.Size = new System.Drawing.Size(700, 480);
             this.Panel_Detail.TabIndex = 2;
+            // 
+            // Btn_SearchResult
+            // 
+            this.Btn_SearchResult.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Btn_SearchResult.Enabled = false;
+            this.Btn_SearchResult.FlatAppearance.BorderSize = 0;
+            this.Btn_SearchResult.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SearchResult.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
+            this.Btn_SearchResult.Location = new System.Drawing.Point(190, 22);
+            this.Btn_SearchResult.Margin = new System.Windows.Forms.Padding(0);
+            this.Btn_SearchResult.MusicList = null;
+            this.Btn_SearchResult.Name = "Btn_SearchResult";
+            this.Btn_SearchResult.Size = new System.Drawing.Size(90, 34);
+            this.Btn_SearchResult.TabIndex = 2;
+            this.Btn_SearchResult.Text = "搜索结果";
+            this.Btn_SearchResult.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Btn_SearchResult.UseVisualStyleBackColor = true;
+            this.Btn_SearchResult.Visible = false;
             // 
             // Panel_MusicList
             // 
@@ -469,6 +489,7 @@
             // Btn_Search
             // 
             this.Btn_Search.BackColor = System.Drawing.Color.LightGray;
+            this.Btn_Search.FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
             this.Btn_Search.FlatAppearance.BorderSize = 0;
             this.Btn_Search.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_Search.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -479,6 +500,7 @@
             this.Btn_Search.TabStop = false;
             this.Btn_Search.Text = "♬";
             this.Btn_Search.UseVisualStyleBackColor = false;
+            this.Btn_Search.Visible = false;
             this.Btn_Search.Click += new System.EventHandler(this.Btn_Search_Click);
             // 
             // TxtBox_SearchBox
@@ -499,8 +521,10 @@
             // Btn_SearchBorder
             // 
             this.Btn_SearchBorder.BackColor = System.Drawing.Color.LightGray;
-            this.Btn_SearchBorder.Enabled = false;
+            this.Btn_SearchBorder.FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
             this.Btn_SearchBorder.FlatAppearance.BorderSize = 0;
+            this.Btn_SearchBorder.FlatAppearance.MouseDownBackColor = System.Drawing.Color.LightGray;
+            this.Btn_SearchBorder.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightGray;
             this.Btn_SearchBorder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_SearchBorder.Location = new System.Drawing.Point(20, 12);
             this.Btn_SearchBorder.Name = "Btn_SearchBorder";
@@ -508,6 +532,7 @@
             this.Btn_SearchBorder.TabIndex = 6;
             this.Btn_SearchBorder.TabStop = false;
             this.Btn_SearchBorder.UseVisualStyleBackColor = false;
+            this.Btn_SearchBorder.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Btn_Search_MouseDown);
             // 
             // Btn_Login
             // 
@@ -1324,6 +1349,7 @@
         private System.Windows.Forms.Timer Timer_Searching;
         private MButton mButton1;
         private System.Windows.Forms.Timer Timer_Net;
+        private MLButton Btn_SearchResult;
     }
 }
 
