@@ -155,7 +155,7 @@ namespace GuGuGuMusic
         {
             try
             {
-
+                this.Musics.Clear();
             }
             catch (Exception e)
             {

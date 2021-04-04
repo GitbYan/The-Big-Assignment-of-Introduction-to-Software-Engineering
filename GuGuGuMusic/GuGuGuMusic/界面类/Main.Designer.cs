@@ -32,6 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.Main_Panel = new System.Windows.Forms.Panel();
             this.Panel_Detail = new System.Windows.Forms.Panel();
+            this.MSBar_MusicList = new ControlDemos.MScrollBar();
+            this.Btn_SearchResult = new GuGuGuMusic.MLButton();
             this.Panel_MusicList = new System.Windows.Forms.Panel();
             this.button2 = new System.Windows.Forms.Button();
             this.mButton1 = new GuGuGuMusic.MButton();
@@ -48,7 +50,7 @@
             this.Btn_MusicPic = new System.Windows.Forms.Button();
             this.Btn_Process = new System.Windows.Forms.Button();
             this.Btn_Playlist = new System.Windows.Forms.Button();
-            this.mTrackBar_Music = new ControlDemos.MTrackBar();
+            this.MTBar_Music = new ControlDemos.MTrackBar();
             this.Panel_Tool = new System.Windows.Forms.Panel();
             this.CMS_Main = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.登陆ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,6 +67,7 @@
             this.Btn_Close = new System.Windows.Forms.Button();
             this.Panel_Nav = new System.Windows.Forms.Panel();
             this.Panel_MenuList = new System.Windows.Forms.Panel();
+            this.MSBar_MenuList = new ControlDemos.MScrollBar();
             this.Panel_CreatedList = new System.Windows.Forms.Panel();
             this.Panel_CreateList = new System.Windows.Forms.Panel();
             this.Btn_Spread = new System.Windows.Forms.Button();
@@ -92,9 +95,11 @@
             this.Btn_SingleLoop = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Panel_PlayList = new System.Windows.Forms.Panel();
+            this.Btn_Bar = new System.Windows.Forms.Button();
+            this.MSBar_PlayingMusicList = new ControlDemos.MScrollBar();
             this.Btn_Shut = new System.Windows.Forms.Button();
             this.Panel_PlayingMusicList = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.ButtonType = new System.Windows.Forms.Button();
             this.Lbl_Number = new System.Windows.Forms.Label();
             this.Lbl_PlayList = new System.Windows.Forms.Button();
             this.Timer_NamingList = new System.Windows.Forms.Timer(this.components);
@@ -102,7 +107,7 @@
             this.Panel_Mode = new System.Windows.Forms.Panel();
             this.Panel_Volume = new System.Windows.Forms.Panel();
             this.Lbl_Volume = new System.Windows.Forms.Label();
-            this.mTrackBar_Volume = new ControlDemos.MTrackBar();
+            this.MTBar_Volume = new ControlDemos.MTrackBar();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.CMS歌曲 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.播放ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,6 +119,7 @@
             this.Timer_Loading = new System.Windows.Forms.Timer(this.components);
             this.Timer_Searching = new System.Windows.Forms.Timer(this.components);
             this.Timer_Net = new System.Windows.Forms.Timer(this.components);
+            this.Timer_MSBar_MenuList = new System.Windows.Forms.Timer(this.components);
             this.Main_Panel.SuspendLayout();
             this.Panel_Detail.SuspendLayout();
             this.Panel_MusicList.SuspendLayout();
@@ -155,6 +161,8 @@
             // Panel_Detail
             // 
             this.Panel_Detail.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.Panel_Detail.Controls.Add(this.MSBar_MusicList);
+            this.Panel_Detail.Controls.Add(this.Btn_SearchResult);
             this.Panel_Detail.Controls.Add(this.Panel_MusicList);
             this.Panel_Detail.Controls.Add(this.Btn_AddLocalMusic);
             this.Panel_Detail.Location = new System.Drawing.Point(200, 80);
@@ -163,6 +171,44 @@
             this.Panel_Detail.Name = "Panel_Detail";
             this.Panel_Detail.Size = new System.Drawing.Size(700, 480);
             this.Panel_Detail.TabIndex = 2;
+            // 
+            // MSBar_MusicList
+            // 
+            this.MSBar_MusicList.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.MSBar_MusicList.Enabled = false;
+            this.MSBar_MusicList.Location = new System.Drawing.Point(688, 3);
+            this.MSBar_MusicList.M_BarColor = System.Drawing.Color.WhiteSmoke;
+            this.MSBar_MusicList.M_BarSize = 10;
+            this.MSBar_MusicList.M_IsRound = true;
+            this.MSBar_MusicList.M_Maximum = 100D;
+            this.MSBar_MusicList.M_Orientation = ControlDemos.Orientation.Vertical_UD;
+            this.MSBar_MusicList.M_PresentColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.MSBar_MusicList.M_SliderColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.MSBar_MusicList.M_SliderHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.MSBar_MusicList.M_SliderLength = 237;
+            this.MSBar_MusicList.M_Value = 0D;
+            this.MSBar_MusicList.Name = "MSBar_MusicList";
+            this.MSBar_MusicList.Size = new System.Drawing.Size(10, 474);
+            this.MSBar_MusicList.TabIndex = 6;
+            this.MSBar_MusicList.MValueChanged += new ControlDemos.MScrollBar.MValueChangedEventHandler(this.MSBar_MusicList_MValueChanged);
+            // 
+            // Btn_SearchResult
+            // 
+            this.Btn_SearchResult.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Btn_SearchResult.Enabled = false;
+            this.Btn_SearchResult.FlatAppearance.BorderSize = 0;
+            this.Btn_SearchResult.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SearchResult.Font = new System.Drawing.Font("微软雅黑", 10F);
+            this.Btn_SearchResult.Location = new System.Drawing.Point(190, 22);
+            this.Btn_SearchResult.Margin = new System.Windows.Forms.Padding(0);
+            this.Btn_SearchResult.MusicList = null;
+            this.Btn_SearchResult.Name = "Btn_SearchResult";
+            this.Btn_SearchResult.Size = new System.Drawing.Size(90, 34);
+            this.Btn_SearchResult.TabIndex = 2;
+            this.Btn_SearchResult.Text = "搜索结果";
+            this.Btn_SearchResult.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Btn_SearchResult.UseVisualStyleBackColor = true;
+            this.Btn_SearchResult.Visible = false;
             // 
             // Panel_MusicList
             // 
@@ -205,6 +251,7 @@
             this.Btn_AddLocalMusic.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
             this.Btn_AddLocalMusic.FlatAppearance.BorderSize = 0;
             this.Btn_AddLocalMusic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_AddLocalMusic.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Btn_AddLocalMusic.Location = new System.Drawing.Point(30, 22);
             this.Btn_AddLocalMusic.Name = "Btn_AddLocalMusic";
             this.Btn_AddLocalMusic.Size = new System.Drawing.Size(96, 32);
@@ -217,7 +264,7 @@
             // 
             this.Panel_Play.BackColor = System.Drawing.Color.WhiteSmoke;
             this.Panel_Play.Controls.Add(this.Panel_PlayStatus);
-            this.Panel_Play.Controls.Add(this.mTrackBar_Music);
+            this.Panel_Play.Controls.Add(this.MTBar_Music);
             this.Panel_Play.Location = new System.Drawing.Point(200, 560);
             this.Panel_Play.Margin = new System.Windows.Forms.Padding(0);
             this.Panel_Play.MinimumSize = new System.Drawing.Size(700, 80);
@@ -392,27 +439,27 @@
             this.Btn_Playlist.UseVisualStyleBackColor = true;
             this.Btn_Playlist.Click += new System.EventHandler(this.Btn_Playlist_Click);
             // 
-            // mTrackBar_Music
+            // MTBar_Music
             // 
-            this.mTrackBar_Music.Location = new System.Drawing.Point(0, 2);
-            this.mTrackBar_Music.M_BarColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
-            this.mTrackBar_Music.M_BarSize = 3;
-            this.mTrackBar_Music.M_CircleRadius = 6;
-            this.mTrackBar_Music.M_IsRound = true;
-            this.mTrackBar_Music.M_Maximum = 100D;
-            this.mTrackBar_Music.M_Minimum = 0D;
-            this.mTrackBar_Music.M_Orientation = ControlDemos.Orientation.Horizontal_LR;
-            this.mTrackBar_Music.M_SliderColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(204)))), ((int)(((byte)(108)))));
-            this.mTrackBar_Music.M_Value = 0D;
-            this.mTrackBar_Music.Margin = new System.Windows.Forms.Padding(0);
-            this.mTrackBar_Music.MinimumSize = new System.Drawing.Size(700, 3);
-            this.mTrackBar_Music.Name = "mTrackBar_Music";
-            this.mTrackBar_Music.Size = new System.Drawing.Size(700, 13);
-            this.mTrackBar_Music.TabIndex = 0;
-            this.mTrackBar_Music.Text = "mTrackBar_Music";
-            this.mTrackBar_Music.MValueChanged += new ControlDemos.MTrackBar.MValueChangedEventHandler(this.mTrackBar_Music_MValueChanged);
-            this.mTrackBar_Music.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mTrackBar_MouseDown);
-            this.mTrackBar_Music.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mTrackBar_MouseUp);
+            this.MTBar_Music.Location = new System.Drawing.Point(0, 2);
+            this.MTBar_Music.M_BarColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(217)))), ((int)(((byte)(217)))));
+            this.MTBar_Music.M_BarSize = 3;
+            this.MTBar_Music.M_CircleRadius = 6;
+            this.MTBar_Music.M_IsRound = true;
+            this.MTBar_Music.M_Maximum = 100D;
+            this.MTBar_Music.M_Minimum = 0D;
+            this.MTBar_Music.M_Orientation = ControlDemos.Orientation.Horizontal_LR;
+            this.MTBar_Music.M_SliderColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(204)))), ((int)(((byte)(108)))));
+            this.MTBar_Music.M_Value = 0D;
+            this.MTBar_Music.Margin = new System.Windows.Forms.Padding(0);
+            this.MTBar_Music.MinimumSize = new System.Drawing.Size(700, 3);
+            this.MTBar_Music.Name = "MTBar_Music";
+            this.MTBar_Music.Size = new System.Drawing.Size(700, 13);
+            this.MTBar_Music.TabIndex = 0;
+            this.MTBar_Music.Text = "mTrackBar_Music";
+            this.MTBar_Music.MValueChanged += new ControlDemos.MTrackBar.MValueChangedEventHandler(this.MTBar_Music_MValueChanged);
+            this.MTBar_Music.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MTBar_MouseDown);
+            this.MTBar_Music.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MTBar_MouseUp);
             // 
             // Panel_Tool
             // 
@@ -437,6 +484,7 @@
             // 
             // CMS_Main
             // 
+            this.CMS_Main.Font = new System.Drawing.Font("微软雅黑", 9F);
             this.CMS_Main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.登陆ToolStripMenuItem,
             this.切换账号ToolStripMenuItem,
@@ -469,6 +517,7 @@
             // Btn_Search
             // 
             this.Btn_Search.BackColor = System.Drawing.Color.LightGray;
+            this.Btn_Search.FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
             this.Btn_Search.FlatAppearance.BorderSize = 0;
             this.Btn_Search.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_Search.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -479,16 +528,17 @@
             this.Btn_Search.TabStop = false;
             this.Btn_Search.Text = "♬";
             this.Btn_Search.UseVisualStyleBackColor = false;
+            this.Btn_Search.Visible = false;
             this.Btn_Search.Click += new System.EventHandler(this.Btn_Search_Click);
             // 
             // TxtBox_SearchBox
             // 
             this.TxtBox_SearchBox.BackColor = System.Drawing.Color.LightGray;
             this.TxtBox_SearchBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.TxtBox_SearchBox.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.TxtBox_SearchBox.Font = new System.Drawing.Font("微软雅黑", 10F);
             this.TxtBox_SearchBox.Location = new System.Drawing.Point(30, 22);
             this.TxtBox_SearchBox.Name = "TxtBox_SearchBox";
-            this.TxtBox_SearchBox.Size = new System.Drawing.Size(250, 16);
+            this.TxtBox_SearchBox.Size = new System.Drawing.Size(250, 18);
             this.TxtBox_SearchBox.TabIndex = 7;
             this.TxtBox_SearchBox.TabStop = false;
             this.TxtBox_SearchBox.Text = "🔍搜索音乐";
@@ -499,8 +549,10 @@
             // Btn_SearchBorder
             // 
             this.Btn_SearchBorder.BackColor = System.Drawing.Color.LightGray;
-            this.Btn_SearchBorder.Enabled = false;
+            this.Btn_SearchBorder.FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
             this.Btn_SearchBorder.FlatAppearance.BorderSize = 0;
+            this.Btn_SearchBorder.FlatAppearance.MouseDownBackColor = System.Drawing.Color.LightGray;
+            this.Btn_SearchBorder.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightGray;
             this.Btn_SearchBorder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_SearchBorder.Location = new System.Drawing.Point(20, 12);
             this.Btn_SearchBorder.Name = "Btn_SearchBorder";
@@ -508,6 +560,7 @@
             this.Btn_SearchBorder.TabIndex = 6;
             this.Btn_SearchBorder.TabStop = false;
             this.Btn_SearchBorder.UseVisualStyleBackColor = false;
+            this.Btn_SearchBorder.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Btn_Search_MouseDown);
             // 
             // Btn_Login
             // 
@@ -518,6 +571,7 @@
             this.Btn_Login.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.Btn_Login.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.Btn_Login.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Login.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Btn_Login.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.Btn_Login.Location = new System.Drawing.Point(435, 0);
             this.Btn_Login.Name = "Btn_Login";
@@ -636,6 +690,7 @@
             // Panel_MenuList
             // 
             this.Panel_MenuList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Panel_MenuList.Controls.Add(this.MSBar_MenuList);
             this.Panel_MenuList.Controls.Add(this.Panel_CreatedList);
             this.Panel_MenuList.Controls.Add(this.Panel_CreateList);
             this.Panel_MenuList.Controls.Add(this.Panel_MyMusicMenuList);
@@ -646,6 +701,26 @@
             this.Panel_MenuList.Name = "Panel_MenuList";
             this.Panel_MenuList.Size = new System.Drawing.Size(200, 558);
             this.Panel_MenuList.TabIndex = 1;
+            // 
+            // MSBar_MenuList
+            // 
+            this.MSBar_MenuList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.MSBar_MenuList.Enabled = false;
+            this.MSBar_MenuList.Location = new System.Drawing.Point(186, 4);
+            this.MSBar_MenuList.M_BarColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.MSBar_MenuList.M_BarSize = 10;
+            this.MSBar_MenuList.M_IsRound = true;
+            this.MSBar_MenuList.M_Maximum = 100D;
+            this.MSBar_MenuList.M_Orientation = ControlDemos.Orientation.Vertical_UD;
+            this.MSBar_MenuList.M_PresentColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.MSBar_MenuList.M_SliderColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.MSBar_MenuList.M_SliderHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.MSBar_MenuList.M_SliderLength = 275;
+            this.MSBar_MenuList.M_Value = 0D;
+            this.MSBar_MenuList.Name = "MSBar_MenuList";
+            this.MSBar_MenuList.Size = new System.Drawing.Size(10, 550);
+            this.MSBar_MenuList.TabIndex = 5;
+            this.MSBar_MenuList.MValueChanged += new ControlDemos.MScrollBar.MValueChangedEventHandler(this.MSBar_MenuList_MValueChanged);
             // 
             // Panel_CreatedList
             // 
@@ -694,7 +769,7 @@
             this.Btn_CteateList.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.Btn_CteateList.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.Btn_CteateList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_CteateList.Font = new System.Drawing.Font("微軟正黑體 Light", 16F);
+            this.Btn_CteateList.Font = new System.Drawing.Font("微软雅黑 Light", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Btn_CteateList.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.Btn_CteateList.Location = new System.Drawing.Point(140, 0);
             this.Btn_CteateList.Name = "Btn_CteateList";
@@ -713,7 +788,7 @@
             this.Btn_ShowCreatedList.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.Btn_ShowCreatedList.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.Btn_ShowCreatedList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_ShowCreatedList.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
+            this.Btn_ShowCreatedList.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Btn_ShowCreatedList.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.Btn_ShowCreatedList.Location = new System.Drawing.Point(20, 0);
             this.Btn_ShowCreatedList.Name = "Btn_ShowCreatedList";
@@ -746,7 +821,7 @@
             this.Btn_Liked.FlatAppearance.BorderSize = 0;
             this.Btn_Liked.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
             this.Btn_Liked.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Liked.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
+            this.Btn_Liked.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Btn_Liked.Location = new System.Drawing.Point(20, 96);
             this.Btn_Liked.Margin = new System.Windows.Forms.Padding(0);
             this.Btn_Liked.MusicList = null;
@@ -762,6 +837,7 @@
             // 
             // CMS歌单
             // 
+            this.CMS歌单.Font = new System.Drawing.Font("微软雅黑", 9F);
             this.CMS歌单.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.播放,
             this.删除ToolStripMenuItem,
@@ -800,7 +876,7 @@
             this.Btn_History.FlatAppearance.BorderSize = 0;
             this.Btn_History.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
             this.Btn_History.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_History.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
+            this.Btn_History.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Btn_History.Location = new System.Drawing.Point(20, 66);
             this.Btn_History.Margin = new System.Windows.Forms.Padding(0);
             this.Btn_History.MusicList = null;
@@ -823,7 +899,7 @@
             this.Btn_Local.FlatAppearance.BorderSize = 0;
             this.Btn_Local.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
             this.Btn_Local.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Local.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
+            this.Btn_Local.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Btn_Local.Location = new System.Drawing.Point(20, 36);
             this.Btn_Local.Margin = new System.Windows.Forms.Padding(0);
             this.Btn_Local.MusicList = null;
@@ -840,7 +916,7 @@
             this.Lbl_MyMusic.Enabled = false;
             this.Lbl_MyMusic.FlatAppearance.BorderSize = 0;
             this.Lbl_MyMusic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Lbl_MyMusic.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
+            this.Lbl_MyMusic.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Lbl_MyMusic.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.Lbl_MyMusic.Location = new System.Drawing.Point(20, 0);
             this.Lbl_MyMusic.Name = "Lbl_MyMusic";
@@ -868,7 +944,7 @@
             this.Btn_PopMusic.FlatAppearance.BorderSize = 0;
             this.Btn_PopMusic.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
             this.Btn_PopMusic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_PopMusic.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
+            this.Btn_PopMusic.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Btn_PopMusic.Location = new System.Drawing.Point(20, 36);
             this.Btn_PopMusic.Margin = new System.Windows.Forms.Padding(0);
             this.Btn_PopMusic.MusicList = null;
@@ -885,7 +961,7 @@
             this.Lbl_OnlineMusic.Enabled = false;
             this.Lbl_OnlineMusic.FlatAppearance.BorderSize = 0;
             this.Lbl_OnlineMusic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Lbl_OnlineMusic.Font = new System.Drawing.Font("微軟正黑體 Light", 10F);
+            this.Lbl_OnlineMusic.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Lbl_OnlineMusic.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.Lbl_OnlineMusic.Location = new System.Drawing.Point(20, 0);
             this.Lbl_OnlineMusic.Margin = new System.Windows.Forms.Padding(0);
@@ -930,6 +1006,7 @@
             this.Btn_Random.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.Btn_Random.FlatAppearance.BorderSize = 0;
             this.Btn_Random.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Random.Font = new System.Drawing.Font("微软雅黑", 9F);
             this.Btn_Random.Location = new System.Drawing.Point(3, 108);
             this.Btn_Random.Name = "Btn_Random";
             this.Btn_Random.Size = new System.Drawing.Size(87, 34);
@@ -947,6 +1024,7 @@
             this.Btn_Sequential.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.Btn_Sequential.FlatAppearance.BorderSize = 0;
             this.Btn_Sequential.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Sequential.Font = new System.Drawing.Font("微软雅黑", 9F);
             this.Btn_Sequential.Location = new System.Drawing.Point(3, 73);
             this.Btn_Sequential.Name = "Btn_Sequential";
             this.Btn_Sequential.Size = new System.Drawing.Size(87, 34);
@@ -964,6 +1042,7 @@
             this.Btn_Loop.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.Btn_Loop.FlatAppearance.BorderSize = 0;
             this.Btn_Loop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Loop.Font = new System.Drawing.Font("微软雅黑", 9F);
             this.Btn_Loop.Location = new System.Drawing.Point(3, 38);
             this.Btn_Loop.Name = "Btn_Loop";
             this.Btn_Loop.Size = new System.Drawing.Size(87, 34);
@@ -981,6 +1060,7 @@
             this.Btn_SingleLoop.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.Btn_SingleLoop.FlatAppearance.BorderSize = 0;
             this.Btn_SingleLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SingleLoop.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Btn_SingleLoop.Location = new System.Drawing.Point(3, 3);
             this.Btn_SingleLoop.Name = "Btn_SingleLoop";
             this.Btn_SingleLoop.Size = new System.Drawing.Size(87, 34);
@@ -999,6 +1079,8 @@
             // Panel_PlayList
             // 
             this.Panel_PlayList.BackColor = System.Drawing.Color.White;
+            this.Panel_PlayList.Controls.Add(this.Btn_Bar);
+            this.Panel_PlayList.Controls.Add(this.MSBar_PlayingMusicList);
             this.Panel_PlayList.Controls.Add(this.Btn_Shut);
             this.Panel_PlayList.Controls.Add(this.Panel_PlayingMusicList);
             this.Panel_PlayList.Controls.Add(this.Lbl_Number);
@@ -1007,6 +1089,45 @@
             this.Panel_PlayList.Name = "Panel_PlayList";
             this.Panel_PlayList.Size = new System.Drawing.Size(300, 648);
             this.Panel_PlayList.TabIndex = 1;
+            // 
+            // Btn_Bar
+            // 
+            this.Btn_Bar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.Btn_Bar.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.Btn_Bar.FlatAppearance.BorderSize = 0;
+            this.Btn_Bar.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.Btn_Bar.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.Btn_Bar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_Bar.Location = new System.Drawing.Point(286, 68);
+            this.Btn_Bar.Name = "Btn_Bar";
+            this.Btn_Bar.Size = new System.Drawing.Size(10, 90);
+            this.Btn_Bar.TabIndex = 1;
+            this.Btn_Bar.UseVisualStyleBackColor = false;
+            this.Btn_Bar.Visible = false;
+            this.Btn_Bar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Btn_Bar_MouseDown);
+            this.Btn_Bar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Btn_Bar_MouseMove);
+            this.Btn_Bar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Btn_Bar_MouseUp);
+            // 
+            // MSBar_PlayingMusicList
+            // 
+            this.MSBar_PlayingMusicList.Enabled = false;
+            this.MSBar_PlayingMusicList.Location = new System.Drawing.Point(286, 68);
+            this.MSBar_PlayingMusicList.M_BarColor = System.Drawing.Color.White;
+            this.MSBar_PlayingMusicList.M_BarSize = 10;
+            this.MSBar_PlayingMusicList.M_IsRound = false;
+            this.MSBar_PlayingMusicList.M_Maximum = 100D;
+            this.MSBar_PlayingMusicList.M_Orientation = ControlDemos.Orientation.Vertical_UD;
+            this.MSBar_PlayingMusicList.M_PresentColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.MSBar_PlayingMusicList.M_SliderColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.MSBar_PlayingMusicList.M_SliderHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.MSBar_PlayingMusicList.M_SliderLength = 90;
+            this.MSBar_PlayingMusicList.M_Value = 0D;
+            this.MSBar_PlayingMusicList.Name = "MSBar_PlayingMusicList";
+            this.MSBar_PlayingMusicList.Size = new System.Drawing.Size(10, 512);
+            this.MSBar_PlayingMusicList.TabIndex = 6;
+            this.MSBar_PlayingMusicList.Visible = false;
+            this.MSBar_PlayingMusicList.MValueChanged += new ControlDemos.MScrollBar.MValueChangedEventHandler(this.MSBar_PlayingMusicList_MValueChanged);
+            this.MSBar_PlayingMusicList.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MSBar_PlayingMusicList_MouseMove);
             // 
             // Btn_Shut
             // 
@@ -1024,23 +1145,29 @@
             // 
             // Panel_PlayingMusicList
             // 
-            this.Panel_PlayingMusicList.AutoScroll = true;
-            this.Panel_PlayingMusicList.Controls.Add(this.button1);
+            this.Panel_PlayingMusicList.BackColor = System.Drawing.Color.White;
+            this.Panel_PlayingMusicList.Controls.Add(this.ButtonType);
             this.Panel_PlayingMusicList.Location = new System.Drawing.Point(0, 68);
             this.Panel_PlayingMusicList.MinimumSize = new System.Drawing.Size(300, 512);
             this.Panel_PlayingMusicList.Name = "Panel_PlayingMusicList";
             this.Panel_PlayingMusicList.Size = new System.Drawing.Size(300, 512);
             this.Panel_PlayingMusicList.TabIndex = 8;
             // 
-            // button1
+            // ButtonType
             // 
-            this.button1.Location = new System.Drawing.Point(17, 38);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.PlayChoosedMusic2);
+            this.ButtonType.BackColor = System.Drawing.Color.White;
+            this.ButtonType.FlatAppearance.BorderSize = 0;
+            this.ButtonType.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.ButtonType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ButtonType.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.ButtonType.Location = new System.Drawing.Point(0, 0);
+            this.ButtonType.Name = "ButtonType";
+            this.ButtonType.Size = new System.Drawing.Size(300, 64);
+            this.ButtonType.TabIndex = 0;
+            this.ButtonType.Text = "用于定位到 单机歌曲事件 函数";
+            this.ButtonType.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ButtonType.UseVisualStyleBackColor = false;
+            this.ButtonType.Click += new System.EventHandler(this.PlayChoosedMusic2);
             // 
             // Lbl_Number
             // 
@@ -1093,7 +1220,7 @@
             // 
             this.Panel_Volume.BackColor = System.Drawing.Color.White;
             this.Panel_Volume.Controls.Add(this.Lbl_Volume);
-            this.Panel_Volume.Controls.Add(this.mTrackBar_Volume);
+            this.Panel_Volume.Controls.Add(this.MTBar_Volume);
             this.Panel_Volume.Location = new System.Drawing.Point(610, 390);
             this.Panel_Volume.Name = "Panel_Volume";
             this.Panel_Volume.Size = new System.Drawing.Size(65, 190);
@@ -1110,26 +1237,25 @@
             this.Lbl_Volume.Text = "100%";
             this.Lbl_Volume.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // mTrackBar_Volume
+            // MTBar_Volume
             // 
-            this.mTrackBar_Volume.BackColor = System.Drawing.Color.White;
-            this.mTrackBar_Volume.Enabled = false;
-            this.mTrackBar_Volume.Location = new System.Drawing.Point(22, 19);
-            this.mTrackBar_Volume.M_BarColor = System.Drawing.Color.WhiteSmoke;
-            this.mTrackBar_Volume.M_BarSize = 4;
-            this.mTrackBar_Volume.M_CircleRadius = 10;
-            this.mTrackBar_Volume.M_IsRound = true;
-            this.mTrackBar_Volume.M_Maximum = 100D;
-            this.mTrackBar_Volume.M_Minimum = 0D;
-            this.mTrackBar_Volume.M_Orientation = ControlDemos.Orientation.Vertical_DU;
-            this.mTrackBar_Volume.M_SliderColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(204)))), ((int)(((byte)(108)))));
-            this.mTrackBar_Volume.M_Value = 100D;
-            this.mTrackBar_Volume.Name = "mTrackBar_Volume";
-            this.mTrackBar_Volume.Size = new System.Drawing.Size(21, 123);
-            this.mTrackBar_Volume.TabIndex = 0;
-            this.mTrackBar_Volume.Text = "mTrackBar_Volume";
-            this.mTrackBar_Volume.MValueChanged += new ControlDemos.MTrackBar.MValueChangedEventHandler(this.mTrackBar_Volume_ValueChanged);
-            this.mTrackBar_Volume.MouseEnter += new System.EventHandler(this.mTrackBar_Volume_MouseEnter);
+            this.MTBar_Volume.BackColor = System.Drawing.Color.White;
+            this.MTBar_Volume.Enabled = false;
+            this.MTBar_Volume.Location = new System.Drawing.Point(22, 19);
+            this.MTBar_Volume.M_BarColor = System.Drawing.Color.WhiteSmoke;
+            this.MTBar_Volume.M_BarSize = 4;
+            this.MTBar_Volume.M_CircleRadius = 10;
+            this.MTBar_Volume.M_IsRound = true;
+            this.MTBar_Volume.M_Maximum = 100D;
+            this.MTBar_Volume.M_Minimum = 0D;
+            this.MTBar_Volume.M_Orientation = ControlDemos.Orientation.Vertical_DU;
+            this.MTBar_Volume.M_SliderColor = System.Drawing.Color.LightCoral;
+            this.MTBar_Volume.M_Value = 100D;
+            this.MTBar_Volume.Name = "MTBar_Volume";
+            this.MTBar_Volume.Size = new System.Drawing.Size(21, 123);
+            this.MTBar_Volume.TabIndex = 0;
+            this.MTBar_Volume.MValueChanged += new ControlDemos.MTrackBar.MValueChangedEventHandler(this.MTBar_Volume_ValueChanged);
+            this.MTBar_Volume.MouseEnter += new System.EventHandler(this.MTBar_Volume_MouseEnter);
             // 
             // toolStripMenuItem2
             // 
@@ -1139,6 +1265,7 @@
             // 
             // CMS歌曲
             // 
+            this.CMS歌曲.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.CMS歌曲.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.播放ToolStripMenuItem1,
             this.添加到ToolStripMenuItem,
@@ -1194,6 +1321,10 @@
             // 
             this.Timer_Net.Tick += new System.EventHandler(this.Timer_Net_Tick);
             // 
+            // Timer_MSBar_MenuList
+            // 
+            this.Timer_MSBar_MenuList.Tick += new System.EventHandler(this.Timer_MSBar_MenuList_Tick);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1209,7 +1340,7 @@
             this.MinimumSize = new System.Drawing.Size(908, 648);
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.mTrackBar_Volume_MouseWheel);
+            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Form_MouseWheel);
             this.Resize += new System.EventHandler(this.Main_Resize);
             this.Main_Panel.ResumeLayout(false);
             this.Panel_Detail.ResumeLayout(false);
@@ -1247,7 +1378,7 @@
         private System.Windows.Forms.Panel Panel_Detail;
         private System.Windows.Forms.Panel Panel_Icon;
         private System.Windows.Forms.Panel Panel_MenuList;
-        private ControlDemos.MTrackBar mTrackBar_Music;
+        private ControlDemos.MTrackBar MTBar_Music;
         private System.Windows.Forms.PictureBox Icon_pictureBox;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.ContextMenuStrip CMS_Main;
@@ -1300,7 +1431,7 @@
         private System.Windows.Forms.Button Btn_Loop;
         private System.Windows.Forms.Button Btn_SingleLoop;
         private System.Windows.Forms.Panel Panel_Volume;
-        private ControlDemos.MTrackBar mTrackBar_Volume;
+        private ControlDemos.MTrackBar MTBar_Volume;
         private System.Windows.Forms.Label Lbl_Volume;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ContextMenuStrip CMS歌单;
@@ -1315,7 +1446,7 @@
         private System.Windows.Forms.ToolStripMenuItem 添加到ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 移除ToolStripMenuItem;
         private System.Windows.Forms.Timer Timer_Loading;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button ButtonType;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ToolStripMenuItem 登陆ToolStripMenuItem;
         private System.Windows.Forms.Button Btn_SearchBorder;
@@ -1324,6 +1455,12 @@
         private System.Windows.Forms.Timer Timer_Searching;
         private MButton mButton1;
         private System.Windows.Forms.Timer Timer_Net;
+        private MLButton Btn_SearchResult;
+        private ControlDemos.MScrollBar MSBar_MenuList;
+        private ControlDemos.MScrollBar MSBar_MusicList;
+        private ControlDemos.MScrollBar MSBar_PlayingMusicList;
+        private System.Windows.Forms.Timer Timer_MSBar_MenuList;
+        private System.Windows.Forms.Button Btn_Bar;
     }
 }
 
