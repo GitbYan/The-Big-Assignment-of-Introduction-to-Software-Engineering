@@ -24,72 +24,27 @@ namespace GuGuGuMusic
             this.FileURL = FileURL;
         }
 
-        #region
-        private string _Name = "我的音乐";
+        #region 属性
         /// <summary>
         /// 音乐名
         /// </summary>
-        public string Name
-        {
-            get { return _Name; }
-            set
-            {
-                _Name = value;
-            }
-        }
+        public string Name { set; get; }
 
-        private string _Singer = "我";
         /// <summary>
         /// 歌手
         /// </summary>
-        public string Singer
-        {
-            get { return _Singer; }
-            set
-            {
-                _Singer = value;
-            }
-        }
+        public string Singer { set; get; }
 
-        private string _FileURL = "";
         /// <summary>
         /// 音乐文件地址url
         /// </summary>
-        public string FileURL
-        {
-            get { return _FileURL; }
-            set
-            {
-                _FileURL = value;
-            }
-        }
+        public string FileURL { set; get; }
 
-        private string _Album = "";
         /// <summary>
         /// 专辑
         /// </summary>
-        public string Album
-        {
-            get { return _Album; }
-            set
-            {
-                _Album = value;
-            }
-        }
+        public string Album { set; get; }
         #endregion
-
-        private string _Duration = "";
-        /// <summary>
-        /// 时常
-        /// </summary>
-        public string Duration
-        {
-            get { return _Duration; }
-            set
-            {
-                _Duration = value;
-            }
-        }
 
     }
 }

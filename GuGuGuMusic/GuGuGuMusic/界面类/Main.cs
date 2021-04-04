@@ -191,7 +191,6 @@ namespace GuGuGuMusic
             InitAWMP(myMusicApp.PlayingMusicList, myMusicApp.PlayingMusicList.StartIndex);
             AWMP.settings.setMode("loop", true);//设置为循环播放
             AWMP.settings.volume = 100;
-
             base.Opacity = 0;
             Timer_Loading.Start();
         }
@@ -294,13 +293,15 @@ namespace GuGuGuMusic
         {
             Panel_PlayList.Width = 0;
             Panel_PlayList.Hide();
+            int deltaX = this.Width - 2 * edgeX - Main_Panel.Width;
+            int deltaY = this.Height - 2 * edgeY - Main_Panel.Height;
             //大小
             Main_Panel.Width = this.Width - 2 * edgeX;
             Main_Panel.Height = this.Height - 2 * edgeY;
             Panel_Nav.Height = (int)(this.Height - 2 * edgeY);
             Panel_Tool.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
             Panel_Play.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
-            mTrackBar_Music.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
+            MTBar_Music.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
             Panel_PlayStatus.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
             Panel_Detail.Width = (int)(this.Width - Panel_Nav.Width - 2 * edgeX);
             Panel_Detail.Height = (int)(this.Height - Panel_Play.Height - 80 - 2 * edgeY);
@@ -308,7 +309,12 @@ namespace GuGuGuMusic
             Panel_PlayList.Height = this.Height;
             Panel_MusicList.Height = Panel_Detail.Width - 80;
             Panel_MusicList.Width = Panel_Detail.Width - 60;
-            
+            TxtBox_SearchBox.Width = TxtBox_SearchBox.Width + deltaX / 3;
+            Btn_SearchBorder.Width = Btn_SearchBorder.Width + deltaX / 3;
+            MSBar_MenuList.Height = MSBar_MenuList.Height + deltaY;
+            MSBar_MusicList.Height = MSBar_MusicList.Height + deltaY;
+            MSBar_PlayingMusicList.Height = MSBar_PlayingMusicList.Height + deltaY;
+
             //位置
             Panel_Play.Location = new Point(Panel_Play.Location.X, Panel_Detail.Location.Y + Panel_Detail.Height);
             Panel_Control.Location = new Point((Panel_PlayStatus.Width - Panel_Control.Width) / 2, 0);
@@ -316,6 +322,8 @@ namespace GuGuGuMusic
             Panel_Mode.Location = new Point((this.Width - 908)/2 + 418, Panel_Mode.Location.Y);
             Panel_Volume.Location = new Point((this.Width - 908)/2 + 610, Panel_Volume.Location.Y);
             Btn_Shut.Location = new Point(Btn_Shut.Location.X, Panel_PlayList.Height - 68);
+            Btn_Search.Location = new Point(Btn_Search.Location.X + deltaX / 3, Btn_Search.Location.Y);
+            MSBar_MusicList.Location = new Point(Panel_Detail.Width- MSBar_MusicList.Width, MSBar_MusicList.Location.Y);
             //刷新
             ShowList(ChoosedMLButton.MusicList);
         }
@@ -519,15 +527,17 @@ namespace GuGuGuMusic
             {
                 if (!Panel_Volume.Visible)
                 {
+                    Panel_Volume.Show();
+                    MTBar_Volume.Enabled = true;
+                    MTBar_Volume.Focus();
                     Timer_Volume.Start();
                 }
                 else
                 {
+                    Panel_Volume.Hide();
+                    MTBar_Volume.Enabled = false;
                     Timer_Volume.Stop();
                 }
-                mTrackBar_Volume.Enabled = mTrackBar_Volume.Enabled ? false : true;
-                if (mTrackBar_Volume.Enabled) { mTrackBar_Volume.Focus(); }
-                Panel_Volume.Visible = Panel_Volume.Visible == true ? false : true;
             }
             catch(Exception ce)
             {
@@ -540,35 +550,18 @@ namespace GuGuGuMusic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void mTrackBar_Volume_MouseEnter(object sender,EventArgs e)
+        private void MTBar_Volume_MouseEnter(object sender,EventArgs e)
         {
             try
             {
-                mTrackBar_Volume.Focus();
+                MTBar_Volume.Focus();
             }
             catch(Exception ce)
             {
                 Console.WriteLine("2010:"+ce.Message);
             }
         }
-        /// <summary>
-        /// 鼠标滚轮控制调节音量
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void mTrackBar_Volume_MouseWheel(object sender,MouseEventArgs e)
-        {
-            try
-            {
-                if (mTrackBar_Volume.Enabled)
-                {
-                    mTrackBar_Volume.M_Value += e.Delta / 120;
-                }
-            }catch(Exception ce)
-            {
-                Console.WriteLine("2011:"+ce.Message);
-            }
-        }
+        
 
         /// <summary>
         /// 播放按钮点击事件
@@ -668,10 +661,10 @@ namespace GuGuGuMusic
                 }
                 else
                 {
-                    value = mTrackBar_Music.M_Maximum * currentPosition / duration;
+                    value = MTBar_Music.M_Maximum * currentPosition / duration;
                 }                
-                if (value < 0) { mTrackBar_Music.M_Value = 0; }
-                else { mTrackBar_Music.M_Value = value; }
+                if (value < 0) { MTBar_Music.M_Value = 0; }
+                else { MTBar_Music.M_Value = value; }
             }
             catch (Exception ce)
             {
@@ -679,14 +672,14 @@ namespace GuGuGuMusic
             }
         }
 
-        private void mTrackBar_Music_MValueChanged(object sender, MEventArgs e)
+        private void MTBar_Music_MValueChanged(object sender, MEventArgs e)
         {
             try
             {
                 if (AWMP.currentMedia != null)
                 {
                     double duration = AWMP.currentMedia.duration;
-                    double currentPosition = (mTrackBar_Music.M_Value / mTrackBar_Music.M_Maximum) * duration;
+                    double currentPosition = (MTBar_Music.M_Value / MTBar_Music.M_Maximum) * duration;
                     //用数字实时显示播放进度
                     string max_minute = (int)(duration / 60) >= 10 ? ((int)(duration / 60)).ToString() : "0" + ((int)(duration / 60)).ToString();
                     string max_second = (int)(duration % 60) >= 10 ? ((int)(duration % 60)).ToString() : "0" + ((int)(duration % 60)).ToString();
@@ -710,7 +703,7 @@ namespace GuGuGuMusic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void mTrackBar_MouseDown(object sender, EventArgs e)
+        private void MTBar_MouseDown(object sender, EventArgs e)
         {
             try
             {
@@ -727,11 +720,11 @@ namespace GuGuGuMusic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void mTrackBar_MouseUp(object sender, EventArgs e)
+        private void MTBar_MouseUp(object sender, EventArgs e)
         {
             try
             {
-                double newValue = mTrackBar_Music.M_Value / mTrackBar_Music.M_Maximum * AWMP.currentMedia.duration;
+                double newValue = MTBar_Music.M_Value / MTBar_Music.M_Maximum * AWMP.currentMedia.duration;
                 //播放中
                 if (AWMP.playState == WMPPlayState.wmppsPlaying)
                 {
@@ -941,11 +934,11 @@ namespace GuGuGuMusic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void mTrackBar_Volume_ValueChanged(object sender, MEventArgs e)
+        private void MTBar_Volume_ValueChanged(object sender, MEventArgs e)
         {
             try
             {
-                int volume = (int)(100 * mTrackBar_Volume.M_Value / mTrackBar_Volume.M_Maximum);
+                int volume = (int)(100 * MTBar_Volume.M_Value / MTBar_Volume.M_Maximum);
                 Lbl_Volume.Text = volume.ToString() + "%";
                 AWMP.settings.volume = volume;
             }
@@ -981,6 +974,7 @@ namespace GuGuGuMusic
                             M_music = music,
                             Index = i,
                             ContextMenuStrip = CMS歌曲,
+                            Font = ButtonType.Font
                         };
                         b.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
                         b.DoubleClick += new EventHandler(PlayChoosedMusic);
@@ -1057,6 +1051,7 @@ namespace GuGuGuMusic
                         ContextMenuStrip = CMS歌单,
                         Enabled = false,
                         Location = new Point(20, 0),
+                        Font = Btn_Local.Font
                     };
                     int newindex = MyMusicApp.ListLimits;
                     string autoname = "新建歌单" + newindex;
@@ -1427,6 +1422,11 @@ namespace GuGuGuMusic
                 Panel_PlayList.Show();
                 Panel_PlayList.Width = 300;
                 Panel_PlayList.Location = new Point(this.Width - 300, 0);
+                if (Panel_PlayingMusicList.Controls.Count * ButtonType.Height > Panel_PlayList.Height)
+                {
+                    MSBar_PlayingMusicList.Enabled = true;
+                    Btn_Bar.Show();
+                }
                 Timer_ClosePlayList.Start();
             }
             catch (Exception ce)
@@ -1476,7 +1476,9 @@ namespace GuGuGuMusic
                             BackColor = Color.White,
                             M_music = music,
                             Index = i,
+                            Font = ButtonType.Font
                         };
+                        b.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
                         b.DoubleClick += new EventHandler(PlayChoosedMusic2);
                         b.Location = new Point(0, 64 * i);
                         b.Text = music.Name;
@@ -1710,10 +1712,11 @@ namespace GuGuGuMusic
             {
                 if (MouseButtons == MouseButtons.Left || MouseButtons == MouseButtons.Right)
                 {
-                    if (!InBox(new Size(300, 648), new Point(this.Width - 300 + this.Left, 0 + this.Top)))
+                    if (!InBox(new Size(Panel_PlayList.Width,Panel_PlayList.Height), new Point(this.Width - 300 + this.Left, this.Top)))
                     {
                         Panel_PlayList.Width = 0;
                         Panel_PlayList.Hide();
+                        MSBar_PlayingMusicList.Enabled = false;
                         Timer_ClosePlayList.Stop();
                     }
                 }
@@ -1730,7 +1733,7 @@ namespace GuGuGuMusic
             {
                 if (MouseButtons == MouseButtons.Left || MouseButtons == MouseButtons.Right)
                 {
-                    if (!InBox(new Size(93, 145), new Point(Panel_Mode.Location.X + this.Left, Panel_Mode.Location.Y + this.Top)))
+                    if (!InBox(new Size(Panel_Mode.Width, Panel_Mode.Height), new Point(Panel_Mode.Location.X + this.Left, Panel_Mode.Location.Y + this.Top)))
                     {
                         Panel_Mode.Visible = false;
                         Timer_PlayingMode.Stop();
@@ -1750,14 +1753,13 @@ namespace GuGuGuMusic
             {
                 if (MouseButtons == MouseButtons.Left || MouseButtons == MouseButtons.Right)
                 {
-                    if (!InBox(new Size(65, 190), new Point(Panel_Volume.Location.X + this.Left, Panel_Volume.Location.Y + this.Top)))
+                    if (!InBox(new Size(Panel_Volume.Width, Panel_Volume.Height), new Point(Panel_Volume.Location.X + this.Left, Panel_Volume.Location.Y + this.Top)))
                     {
-                        mTrackBar_Volume.Enabled = false;
+                        MTBar_Volume.Enabled = false;
                         Panel_Volume.Visible = false;
                         Timer_Volume.Stop();
                     }
                 }
-
             }
             catch (Exception ce)
             {
@@ -2106,7 +2108,7 @@ namespace GuGuGuMusic
             {
                 if (MouseButtons == MouseButtons.Left || MouseButtons == MouseButtons.Right)
                 {
-                    if (!InBox(new Size(300, 36), new Point(20 + Panel_Tool.Left + this.Left + Main_Panel.Left, 12 + this.Top + Main_Panel.Top + Panel_Tool.Top)))
+                    if (!InBox(new Size(Btn_SearchBorder.Width, Btn_SearchBorder.Height), new Point(Btn_SearchBorder.Location.X + Panel_Tool.Left + this.Left + Main_Panel.Left, Btn_SearchBorder.Location.Y + this.Top + Main_Panel.Top + Panel_Tool.Top)))
                     {
                         ChoosedMLButton.Focus();
                     }
@@ -2120,7 +2122,177 @@ namespace GuGuGuMusic
 
         private void Timer_Net_Tick(object sender, EventArgs e)
         {
+            try
+            {
 
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2070:" + ce.Message);
+            }
         }
+
+        private void MSBar_MenuList_MValueChanged(object sender, MEventArgs e)
+        {
+            try
+            {
+
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2073:" + ce.Message);
+            }
+        }
+
+        private void MSBar_MusicList_MValueChanged(object sender, MEventArgs e)
+        {
+            try
+            {
+
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2076:" + ce.Message);
+            }
+        }
+
+        private void MSBar_PlayingMusicList_MValueChanged(object sender, MEventArgs e)
+        {
+            try
+            {
+                double value = MSBar_PlayingMusicList.M_Value;
+                double max = MSBar_PlayingMusicList.M_Maximum - (MSBar_PlayingMusicList.M_SliderLength * MSBar_PlayingMusicList.M_Maximum / MSBar_PlayingMusicList.Height);
+                if (value >= max)
+                {
+                    value = max;
+                }
+                int top = MSBar_PlayingMusicList.Location.Y+(int)(value * (MSBar_PlayingMusicList.Height-Btn_Bar.Height) / max);
+                Btn_Bar.Location = new Point(Btn_Bar.Location.X, top);
+                int delta = (Panel_PlayingMusicList.Controls.Count*ButtonType.Height - MSBar_PlayingMusicList.Height) * (top-MSBar_PlayingMusicList.Location.Y) / (MSBar_PlayingMusicList.Height - Btn_Bar.Height);
+                foreach (Control control in Panel_PlayingMusicList.Controls)
+                {
+                    MButton mButton = (MButton)control;
+                    mButton.Location = new Point(mButton.Location.X, mButton.Index * mButton.Height - delta);
+                }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2077:" + ce.Message);
+            }
+        }
+
+        private void Btn_Bar_MouseDown(object sender, EventArgs e)
+        {
+            try
+            {
+                Timer_ClosePlayList.Stop();
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2071:" + ce.Message);
+            }
+        }
+        private void MSBar_PlayingMusicList_MouseMove(object sender, EventArgs e)
+        {
+            try
+            {
+                Timer_ClosePlayList.Stop();
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2071:" + ce.Message);
+            }
+        }
+
+        private void Btn_Bar_MouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    double max = MSBar_PlayingMusicList.M_Maximum - (MSBar_PlayingMusicList.M_SliderLength * MSBar_PlayingMusicList.M_Maximum / MSBar_PlayingMusicList.Height);
+                    int center = MousePosition.Y - this.Top - Panel_PlayList.Top;
+                    if(center<= MSBar_PlayingMusicList.Location.Y + Btn_Bar.Height / 2)
+                    {
+                        center = MSBar_PlayingMusicList.Location.Y + Btn_Bar.Height / 2;
+                    }
+                    if(center>= MSBar_PlayingMusicList.Location.Y + MSBar_PlayingMusicList.Height - Btn_Bar.Height / 2)
+                    {
+                        center = MSBar_PlayingMusicList.Location.Y + MSBar_PlayingMusicList.Height - Btn_Bar.Height / 2;
+                    }
+                    int top = center - Btn_Bar.Height / 2;
+                    Btn_Bar.Location = new Point(Btn_Bar.Location.X, top);
+                    MSBar_PlayingMusicList.M_Value = (top - MSBar_PlayingMusicList.Location.Y) * max / (MSBar_PlayingMusicList.Height - MSBar_PlayingMusicList.M_SliderLength);
+                }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2071:" + ce.Message);
+            }
+        }
+
+        private void Btn_Bar_MouseUp(object sender, EventArgs e)
+        {
+            try
+            {
+                Timer_ClosePlayList.Start();
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2072:" + ce.Message);
+            }
+        }
+
+        private void Form_MouseWheel(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (MTBar_Volume.Enabled)
+                {
+                    MTBar_Volume.M_Value += e.Delta * MTBar_Volume.M_Maximum / 1200;
+                }
+                if (MSBar_MusicList.Enabled)
+                {
+                    MSBar_MusicList.M_Value -= e.Delta * MSBar_MusicList.M_Maximum / 1200;
+                }
+                if (MSBar_MenuList.Enabled)
+                {
+                    MSBar_MenuList.M_Value -= e.Delta * MSBar_MenuList.M_Maximum / 1200;
+                }
+                if (MSBar_PlayingMusicList.Enabled)
+                {
+                    double max = MSBar_PlayingMusicList.M_Maximum - (MSBar_PlayingMusicList.M_SliderLength * MSBar_PlayingMusicList.M_Maximum / MSBar_PlayingMusicList.Height);
+                    int totalHeight = Panel_PlayingMusicList.Controls.Count * ButtonType.Height - MSBar_PlayingMusicList.Height;
+                    double k = ButtonType.Height * max / (642 * totalHeight);
+                    Console.WriteLine(k);
+                    Console.WriteLine(e.Delta);
+                    MSBar_PlayingMusicList.M_Value -= e.Delta * k;
+                }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2080:" + ce.Message);
+            }
+        }
+
+        private void Timer_MSBar_MenuList_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (MouseButtons == MouseButtons.Left || MouseButtons == MouseButtons.Right)
+                {
+                    if (!InBox(new Size(Panel_Volume.Width, Panel_Volume.Height), new Point(Panel_Volume.Location.X + this.Left, Panel_Volume.Location.Y + this.Top)))
+                    {
+                        MSBar_MenuList.Enabled = false;
+                        Timer_MSBar_MenuList.Stop();
+                    }
+                }
+            }
+            catch (Exception ce)
+            {
+                Console.WriteLine("2081:" + ce.Message);
+            }
+        }
+
     }
 }

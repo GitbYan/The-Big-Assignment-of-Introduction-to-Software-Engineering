@@ -25,7 +25,7 @@ namespace ControlDemos
 
         #region 属性
 
-        private Color _BarColor = Color.FromArgb(128, 255, 128);
+        private Color _BarColor = Color.FromArgb(217, 217, 217);
         /// <summary>
         /// 背景条颜色
         /// </summary>
@@ -40,7 +40,7 @@ namespace ControlDemos
             }
         }
 
-        private Color _SliderColor = Color.FromArgb(0, 192, 0);//绿
+        private Color _SliderColor = Color.FromArgb(70, 204, 108);
         /// <summary>
         /// 滑块颜色
         /// </summary>
@@ -86,7 +86,6 @@ namespace ControlDemos
                 Invalidate();
             }
         }
-
 
         private double _Maximum = 100;
         /// <summary>
