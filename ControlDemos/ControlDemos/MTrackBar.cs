@@ -418,7 +418,6 @@ namespace ControlDemos
             mouseStatus = MouseStatus.Up;
         }
         
-
         protected override void OnMouseEnter(EventArgs e)
         {
             base.OnMouseEnter(e);

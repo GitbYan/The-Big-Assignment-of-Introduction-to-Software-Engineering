@@ -27,10 +27,6 @@ namespace GuGuGuMusic
             {
                 InitLoginInfo(user);
             }
-            if (Connected = NetLinked())
-            {
-                MusicInfo = mDB.GetMusics();
-            }
         }
 
         public bool NetLinked()
@@ -40,7 +36,6 @@ namespace GuGuGuMusic
                 WebRequest myrequest = WebRequest.Create("http://www.baidu.com");
                 WebResponse webResponse = myrequest.GetResponse();
                 webResponse.Close();
-                MusicInfo = mDB.GetMusics();
                 return true;
             }
             catch (Exception e)
@@ -58,7 +53,18 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("5010:" + e.Message);
+                Console.WriteLine("5008:" + e.Message);
+            }
+        }
+
+        public void GetMusics()
+        {
+            try
+            {
+                MusicInfo = mDB.GetMusics();
+            }catch(Exception ce)
+            {
+                Console.WriteLine("5010:"+ce.Message);
             }
         }
 
@@ -331,7 +337,7 @@ namespace GuGuGuMusic
             }
             catch (Exception e)
             {
-                Console.WriteLine("5008:" + e.Message);
+                Console.WriteLine("5011:" + e.Message);
                 return false;
             }
         }

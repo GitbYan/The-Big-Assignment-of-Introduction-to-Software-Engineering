@@ -291,7 +291,6 @@ namespace GuGuGuMusic
                         music.Singer = str_[0];
                         music.Album = str_[1];
                         music.Name = str_[2];
-                        Console.WriteLine(s);
                     }
                 }
                 music.FileURL = fileurl;
@@ -491,17 +490,14 @@ namespace GuGuGuMusic
                 FileInfo myFile;
                 if (musicList.ListName.ToString() == "本地与下载")
                 {
-                    Console.WriteLine("读取本地列表");
                     myFile = new FileInfo("../local/local.txt");
                 }
                 else
                 {
-                    Console.WriteLine("读取本地播放列表");
                     myFile = new FileInfo("../local/playing.txt");
                 }
                 StreamReader sR = myFile.OpenText();
                 string filename = "";
-                int i = 0;
                 string nextLine;
                 while ((nextLine = sR.ReadLine()) != null)
                 {
@@ -509,7 +505,6 @@ namespace GuGuGuMusic
                     if (nextLine.Last() == '】')
                     {
                         Music music = ReadLocalMusic(filename);
-                        Console.WriteLine(filename);
                         musicList.Add(music);
                         filename = "";
                     }
