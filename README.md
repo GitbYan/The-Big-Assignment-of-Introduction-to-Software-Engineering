@@ -112,7 +112,7 @@ MySQL -version:8.0.19
 
   2. ###### COM:Windows Media Player
 
-  3. ###### Shell32引用属性：嵌入互操作类型=false
+  3. ###### Shell32引用属性：嵌入互操作类型=false 避免引起互操作类型异常 
 
 - ##### 需要添加App.config文件并修改对应内容：添加\<add\>信息,[]内容必须设置正确
 

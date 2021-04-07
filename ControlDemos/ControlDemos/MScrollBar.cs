@@ -197,6 +197,7 @@ namespace ControlDemos
             set
             {
                 _SliderLength = value;
+                Invalidate();
             }
         }
         #endregion
@@ -223,8 +224,8 @@ namespace ControlDemos
             float fCapWidth = 0;
             if (_IsRound)
             {
-                fCapWidth = _BarSize;
-                fCapHalfWidth = _BarSize / 2.0f;
+                fCapWidth = _SliderLength;
+                fCapHalfWidth = _SliderLength / 2.0f;
             }
 
             if (_Orientation == Orientation.Horizontal_LR || _Orientation == Orientation.Horizontal_RL)
@@ -248,22 +249,21 @@ namespace ControlDemos
             float fCapWidth = 0;
             if (_IsRound)
             {
-                fCapWidth = _BarSize;
-                fCapHalfWidth = _BarSize / 2.0f;
+                fCapWidth = _SliderLength;
+                fCapHalfWidth = _SliderLength / 2.0f;
             }
 
             float fRatio = Convert.ToSingle((float)(_Value / _Maximum));
             if (_Orientation == Orientation.Horizontal_LR || _Orientation == Orientation.Horizontal_RL)
             {
                 float fPointValue = fRatio * (Width - fCapWidth) + fCapHalfWidth;
-                mousePoint = new PointF(fPointValue, fCapHalfWidth);
+                mousePoint = new PointF(fPointValue, _BarSize / 2.0f);
             }
             else if (_Orientation == Orientation.Vertical_UD || _Orientation == Orientation.Vertical_DU)
             {
                 float fPointValue = fRatio * (Height - fCapWidth) + fCapHalfWidth;
-                mousePoint = new PointF(fCapHalfWidth, fPointValue);
+                mousePoint = new PointF(_BarSize / 2.0f, fPointValue);
             }
-
         }
 
         #region 重写
@@ -322,15 +322,15 @@ namespace ControlDemos
             {
                 e.Graphics.DrawLine(penBarBack, fCapHalfWidth, Height / 2f, Width - fCapHalfWidth, Height / 2f);
                 fPointValue = mousePoint.X;
-                if (fPointValue - _SliderLength / 2 < fCapHalfWidth) fPointValue = _SliderLength / 2 + fCapHalfWidth;
-                if (fPointValue + _SliderLength / 2 > Width - fCapHalfWidth) fPointValue = Width - fCapHalfWidth - _SliderLength / 2;
+                if (fPointValue - _SliderLength / 2 < 0) fPointValue = _SliderLength / 2;
+                if (fPointValue + _SliderLength / 2 > Width) fPointValue = Width  - _SliderLength / 2;
             }
             else
             {
                 e.Graphics.DrawLine(penBarBack, Width / 2f, fCapHalfWidth, Width / 2f, Height - fCapHalfWidth);
                 fPointValue = mousePoint.Y;
-                if (fPointValue - _SliderLength / 2 < fCapHalfWidth) fPointValue = _SliderLength / 2 + fCapHalfWidth;
-                if (fPointValue + _SliderLength / 2 > Height - fCapHalfWidth) fPointValue = Height - fCapHalfWidth - _SliderLength / 2;
+                if (fPointValue - _SliderLength / 2 < 0) fPointValue = _SliderLength / 2;
+                if (fPointValue + _SliderLength / 2 > Height) fPointValue = Height - _SliderLength / 2;
             }
 
             if (_Orientation == Orientation.Horizontal_LR|| _Orientation == Orientation.Horizontal_RL)
