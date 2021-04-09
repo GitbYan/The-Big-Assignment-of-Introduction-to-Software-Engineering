@@ -128,6 +128,7 @@ namespace GuGuGuMusic
             this.Timer_Searching = new System.Windows.Forms.Timer(this.components);
             this.Timer_MSBar_MenuList = new System.Windows.Forms.Timer(this.components);
             this.Timer_Login = new System.Windows.Forms.Timer(this.components);
+            this.下载ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Main_Panel.SuspendLayout();
             this.Panel_Detail.SuspendLayout();
             this.Panel_MusicListScroll.SuspendLayout();
@@ -1399,28 +1400,29 @@ namespace GuGuGuMusic
             this.CMS歌曲.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.播放ToolStripMenuItem1,
             this.添加到ToolStripMenuItem,
-            this.移除ToolStripMenuItem});
+            this.移除ToolStripMenuItem,
+            this.下载ToolStripMenuItem});
             this.CMS歌曲.Name = "contextMenuStrip3";
-            this.CMS歌曲.Size = new System.Drawing.Size(113, 70);
+            this.CMS歌曲.Size = new System.Drawing.Size(181, 114);
             this.CMS歌曲.Opening += new System.ComponentModel.CancelEventHandler(this.CMS歌曲_Opening);
             // 
             // 播放ToolStripMenuItem1
             // 
             this.播放ToolStripMenuItem1.Name = "播放ToolStripMenuItem1";
-            this.播放ToolStripMenuItem1.Size = new System.Drawing.Size(112, 22);
+            this.播放ToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.播放ToolStripMenuItem1.Text = "▷播放";
             this.播放ToolStripMenuItem1.Click += new System.EventHandler(this.播放ToolStripMenuItem1_Click);
             // 
             // 添加到ToolStripMenuItem
             // 
             this.添加到ToolStripMenuItem.Name = "添加到ToolStripMenuItem";
-            this.添加到ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.添加到ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.添加到ToolStripMenuItem.Text = "添加到";
             // 
             // 移除ToolStripMenuItem
             // 
             this.移除ToolStripMenuItem.Name = "移除ToolStripMenuItem";
-            this.移除ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.移除ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.移除ToolStripMenuItem.Text = "移除";
             this.移除ToolStripMenuItem.Click += new System.EventHandler(this.移除ToolStripMenuItem_Click);
             // 
@@ -1454,6 +1456,13 @@ namespace GuGuGuMusic
             // 
             this.Timer_Login.Interval = 5;
             this.Timer_Login.Tick += new System.EventHandler(this.Timer_Login_Tick);
+            // 
+            // 下载ToolStripMenuItem
+            // 
+            this.下载ToolStripMenuItem.Name = "下载ToolStripMenuItem";
+            this.下载ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.下载ToolStripMenuItem.Text = "下载";
+            this.下载ToolStripMenuItem.Click += new System.EventHandler(this.下载ToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -1601,6 +1610,7 @@ namespace GuGuGuMusic
         private Button Lbl_ShowList;
         private Panel Panel_MenuListScroll;
         private Timer Timer_Login;
+        private ToolStripMenuItem 下载ToolStripMenuItem;
     }
 }
 
