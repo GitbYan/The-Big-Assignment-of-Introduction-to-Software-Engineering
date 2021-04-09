@@ -1947,6 +1947,14 @@ namespace GuGuGuMusic
                 MButton mButton = (MButton)((ContextMenuStrip)sender).SourceControl;
                 ResetChoosedMButton(mButton);
                 this.添加到ToolStripMenuItem.DropDownItems.Clear();
+                if (ChoosedMLButton.MusicList.ListName == "本地与下载")
+                {
+                    this.下载ToolStripMenuItem.Visible = false;
+                }
+                else
+                {
+                    this.下载ToolStripMenuItem.Visible = true;
+                }
                 ToolStripMenuItem toolStripMenuItem;
                 //我喜欢
                 if (Btn_Liked.Visible)
@@ -2158,7 +2166,6 @@ namespace GuGuGuMusic
                         Btn_SearchResult.MusicList.Clear();
                         string searchtext = TxtBox_SearchBox.Text.ToString();
                         Regex regex = new Regex(searchtext, RegexOptions.IgnoreCase);
-                        MusicList musicList = myMusicApp.mdb
                         foreach (Music music in myMusicApp.MusicInfo)
                         {
                             Match match = regex.Match(music.Name + "," + music.Singer + "," + music.Album);
@@ -2465,5 +2472,36 @@ namespace GuGuGuMusic
             }
         }
 
+        private void 下载ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string url = ChoosedMButton.M_music.FileURL;
+                string filename = ChoosedMButton.M_music.Name + " - " + ChoosedMButton.M_music.Singer + ".mp3";
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                using (Stream stream = response.GetResponseStream())
+                {
+                    //获取文件后缀
+                    filename = "../local/" + filename;
+                    using (FileStream fileStream = new FileStream(filename, FileMode.CreateNew))
+                    {
+                        byte[] bArr = new byte[1024];
+                        int size = stream.Read(bArr, 0, (int)bArr.Length);
+                        while (size > 0)
+                        {
+                            fileStream.Write(bArr, 0, size);
+                            size = stream.Read(bArr, 0, (int)bArr.Length);
+                        }
+                        fileStream.Close();
+                    }
+                    stream.Close();
+                }
+            }
+            catch(Exception ce)
+            {
+                Console.WriteLine("2084:" + ce.Message);
+            }
+        }
     }
 }

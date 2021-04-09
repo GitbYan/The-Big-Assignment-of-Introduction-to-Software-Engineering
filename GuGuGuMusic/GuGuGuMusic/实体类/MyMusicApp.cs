@@ -27,6 +27,10 @@ namespace GuGuGuMusic
             {
                 InitLoginInfo(user);
             }
+            if (NetLinked())
+            {
+                MusicInfo = mDB.GetMusics();
+            }
         }
 
         public bool NetLinked()
@@ -54,17 +58,6 @@ namespace GuGuGuMusic
             catch (Exception e)
             {
                 Console.WriteLine("5008:" + e.Message);
-            }
-        }
-
-        public void GetMusics()
-        {
-            try
-            {
-                MusicInfo = mDB.GetMusics();
-            }catch(Exception ce)
-            {
-                Console.WriteLine("5010:"+ce.Message);
             }
         }
 
