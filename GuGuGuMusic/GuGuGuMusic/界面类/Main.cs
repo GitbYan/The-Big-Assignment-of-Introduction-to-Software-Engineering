@@ -168,6 +168,7 @@ namespace GuGuGuMusic
         public Main()
         {
             InitializeComponent();
+
             //设置双缓冲减少屏幕闪烁
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
@@ -206,6 +207,9 @@ namespace GuGuGuMusic
             string max_second = (int)(duration % 60) >= 10 ? ((int)(duration % 60)).ToString() : "0" + ((int)(duration % 60)).ToString();
             Btn_Process.Text = "00:00 / " + max_minute + ":" + max_second;
             MTBar_Music.M_Value = 0;
+
+            //Console.WriteLine(AWMP.currentMedia.sourceURL);
+            //Console.WriteLine(ChoosedMButton.M_music.FileURL);
         }
 
         private void Form_MouseClick(object sender, MouseEventArgs e)
@@ -274,7 +278,6 @@ namespace GuGuGuMusic
             {
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-
                     string filename = openFileDialog.FileName;
                     ShellClass sh = new ShellClass();
                     Folder dir = sh.NameSpace(Path.GetDirectoryName(filename));
@@ -302,9 +305,9 @@ namespace GuGuGuMusic
                     ShowList(myMusicApp.LocalMusicList);
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2001:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -376,9 +379,9 @@ namespace GuGuGuMusic
                 this.Hide();
                 SetVisibleCore(false);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2002:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -402,9 +405,9 @@ namespace GuGuGuMusic
                     toolTip.SetToolTip(Btn_MaxSize, "最大化");
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2003:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -420,11 +423,11 @@ namespace GuGuGuMusic
             {
                 this.WindowState = FormWindowState.Minimized;
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2004:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
-            
+
         }
 
         /// <summary>
@@ -440,9 +443,9 @@ namespace GuGuGuMusic
                 p = Btn_Menu.PointToScreen(p);
                 CMS_Main.Show(p.X - CMS_Main.Width / 2, p.Y + Btn_Menu.Height);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2005:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -474,9 +477,9 @@ namespace GuGuGuMusic
                     }
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2006:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -502,6 +505,7 @@ namespace GuGuGuMusic
             {
                 if (musicList != null && musicList.Musics.Count() != 0)
                 {
+                    //ResetChoosedMButton(Panel_MusicList.Controls[index]);
                     IWMPPlaylist playList = AWMP.playlistCollection.newPlaylist("MyPlayList");
                     IWMPMedia media = AWMP.newMedia(musicList.Musics[index].FileURL);
                     playList.appendItem(media);
@@ -510,12 +514,18 @@ namespace GuGuGuMusic
                         MediaDic.Add(media.sourceURL, musicList.Musics[index]);
                     }
                     Btn_CurrentMusic.M_music = musicList.Musics[index];
-                    for (int i = 0; i < musicList.Musics.Count; i++)
+                    for (int i = index+1; i < musicList.Musics.Count; i++)
                     {
-                        if (i == index)
+                        string url = musicList.Musics[i].FileURL.ToString();
+                        media = AWMP.newMedia(url);
+                        if (!MediaDic.ContainsKey(media.sourceURL))
                         {
-                            continue;
+                            MediaDic.Add(media.sourceURL, musicList.Musics[i]);
                         }
+                        playList.appendItem(media);
+                    }
+                    for (int i = 0; i < index; i++)
+                    {
                         string url = musicList.Musics[i].FileURL.ToString();
                         media = AWMP.newMedia(url);
                         if (!MediaDic.ContainsKey(media.sourceURL))
@@ -528,10 +538,10 @@ namespace GuGuGuMusic
                     AWMP.Ctlcontrols.stop();
                 }
             }
-            catch(Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("2007:"+e.Message);
-            }            
+                Console.WriteLine(ex.Message + ex.StackTrace);
+            }
         }
 
         /// <summary>
@@ -551,10 +561,11 @@ namespace GuGuGuMusic
                 {
                     Timer_PlayingMode.Stop();
                 }
-                Panel_Mode.Visible = Panel_Mode.Visible == true ? false : true;                
-            }catch(Exception ce)
+                Panel_Mode.Visible = Panel_Mode.Visible == true ? false : true;
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2008:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -582,9 +593,9 @@ namespace GuGuGuMusic
                 }
                
             }
-            catch(Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2009:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -599,9 +610,9 @@ namespace GuGuGuMusic
             {
                 MTBar_Volume.Focus();
             }
-            catch(Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2010:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
         
@@ -633,9 +644,9 @@ namespace GuGuGuMusic
                 }
                 Btn_Play.Text = Btn_Play.Text == "||" ? "▶" : "||";
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("2012:"+ex.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -656,18 +667,19 @@ namespace GuGuGuMusic
                     AWMP.Ctlcontrols.play();
                     Timer_Music.Start();
                 }
-                ChoosedMButton.BackColor = ChoosedMButton.FlatAppearance.MouseDownBackColor;
+                ChoosedMButton.BackColor = ChoosedMButton.FlatAppearance.BorderColor;
                 foreach (MButton mButton in Panel_MusicList.Controls)
                 {
                     if (mButton.M_music.Equals(MediaDic[AWMP.currentMedia.sourceURL]))
                     {
                         ChoosedMButton = mButton;
+                        ChoosedMButton.BackColor = ChoosedMButton.FlatAppearance.MouseDownBackColor;
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("2013:"+ex.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -688,10 +700,19 @@ namespace GuGuGuMusic
                     AWMP.Ctlcontrols.play();
                     Timer_Music.Start();
                 }
+                ChoosedMButton.BackColor = ChoosedMButton.FlatAppearance.BorderColor;
+                foreach (MButton mButton in Panel_MusicList.Controls)
+                {
+                    if (mButton.M_music.Equals(MediaDic[AWMP.currentMedia.sourceURL]))
+                    {
+                        ChoosedMButton = mButton;
+                        ChoosedMButton.BackColor = ChoosedMButton.FlatAppearance.MouseDownBackColor;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("2014:"+ex.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -742,9 +763,9 @@ namespace GuGuGuMusic
                 if (value < 0) { MTBar_Music.M_Value = 0; }
                 else { MTBar_Music.M_Value = value; }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2058:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -766,9 +787,9 @@ namespace GuGuGuMusic
                     Btn_Process.Text = cur_minute + ":" + cur_second + " / " + max_minute + ":" + max_second;
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2015:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -784,9 +805,9 @@ namespace GuGuGuMusic
             {
                 Timer_Music.Stop();
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2016:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -814,9 +835,9 @@ namespace GuGuGuMusic
                     AWMP.Ctlcontrols.currentPosition = newValue;
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2017:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -848,9 +869,9 @@ namespace GuGuGuMusic
 
                 Btn_Mode.Text = Btn_SingleLoop.Text;
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2018:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -901,9 +922,9 @@ namespace GuGuGuMusic
 
                 Btn_Mode.Text = Btn_Loop.Text;
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2019:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -954,9 +975,9 @@ namespace GuGuGuMusic
 
                 Btn_Mode.Text = Btn_Sequential.Text;
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2020:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -999,9 +1020,9 @@ namespace GuGuGuMusic
                 }
                 Btn_Mode.Text = Btn_Random.Text;
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2021:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1018,9 +1039,9 @@ namespace GuGuGuMusic
                 Lbl_Volume.Text = volume.ToString() + "%";
                 AWMP.settings.volume = volume;
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2022:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1037,7 +1058,6 @@ namespace GuGuGuMusic
             try
             {
                 Lbl_ShowList.Text = musicList.ListName;
-                TxtBox_SearchBox.Text = "🔍搜索音乐";
                 List<Music> Musics = musicList.Musics;
                 Panel_MusicList.Controls.Clear();
                 Panel_MusicList.Height = 0;
@@ -1050,7 +1070,7 @@ namespace GuGuGuMusic
                         MButton b = new MButton()
                         {
                             Size = new System.Drawing.Size(Panel_MusicList.Width, 30),
-                            BackColor = Color.Transparent,
+                            BackColor = Panel_MusicList.BackColor,
                             M_music = music,
                             Index = i,
                             ContextMenuStrip = CMS歌曲,
@@ -1059,6 +1079,7 @@ namespace GuGuGuMusic
                         b.DoubleClick += new EventHandler(PlayChoosedMusic);
                         b.Location = new Point(0, b.Height * i);
                         b.FlatAppearance.BorderSize = 0;
+                        b.FlatAppearance.BorderColor = b.BackColor;
                         Panel_MusicList.Controls.Add(b);
                         b.Show();
                         i++;
@@ -1071,6 +1092,7 @@ namespace GuGuGuMusic
                         if (m.M_music.Equals(MediaDic[AWMP.currentMedia.sourceURL]))
                         {
                             m.BackColor = m.FlatAppearance.MouseDownBackColor;
+                            ChoosedMButton = m;
                         }
                     }
                 }
@@ -1086,11 +1108,10 @@ namespace GuGuGuMusic
                     MSBar_MusicList.Hide();
                     MSBar_MusicList.Enabled = false;
                 }
-
             }
-            catch(Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("2023:"+e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1103,6 +1124,7 @@ namespace GuGuGuMusic
         {
             try
             {
+                ChoosedMButton.BackColor = ChoosedMButton.FlatAppearance.BorderColor;
                 MButton mButton = (MButton)sender;
                 ResetChoosedMButton(mButton);
                 mButton.BackColor = mButton.FlatAppearance.MouseDownBackColor;
@@ -1113,15 +1135,13 @@ namespace GuGuGuMusic
                     PlayingMusicListName = ChoosedMLButton.MusicList.ListName;
                 }
                 InitAWMP(myMusicApp.PlayingMusicList, mButton.Index);
-
-
                 AWMP.Ctlcontrols.play();
                 Timer_Music.Start();
                 Btn_Play.Text = "||";
             }
-            catch(Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2024:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
         #endregion
@@ -1194,9 +1214,10 @@ namespace GuGuGuMusic
                     Timer_NamingList.Start();
                 }
 
-            }catch(Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2025:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -1212,9 +1233,10 @@ namespace GuGuGuMusic
             {
                 Button button = (Button)sender;
                 button.ForeColor = System.Drawing.SystemColors.ControlText;
-            }catch(Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2026:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1229,9 +1251,10 @@ namespace GuGuGuMusic
             {
                 Button button = (Button)sender;
                 button.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            }catch(Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2027:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1284,11 +1307,12 @@ namespace GuGuGuMusic
                 Timer_NamingList.Dispose();
                 CreatingBtn.Show();
                 ResetChoosedMLButton(ChoosedMLButton);
-            }catch(Exception ce)
-            {
-                Console.WriteLine("2028:"+ce.Message);
             }
-            
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + ex.StackTrace);
+            }
+
         }
 
 
@@ -1303,9 +1327,10 @@ namespace GuGuGuMusic
             {
                 ResetChoosedMLButton(sender);
                 ShowList(ChoosedMLButton.MusicList);
-            }catch(Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2029:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -1327,9 +1352,9 @@ namespace GuGuGuMusic
                     }
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2030:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -1352,10 +1377,11 @@ namespace GuGuGuMusic
                 }
                 return true;
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2031:" + ce.Message);
-                return false;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+             
+            return false;
             }
 
         }
@@ -1388,9 +1414,10 @@ namespace GuGuGuMusic
                     Btn_Spread.Text = "↑";
                     Panel_CreatedList.Hide();
                 }
-            }catch(Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2032:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
         #endregion
@@ -1417,9 +1444,9 @@ namespace GuGuGuMusic
                     Btn_AddLocalMusic.Hide();
                 }
             }
-            catch(Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("2033:"+e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
         /// <summary>
@@ -1432,10 +1459,11 @@ namespace GuGuGuMusic
             {
                 ChoosedMButton.BackColor = Color.Transparent;
                 ChoosedMButton = (MButton)sender;
+                ChoosedMButton.BackColor = ChoosedMButton.FlatAppearance.MouseDownBackColor;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("2034:"+e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1455,9 +1483,9 @@ namespace GuGuGuMusic
                 ShowList(myMusicApp.LocalMusicList);
 
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2035:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1473,9 +1501,9 @@ namespace GuGuGuMusic
                 ResetChoosedMLButton(sender);
                 ShowList(myMusicApp.HistoryMusicList);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2036:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -1492,11 +1520,10 @@ namespace GuGuGuMusic
                 ResetChoosedMLButton(sender);
                 ShowList(myMusicApp.PopMusicList);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2037:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
- 
         }
 
         /// <summary>
@@ -1511,11 +1538,10 @@ namespace GuGuGuMusic
                 ResetChoosedMLButton(sender);
                 ShowList(Btn_Liked.MusicList);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2038:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
-
         }
 
         #endregion
@@ -1552,9 +1578,9 @@ namespace GuGuGuMusic
                 }
                 Timer_ClosePlayList.Start();
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2039:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1571,11 +1597,10 @@ namespace GuGuGuMusic
                 Panel_PlayList.Hide();
                 MSBar_PlayingMusicList.Enabled = false;
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2040:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
-
         }
 
         /// <summary>
@@ -1612,12 +1637,22 @@ namespace GuGuGuMusic
                         b.Show();
                         i++;
                     }
+                    foreach (MButton m in Panel_PlayingMusicList.Controls)
+                    {
+                        if (AWMP.currentMedia != null)
+                        {
+                            if (m.M_music.Equals(MediaDic[AWMP.currentMedia.sourceURL]))
+                            {
+                                m.BackColor = m.FlatAppearance.MouseDownBackColor;
+                            }
+                        }
+                    }
                 }
                 Invalidate();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("2041:"+e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
         /// <summary>
@@ -1631,13 +1666,27 @@ namespace GuGuGuMusic
             {
                 MButton mButton = (MButton)sender;
                 InitAWMP(myMusicApp.PlayingMusicList, mButton.Index);
+                ChoosedMButton.BackColor = ChoosedMButton.FlatAppearance.BorderColor;
+                foreach (MButton m in Panel_MusicList.Controls)
+                {
+                    if (m.M_music.Equals(MediaDic[AWMP.currentMedia.sourceURL]))
+                    {
+                        ChoosedMButton = m;
+                        ChoosedMButton.BackColor = ChoosedMButton.FlatAppearance.MouseDownBackColor;
+                    }
+                }
+                foreach (MButton m in Panel_PlayingMusicList.Controls)
+                {
+                    m.BackColor = m.FlatAppearance.BorderColor;
+                }
+                mButton.BackColor = mButton.FlatAppearance.MouseDownBackColor;
                 AWMP.Ctlcontrols.play();
                 Timer_Music.Start();
                 Btn_Play.Text = "||";
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2042:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1686,9 +1735,9 @@ namespace GuGuGuMusic
                     MSBar_MenuList.Show();
                 }
             }
-            catch(Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2043:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1701,9 +1750,9 @@ namespace GuGuGuMusic
                 Btn_Liked.Show();
                 Btn_History.Show();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("2058:"+e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1721,11 +1770,11 @@ namespace GuGuGuMusic
                 AWMP.Ctlcontrols.play();
                 Timer_Music.Start();
                 Btn_Play.Text = "||";
-            }catch(Exception ce)
-            {
-                Console.WriteLine("2044:"+ce.Message);
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + ex.StackTrace);
+            }
         }
 
         private void CMS默认歌单_Opening(object sender, CancelEventArgs e)
@@ -1736,11 +1785,10 @@ namespace GuGuGuMusic
                 ResetChoosedMLButton(mLButton);
                 ShowList(mLButton.MusicList);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2045:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
-
         }
 
         private void CMS歌单_Opening(object sender, CancelEventArgs e)
@@ -1770,9 +1818,10 @@ namespace GuGuGuMusic
                 CreatingBtn = mLButton;
                 ResetChoosedMLButton(mLButton);
                 ShowList(mLButton.MusicList);
-            }catch(Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2046:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1793,9 +1842,9 @@ namespace GuGuGuMusic
                 ShowList(mLButton.MusicList);
                 ResetList();
             }
-            catch(Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2047:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1809,9 +1858,10 @@ namespace GuGuGuMusic
                     c.Location = new Point(20, (i-1) * c.Height);
                     i--;
                 }
-            }catch(Exception e)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2048:"+e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1836,9 +1886,9 @@ namespace GuGuGuMusic
                 textBox.Focus();
                 Timer_NamingList.Start();
             }
-            catch(Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2049:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1858,9 +1908,9 @@ namespace GuGuGuMusic
                     }
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2050:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1877,11 +1927,10 @@ namespace GuGuGuMusic
                         Timer_PlayingMode.Stop();
                     }
                 }
-                
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2051:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1901,9 +1950,9 @@ namespace GuGuGuMusic
                     }
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2052:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1912,9 +1961,10 @@ namespace GuGuGuMusic
             try
             {
                 new Login(this).ShowDialog();
-            }catch(Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2053:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1934,9 +1984,9 @@ namespace GuGuGuMusic
                 Timer_Music.Start();
                 Btn_Play.Text = "||";
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2054:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -1959,14 +2009,18 @@ namespace GuGuGuMusic
                 //我喜欢
                 if (Btn_Liked.Visible)
                 {
-                    toolStripMenuItem = new ToolStripMenuItem(Btn_Liked.MusicList.ListName.ToString());
-                    toolStripMenuItem.Name = Btn_Liked.MusicList.ListName.ToString();
+                    toolStripMenuItem = new ToolStripMenuItem(Btn_Liked.MusicList.ListName.ToString())
+                    {
+                        Name = Btn_Liked.MusicList.ListName.ToString()
+                    };
                     toolStripMenuItem.Click += new EventHandler(添加到歌单ToolStripMenuItem_Click);
                     this.添加到ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem });
                 }
                 //播放队列
-                toolStripMenuItem = new ToolStripMenuItem(myMusicApp.PlayingMusicList.ListName);
-                toolStripMenuItem.Name = myMusicApp.PlayingMusicList.ListName;
+                toolStripMenuItem = new ToolStripMenuItem(myMusicApp.PlayingMusicList.ListName)
+                {
+                    Name = myMusicApp.PlayingMusicList.ListName
+                };
                 toolStripMenuItem.Click += new EventHandler(添加到歌单ToolStripMenuItem_Click);
                 this.添加到ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem });
                 //自定义歌单
@@ -1977,11 +2031,11 @@ namespace GuGuGuMusic
                     toolStripMenuItem.Click += new EventHandler(添加到歌单ToolStripMenuItem_Click);
                     this.添加到ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem });
                 }
-            }catch(Exception ce)
-            {
-                Console.WriteLine("2055:"+ce.Message);
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + ex.StackTrace);
+            }
         }
 
         /// <summary>
@@ -2004,6 +2058,7 @@ namespace GuGuGuMusic
                     {
                         mLButton.MusicList.Add(mButton.M_music);
                         ListToUpdate = mLButton.MusicList;
+                        myMusicApp.UpdateMusicList(ListToUpdate);
                     }
                 }
                 //默认歌单
@@ -2011,19 +2066,19 @@ namespace GuGuGuMusic
                 {
                     Btn_Liked.MusicList.Add(mButton.M_music);
                     ListToUpdate = Btn_Liked.MusicList;
+                    myMusicApp.UpdateMusicList(ListToUpdate);
                 }
                 //播放列表
                 if(myMusicApp.PlayingMusicList.ListName == toolStripMenuItem.Name)
                 {
                     myMusicApp.PlayingMusicList.Add(mButton.M_music);
+                    Console.WriteLine(myMusicApp.PlayingMusicList.ListName);
                     myMusicApp.UpdateMusicList(myMusicApp.PlayingMusicList);
                 }
-                //更新musiclist和数据库
-                myMusicApp.UpdateMusicList(ListToUpdate);
             }
-            catch(Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2056:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2047,9 +2102,9 @@ namespace GuGuGuMusic
                 this.user = user;
                 Timer_Login.Start();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("2057:"+e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2073,9 +2128,9 @@ namespace GuGuGuMusic
                 //更新musiclist和数据库
                 myMusicApp.UpdateMusicList(ListToUpdate);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2061:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2093,9 +2148,10 @@ namespace GuGuGuMusic
                 Panel_CreateList.Hide();
                 Btn_Login.Text = "登陆";
                 new Login(this).ShowDialog();
-            }catch(Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2058:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2113,9 +2169,10 @@ namespace GuGuGuMusic
                     CMS_Main.Items.Remove(切换账号ToolStripMenuItem);
                     CMS_Main.Items.Insert(0, 登陆ToolStripMenuItem);
                 }
-            }catch(Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2059:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2137,9 +2194,9 @@ namespace GuGuGuMusic
             {
                 Search();
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2064:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2148,9 +2205,10 @@ namespace GuGuGuMusic
             try
             {
                 TxtBox_SearchBox.Focus();
-            }catch(Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2068:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2158,7 +2216,6 @@ namespace GuGuGuMusic
         {
             try
             {
-
                 if(TxtBox_SearchBox.Text.ToString().Trim(' ') != "")
                 {
                     if (myMusicApp.NetLinked())
@@ -2177,12 +2234,12 @@ namespace GuGuGuMusic
                         ResetChoosedMLButton(Btn_SearchResult);
                         ShowList(Btn_SearchResult.MusicList);
                     }
-                    this.Focus();
+                    Btn_Search.Focus();
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2067:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2192,9 +2249,9 @@ namespace GuGuGuMusic
             {
 
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2065:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2210,9 +2267,9 @@ namespace GuGuGuMusic
                 Btn_Search.Show();
                 Timer_Searching.Start();
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2062:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2227,9 +2284,9 @@ namespace GuGuGuMusic
                     Btn_Search.Hide();
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2063:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2243,9 +2300,9 @@ namespace GuGuGuMusic
                     Search();
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2066:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2262,9 +2319,9 @@ namespace GuGuGuMusic
                     }
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2069:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2279,9 +2336,9 @@ namespace GuGuGuMusic
                 int delta = (int)(height * value / max);
                 Panel_MenuList.Location = new Point(0, -delta);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2073:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2296,9 +2353,9 @@ namespace GuGuGuMusic
                 int delta = (int)(height * value / max);
                 Panel_MusicList.Location = new Point(0, -delta);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2076:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2314,9 +2371,9 @@ namespace GuGuGuMusic
                 Panel_PlayingMusicList.Location = new Point(0, -delta);
 
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2077:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2326,9 +2383,9 @@ namespace GuGuGuMusic
             {
                 Timer_ClosePlayList.Stop();
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2071:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2353,9 +2410,9 @@ namespace GuGuGuMusic
                     MSBar_PlayingMusicList.M_Value = (top - MSBar_PlayingMusicList.Location.Y) * max / (MSBar_PlayingMusicList.Height - MSBar_PlayingMusicList.M_SliderLength);
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2071:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2365,9 +2422,9 @@ namespace GuGuGuMusic
             {
                 Timer_ClosePlayList.Start();
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2072:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2410,9 +2467,9 @@ namespace GuGuGuMusic
                     MSBar_PlayingMusicList.M_Value -= e.Delta * k;
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2080:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2430,9 +2487,9 @@ namespace GuGuGuMusic
                     }
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2081:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2440,15 +2497,21 @@ namespace GuGuGuMusic
         {
             try
             {
+                if (PlayingMusicListName != ChoosedMLButton.MusicList.ListName)
+                {
+                    myMusicApp.PlayingMusicList.Musics = ChoosedMLButton.MusicList.Musics;
+                    myMusicApp.UpdateMusicList(myMusicApp.PlayingMusicList);
+                    PlayingMusicListName = ChoosedMLButton.MusicList.ListName;
+                }
                 InitAWMP(myMusicApp.PlayingMusicList, myMusicApp.PlayingMusicList.StartIndex);
-                ResetChoosedMButton(Panel_MusicList.Controls[myMusicApp.PlayingMusicList.StartIndex + 1]);
+                ResetChoosedMButton(Panel_MusicList.Controls[myMusicApp.PlayingMusicList.StartIndex]);
                 AWMP.Ctlcontrols.play();
                 Timer_Music.Start();
                 Btn_Play.Text = "||";
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2082:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2466,9 +2529,10 @@ namespace GuGuGuMusic
                 Btn_Login.Text = "欢迎您: " + user.User_Id;
                 //
                 Timer_Login.Stop();
-            } catch (Exception ce)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("2083:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -2498,10 +2562,44 @@ namespace GuGuGuMusic
                     stream.Close();
                 }
             }
-            catch(Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("2084:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
+
+        private void MButtonType_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                switch (MButtonType.sortWay)
+                {
+                    case MButton.SortWay.SortByAlbumAscend:
+                        break;
+                    case MButton.SortWay.SortByAlbumDescend:
+                        break;
+                    case MButton.SortWay.SortByNameAscend:
+                        break;
+                    case MButton.SortWay.SortByNameDescend:
+                        break;
+                    case MButton.SortWay.SortBySingerAscend:
+                        break;
+                    case MButton.SortWay.SortBySingerDescend:
+                        break;
+                    case MButton.SortWay.Default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + ex.StackTrace);
+            }
+        }
+
+        private void Btn_CurrentMusic_Click(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

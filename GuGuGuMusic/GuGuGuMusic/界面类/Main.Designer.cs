@@ -121,6 +121,7 @@ namespace GuGuGuMusic
             this.播放ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.添加到ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.移除ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.下载ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Timer_ClosePlayList = new System.Windows.Forms.Timer(this.components);
             this.Timer_PlayingMode = new System.Windows.Forms.Timer(this.components);
             this.Timer_Volume = new System.Windows.Forms.Timer(this.components);
@@ -128,7 +129,6 @@ namespace GuGuGuMusic
             this.Timer_Searching = new System.Windows.Forms.Timer(this.components);
             this.Timer_MSBar_MenuList = new System.Windows.Forms.Timer(this.components);
             this.Timer_Login = new System.Windows.Forms.Timer(this.components);
-            this.下载ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Main_Panel.SuspendLayout();
             this.Panel_Detail.SuspendLayout();
             this.Panel_MusicListScroll.SuspendLayout();
@@ -172,7 +172,7 @@ namespace GuGuGuMusic
             // 
             // Panel_Detail
             // 
-            this.Panel_Detail.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.Panel_Detail.BackColor = System.Drawing.Color.Transparent;
             this.Panel_Detail.Controls.Add(this.MButtonType);
             this.Panel_Detail.Controls.Add(this.Lbl_ShowList);
             this.Panel_Detail.Controls.Add(this.Btn_PlayAll);
@@ -209,6 +209,7 @@ namespace GuGuGuMusic
             this.MButtonType.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.MButtonType.type = GuGuGuMusic.MButton.Type.Default;
             this.MButtonType.UseVisualStyleBackColor = true;
+            this.MButtonType.Click += new System.EventHandler(this.MButtonType_Click);
             // 
             // Lbl_ShowList
             // 
@@ -244,6 +245,7 @@ namespace GuGuGuMusic
             // 
             // Panel_MusicListScroll
             // 
+            this.Panel_MusicListScroll.BackColor = System.Drawing.Color.WhiteSmoke;
             this.Panel_MusicListScroll.Controls.Add(this.Panel_MusicList);
             this.Panel_MusicListScroll.Location = new System.Drawing.Point(30, 143);
             this.Panel_MusicListScroll.Margin = new System.Windows.Forms.Padding(0);
@@ -255,6 +257,7 @@ namespace GuGuGuMusic
             // Panel_MusicList
             // 
             this.Panel_MusicList.AutoSize = true;
+            this.Panel_MusicList.BackColor = System.Drawing.Color.WhiteSmoke;
             this.Panel_MusicList.Location = new System.Drawing.Point(0, 0);
             this.Panel_MusicList.Margin = new System.Windows.Forms.Padding(0);
             this.Panel_MusicList.Name = "Panel_MusicList";
@@ -348,6 +351,7 @@ namespace GuGuGuMusic
             this.Btn_CurrentMusic.TabStop = false;
             this.Btn_CurrentMusic.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.Btn_CurrentMusic.UseVisualStyleBackColor = true;
+            this.Btn_CurrentMusic.Click += new System.EventHandler(this.Btn_CurrentMusic_Click);
             // 
             // Panel_Control
             // 
@@ -515,7 +519,7 @@ namespace GuGuGuMusic
             // 
             // Panel_Tool
             // 
-            this.Panel_Tool.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.Panel_Tool.BackColor = System.Drawing.Color.Transparent;
             this.Panel_Tool.ContextMenuStrip = this.CMS_Main;
             this.Panel_Tool.Controls.Add(this.Btn_SearchResult);
             this.Panel_Tool.Controls.Add(this.Btn_Search);
@@ -588,9 +592,11 @@ namespace GuGuGuMusic
             // 
             // Btn_Search
             // 
-            this.Btn_Search.BackColor = System.Drawing.Color.LightGray;
-            this.Btn_Search.FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
+            this.Btn_Search.BackColor = System.Drawing.Color.LightBlue;
+            this.Btn_Search.FlatAppearance.BorderColor = System.Drawing.Color.LightBlue;
             this.Btn_Search.FlatAppearance.BorderSize = 0;
+            this.Btn_Search.FlatAppearance.MouseDownBackColor = System.Drawing.Color.LightBlue;
+            this.Btn_Search.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightBlue;
             this.Btn_Search.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_Search.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Btn_Search.Location = new System.Drawing.Point(383, 18);
@@ -605,7 +611,7 @@ namespace GuGuGuMusic
             // 
             // TxtBox_SearchBox
             // 
-            this.TxtBox_SearchBox.BackColor = System.Drawing.Color.LightGray;
+            this.TxtBox_SearchBox.BackColor = System.Drawing.Color.LightBlue;
             this.TxtBox_SearchBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.TxtBox_SearchBox.Font = new System.Drawing.Font("微软雅黑", 10F);
             this.TxtBox_SearchBox.ImeMode = System.Windows.Forms.ImeMode.On;
@@ -622,11 +628,11 @@ namespace GuGuGuMusic
             // 
             // Btn_SearchBorder
             // 
-            this.Btn_SearchBorder.BackColor = System.Drawing.Color.LightGray;
-            this.Btn_SearchBorder.FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
+            this.Btn_SearchBorder.BackColor = System.Drawing.Color.LightBlue;
+            this.Btn_SearchBorder.FlatAppearance.BorderColor = System.Drawing.Color.LightBlue;
             this.Btn_SearchBorder.FlatAppearance.BorderSize = 0;
-            this.Btn_SearchBorder.FlatAppearance.MouseDownBackColor = System.Drawing.Color.LightGray;
-            this.Btn_SearchBorder.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightGray;
+            this.Btn_SearchBorder.FlatAppearance.MouseDownBackColor = System.Drawing.Color.LightBlue;
+            this.Btn_SearchBorder.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightBlue;
             this.Btn_SearchBorder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Btn_SearchBorder.Location = new System.Drawing.Point(30, 12);
             this.Btn_SearchBorder.Name = "Btn_SearchBorder";
@@ -1080,6 +1086,8 @@ namespace GuGuGuMusic
             // 
             // Icon_pictureBox
             // 
+            this.Icon_pictureBox.BackgroundImage = global::GuGuGuMusic.Properties.Resources.Icon;
+            this.Icon_pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.Icon_pictureBox.Location = new System.Drawing.Point(49, 10);
             this.Icon_pictureBox.Name = "Icon_pictureBox";
             this.Icon_pictureBox.Size = new System.Drawing.Size(100, 60);
@@ -1403,28 +1411,35 @@ namespace GuGuGuMusic
             this.移除ToolStripMenuItem,
             this.下载ToolStripMenuItem});
             this.CMS歌曲.Name = "contextMenuStrip3";
-            this.CMS歌曲.Size = new System.Drawing.Size(181, 114);
+            this.CMS歌曲.Size = new System.Drawing.Size(113, 92);
             this.CMS歌曲.Opening += new System.ComponentModel.CancelEventHandler(this.CMS歌曲_Opening);
             // 
             // 播放ToolStripMenuItem1
             // 
             this.播放ToolStripMenuItem1.Name = "播放ToolStripMenuItem1";
-            this.播放ToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.播放ToolStripMenuItem1.Size = new System.Drawing.Size(112, 22);
             this.播放ToolStripMenuItem1.Text = "▷播放";
             this.播放ToolStripMenuItem1.Click += new System.EventHandler(this.播放ToolStripMenuItem1_Click);
             // 
             // 添加到ToolStripMenuItem
             // 
             this.添加到ToolStripMenuItem.Name = "添加到ToolStripMenuItem";
-            this.添加到ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.添加到ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.添加到ToolStripMenuItem.Text = "添加到";
             // 
             // 移除ToolStripMenuItem
             // 
             this.移除ToolStripMenuItem.Name = "移除ToolStripMenuItem";
-            this.移除ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.移除ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.移除ToolStripMenuItem.Text = "移除";
             this.移除ToolStripMenuItem.Click += new System.EventHandler(this.移除ToolStripMenuItem_Click);
+            // 
+            // 下载ToolStripMenuItem
+            // 
+            this.下载ToolStripMenuItem.Name = "下载ToolStripMenuItem";
+            this.下载ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.下载ToolStripMenuItem.Text = "下载";
+            this.下载ToolStripMenuItem.Click += new System.EventHandler(this.下载ToolStripMenuItem_Click);
             // 
             // Timer_ClosePlayList
             // 
@@ -1456,13 +1471,6 @@ namespace GuGuGuMusic
             // 
             this.Timer_Login.Interval = 5;
             this.Timer_Login.Tick += new System.EventHandler(this.Timer_Login_Tick);
-            // 
-            // 下载ToolStripMenuItem
-            // 
-            this.下载ToolStripMenuItem.Name = "下载ToolStripMenuItem";
-            this.下载ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.下载ToolStripMenuItem.Text = "下载";
-            this.下载ToolStripMenuItem.Click += new System.EventHandler(this.下载ToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -1522,7 +1530,6 @@ namespace GuGuGuMusic
         private System.Windows.Forms.Panel Panel_Detail;
         private System.Windows.Forms.Panel Panel_Icon;
         private System.Windows.Forms.Panel Panel_MenuList;
-        private ControlDemos.MTrackBar MTBar_Music;
         private System.Windows.Forms.PictureBox Icon_pictureBox;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.ContextMenuStrip CMS_Main;
@@ -1551,7 +1558,6 @@ namespace GuGuGuMusic
         private MLButton Btn_Local = new MLButton();
         private System.Windows.Forms.Button Lbl_MyMusic;
         private System.Windows.Forms.Panel Panel_OnlineMusicMenuList;
-        private MLButton Btn_PopMusic = new MLButton();
         private System.Windows.Forms.Button Lbl_OnlineMusic;
         private System.Windows.Forms.Button Btn_Spread;
         private System.Windows.Forms.Button Btn_CteateList;
@@ -1571,7 +1577,6 @@ namespace GuGuGuMusic
         private System.Windows.Forms.Button Btn_Loop;
         private System.Windows.Forms.Button Btn_SingleLoop;
         private System.Windows.Forms.Panel Panel_Volume;
-        private ControlDemos.MTrackBar MTBar_Volume;
         private System.Windows.Forms.Label Lbl_Volume;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ContextMenuStrip CMS歌单;
@@ -1594,9 +1599,6 @@ namespace GuGuGuMusic
         private System.Windows.Forms.Timer Timer_Searching;
         private MButton MButtonType;
         private MLButton Btn_SearchResult;
-        private ControlDemos.MScrollBar MSBar_MenuList;
-        private ControlDemos.MScrollBar MSBar_MusicList;
-        private ControlDemos.MScrollBar MSBar_PlayingMusicList;
         private System.Windows.Forms.Timer Timer_MSBar_MenuList;
         private System.Windows.Forms.Button Slider_PlayingMusicList;
         private Panel Panel_MusicListScroll;
@@ -1611,6 +1613,12 @@ namespace GuGuGuMusic
         private Panel Panel_MenuListScroll;
         private Timer Timer_Login;
         private ToolStripMenuItem 下载ToolStripMenuItem;
+        private ControlDemos.MScrollBar MSBar_MusicList;
+        private ControlDemos.MTrackBar MTBar_Music;
+        private ControlDemos.MTrackBar MTBar_Volume;
+        private MLButton Btn_PopMusic;
+        private ControlDemos.MScrollBar MSBar_PlayingMusicList;
+        private ControlDemos.MScrollBar MSBar_MenuList;
     }
 }
 

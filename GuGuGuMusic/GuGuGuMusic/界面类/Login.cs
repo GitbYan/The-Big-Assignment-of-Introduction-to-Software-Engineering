@@ -139,9 +139,9 @@ namespace GuGuGuMusic
             {
                 this.Close();
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1001:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -152,9 +152,9 @@ namespace GuGuGuMusic
                 Button b = (Button)sender;
                 b.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1002:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -165,9 +165,9 @@ namespace GuGuGuMusic
                 Button b = (Button)sender;
                 b.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1003:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -191,9 +191,9 @@ namespace GuGuGuMusic
                 register.Show();
                 login = this;
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1004:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -203,9 +203,9 @@ namespace GuGuGuMusic
             {
 
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1005:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -245,9 +245,9 @@ namespace GuGuGuMusic
                         break;
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1007:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -272,9 +272,9 @@ namespace GuGuGuMusic
                         break;
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1008:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -291,9 +291,9 @@ namespace GuGuGuMusic
                     Lbl_Tip1.Hide();
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1009:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -311,9 +311,9 @@ namespace GuGuGuMusic
                     Lbl_Tip2.Hide();
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1010:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -334,9 +334,9 @@ namespace GuGuGuMusic
                     }
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1011:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -361,10 +361,11 @@ namespace GuGuGuMusic
                 }
                 return false;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("1012:" + e.Message);
-                return false;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+            
+            return false;
             }
         }
 
@@ -379,10 +380,11 @@ namespace GuGuGuMusic
                 }
                 return false;
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("1013:" + ce.Message);
-                return false;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+             
+            return false;
             }
         }
         public Panel panel = new Panel()

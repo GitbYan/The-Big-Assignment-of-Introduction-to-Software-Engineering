@@ -67,9 +67,9 @@ namespace GuGuGuMusic
                 }
                 return count;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("7010:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
                 return 0;
             }
         }
@@ -112,9 +112,9 @@ namespace GuGuGuMusic
                 }
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("7001:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
                 return -1;
             }
         }
@@ -144,9 +144,9 @@ namespace GuGuGuMusic
                 return IsExist;
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("7002:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
                 return true;
             }
         }
@@ -157,9 +157,9 @@ namespace GuGuGuMusic
             {
                 this.Musics.Clear();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("7003:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -183,10 +183,10 @@ namespace GuGuGuMusic
                 }
                 return -1;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("7004" + e.Message);
-                return -1;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+                 return -1;
             }
         }
 
@@ -196,9 +196,9 @@ namespace GuGuGuMusic
             {
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("7005:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -213,9 +213,9 @@ namespace GuGuGuMusic
                 Music music = (Music)value;
                 Musics.Remove(music);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("7006:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -225,9 +225,9 @@ namespace GuGuGuMusic
             {
                 Musics.RemoveAt(index);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("7007:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -237,9 +237,9 @@ namespace GuGuGuMusic
             {
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("7008:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -253,10 +253,11 @@ namespace GuGuGuMusic
             {
                 return Musics.GetEnumerator();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("7009:" + e.Message);
-                return null;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+ 
+            return null;
             }
         }
     }
