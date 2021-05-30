@@ -36,9 +36,9 @@ namespace GuGuGuMusic
                 conn.Open();
                 return conn;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4000:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
                 return null;
             }
         }
@@ -87,9 +87,9 @@ namespace GuGuGuMusic
                 mySqlDataAdapter.Fill(userInfoDataSet, "userinfo");
                 return userInfoDataSet;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4001" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
                 return null;
             }
         }
@@ -111,9 +111,9 @@ namespace GuGuGuMusic
                 rd.Close();
                 return password;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4002:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
                 return "";
             }
 
@@ -138,9 +138,9 @@ namespace GuGuGuMusic
                 rd.Close();
                 return exist;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4003:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
                 return true;
             }
 
@@ -167,10 +167,10 @@ namespace GuGuGuMusic
                 n += ExcuteNonQuery(sql3);
                 return n;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4004:" + e.Message);
-                return -1;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+            return -1;
             }
         }
 
@@ -201,10 +201,11 @@ namespace GuGuGuMusic
                 return Musics;
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4005:" + e.Message);
-                return null;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+             
+            return null;
             }
         }
 
@@ -227,10 +228,11 @@ namespace GuGuGuMusic
                 rd.Close();
                 return Musics;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4005:" + e.Message);
-                return null;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+ 
+            return null;
             }
         }
 
@@ -256,10 +258,11 @@ namespace GuGuGuMusic
                 }
                 return n;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4006:" + e.Message);
-                return -1;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+ 
+            return -1;
             }
         }
 
@@ -296,10 +299,10 @@ namespace GuGuGuMusic
                 music.FileURL = fileurl;
                 return music;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("6001:" + e.Message);
-                return null;
+                Console.WriteLine(ex.Message + ex.StackTrace); 
+            return null;
             }
         }
 
@@ -313,10 +316,11 @@ namespace GuGuGuMusic
                 localstring += "】";
                 return localstring;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("6002:" + e.Message);
-                return null;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+  
+            return null;
             }
         }
 
@@ -341,7 +345,6 @@ namespace GuGuGuMusic
                     }
                     File.WriteAllLines(filepath, lines.ToArray());
                     return 0;
-
                 }
                 else if (musicList.ListName.ToString() == "播放列表")
                 {
@@ -366,10 +369,11 @@ namespace GuGuGuMusic
                     return n;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4007:" + e.Message);
-                return -1;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+            
+            return -1;
             }
         }
 
@@ -388,10 +392,11 @@ namespace GuGuGuMusic
                 n += ExcuteNonQuery(sql2);
                 return n;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4008:" + e.Message);
-                return -1;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+             
+            return -1;
             }
         }
 
@@ -410,10 +415,11 @@ namespace GuGuGuMusic
                 n += ExcuteNonQuery(sql2);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4009:" + e.Message);
-                return false;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+            
+            return false;
             }
         }
 
@@ -442,10 +448,11 @@ namespace GuGuGuMusic
                 }
                 return musicLists;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4010:" + e.Message);
-                return null;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+             
+            return null;
             }
         }
 
@@ -472,10 +479,11 @@ namespace GuGuGuMusic
                 rd.Close();
                 return musicList;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4011:" + e.Message);
-                return null;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+             
+            return null;
             }
         }
 
@@ -512,9 +520,10 @@ namespace GuGuGuMusic
                 sR.Close();
                 return musicList;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("4012:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
+            
                 return new MusicList();
             }
         }

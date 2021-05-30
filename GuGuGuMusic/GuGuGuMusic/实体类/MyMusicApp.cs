@@ -42,9 +42,9 @@ namespace GuGuGuMusic
                 webResponse.Close();
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5009:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
                 return false;
             }
         }
@@ -55,9 +55,9 @@ namespace GuGuGuMusic
             {
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5008:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -83,9 +83,9 @@ namespace GuGuGuMusic
                     CreatedMusicList.Add(mDB.GetMusicList(AllMusicLists[i]).ListName, i);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5001:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -100,9 +100,9 @@ namespace GuGuGuMusic
                 AllMusicLists = new List<MusicList>();
                 CreatedMusicList = new Dictionary<string, int>();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5009:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -128,9 +128,9 @@ namespace GuGuGuMusic
                     streamWriter.Close();
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5002:" + e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
         /// <summary>
@@ -219,10 +219,11 @@ namespace GuGuGuMusic
             {
                 return GetCreatedMusicListNumber() < ListLimits;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5003:" + e.Message);
-                return false;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+             
+            return false;
             }
         }
         /// <summary>
@@ -235,10 +236,11 @@ namespace GuGuGuMusic
             {
                 return CreatedMusicList.Count();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5004:" + e.Message);
-                return -1;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+ 
+            return -1;
             }
         }
         /// <summary>
@@ -260,10 +262,11 @@ namespace GuGuGuMusic
                 }
                 return n >= 0;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5005:" + e.Message);
-                return false;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+ 
+            return false;
             }
         }
         /// <summary>
@@ -282,10 +285,11 @@ namespace GuGuGuMusic
                 }
                 return false;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5006:" + e.Message);
-                return false;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+ 
+            return false;
             }
         }
         /// <summary>
@@ -309,10 +313,10 @@ namespace GuGuGuMusic
                 }
                 return false;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5007:" + e.Message);
-                return false;
+                Console.WriteLine(ex.Message + ex.StackTrace);
+             return false;
             }
         }
         /// <summary>
@@ -328,10 +332,10 @@ namespace GuGuGuMusic
                 CreatedMusicList.Remove(musicList.ListName);
                 return n;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("5011:" + e.Message);
-                return false;
+                Console.WriteLine(ex.Message + ex.StackTrace); 
+            return false;
             }
         }
         #endregion

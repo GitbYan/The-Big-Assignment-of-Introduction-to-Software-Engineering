@@ -132,9 +132,9 @@ namespace GuGuGuMusic
             {
                 TryRegister();
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("3001:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -158,9 +158,9 @@ namespace GuGuGuMusic
                     Login.main.Login(new User(userid));
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("3002:"+e.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -178,9 +178,10 @@ namespace GuGuGuMusic
                     return mDB.CreateUser(Account, Password) >= 0;
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("3003:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
+             
                 return false;
             }
         }
@@ -197,9 +198,9 @@ namespace GuGuGuMusic
                     control.Show();
                 }
             }
-            catch(Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("3004:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -230,9 +231,9 @@ namespace GuGuGuMusic
                         break;
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("3005:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -263,9 +264,9 @@ namespace GuGuGuMusic
                         break;
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("3006:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
 
@@ -282,9 +283,9 @@ namespace GuGuGuMusic
                     Lbl_Tip1.Hide();
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("3007:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -303,9 +304,9 @@ namespace GuGuGuMusic
                     Lbl_Tip2.Hide();
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("3008:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -323,9 +324,9 @@ namespace GuGuGuMusic
                     Lbl_Tip3.Hide();
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("3009:" + ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
 
         }
@@ -344,9 +345,9 @@ namespace GuGuGuMusic
                     
                 }
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
-                Console.WriteLine("3010:"+ce.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
     }

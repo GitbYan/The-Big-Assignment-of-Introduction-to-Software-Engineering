@@ -336,12 +336,10 @@ namespace ControlDemos
             if (_Orientation == Orientation.Horizontal_LR|| _Orientation == Orientation.Horizontal_RL)
             {
                 e.Graphics.DrawLine(penBarFore, fPointValue - _SliderLength / 2, Height / 2f, fPointValue + _SliderLength / 2, Height / 2f);
-
             }
             else if (_Orientation == Orientation.Vertical_UD|| _Orientation == Orientation.Vertical_DU)
             {
                 e.Graphics.DrawLine(penBarFore, Width / 2f, fPointValue - _SliderLength / 2, Width / 2f, fPointValue + _SliderLength / 2);
-
             }
 
         }
